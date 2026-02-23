@@ -24,17 +24,25 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const [items, setItems] = useState<CartItem[]>([]);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
         const savedCart = localStorage.getItem("alamode_cart");
         if (savedCart) {
-            setItems(JSON.parse(savedCart));
+            try {
+                setItems(JSON.parse(savedCart));
+            } catch (e) {
+                console.error("Failed to parse cart from localStorage", e);
+            }
         }
+        setIsInitialized(true);
     }, []);
 
     useEffect(() => {
-        localStorage.setItem("alamode_cart", JSON.stringify(items));
-    }, [items]);
+        if (isInitialized) {
+            localStorage.setItem("alamode_cart", JSON.stringify(items));
+        }
+    }, [items, isInitialized]);
 
     const addItem = (item: CartItem) => {
         setItems((prev) => {
