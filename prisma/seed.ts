@@ -71,7 +71,7 @@ async function main() {
         create: { name: "Fashion", slug: "fashion", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071&auto=format&fit=crop" },
     });
 
-    const decor = await prisma.category.upsert({
+    await prisma.category.upsert({
         where: { slug: "decoration" },
         update: {},
         create: { name: "Decoration", slug: "decoration", image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop" },

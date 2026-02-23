@@ -122,7 +122,7 @@ export default function Home() {
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2">Trending Now</h2>
-              <p className="text-gray-400">What's currently captivating our elite community.</p>
+              <p className="text-gray-400">What&apos;s currently captivating our elite community.</p>
             </div>
           </div>
 
