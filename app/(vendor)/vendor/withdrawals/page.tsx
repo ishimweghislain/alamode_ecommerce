@@ -68,7 +68,7 @@ export default async function VendorWithdrawalsPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {withdrawals.map((req) => (
+                            {withdrawals.map((req: any) => (
                                 <tr key={req.id} className="hover:bg-white/5 transition-colors">
                                     <td className="p-4 text-sm text-gray-400 font-mono">
                                         {new Date(req.createdAt).toLocaleDateString()}
@@ -78,8 +78,8 @@ export default async function VendorWithdrawalsPage() {
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${req.status === 'COMPLETED' ? 'bg-green-500/10 text-green-500' :
-                                                req.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
-                                                    'bg-red-500/10 text-red-500'
+                                            req.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
+                                                'bg-red-500/10 text-red-500'
                                             }`}>
                                             {req.status}
                                         </span>
