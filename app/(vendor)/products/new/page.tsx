@@ -75,7 +75,7 @@ export default function NewProductPage() {
         <div className="max-w-4xl mx-auto py-10">
             <div className="mb-10">
                 <h1 className="text-3xl font-outfit font-bold text-white mb-2 font-bold">Add New Luxury Product</h1>
-                <p className="text-gray-400">Showcase your masterpiece to the ALAMODE.RW community.</p>
+                <p className="text-gray-400">Showcase your masterpiece to the ALAMODE community.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">

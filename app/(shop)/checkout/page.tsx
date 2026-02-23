@@ -186,7 +186,7 @@ export default function CheckoutPage() {
                             )}
                         </button>
                         <p className="mt-6 text-[10px] text-gray-500 text-center leading-relaxed">
-                            By placing this order, you agree to ALAMODE.RW's <br />
+                            By placing this order, you agree to ALAMODE's <br />
                             <Link href="/terms" className="underline">Terms of Service</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.
                         </p>
                     </div>

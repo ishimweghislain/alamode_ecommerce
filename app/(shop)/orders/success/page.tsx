@@ -13,7 +13,7 @@ export default function OrderSuccessPage() {
                 <div>
                     <h1 className="text-4xl md:text-5xl font-outfit font-bold text-white mb-4">Payment Successful!</h1>
                     <p className="text-gray-400 text-lg max-w-xl mx-auto">
-                        Thank you for choosing ALAMODE.RW. Your luxury order has been received and is being prepared with clinical precision.
+                        Thank you for choosing ALAMODE. Your luxury order has been received and is being prepared with clinical precision.
                     </p>
                 </div>
 
