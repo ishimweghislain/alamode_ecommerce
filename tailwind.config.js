@@ -1,19 +1,31 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/app/**/*.{js,ts,jsx,tsx}",
-    "./src/components/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        primary: "#064E3B",      // Dark Green
-        secondary: "#047857",    // Emerald
-        accent: "#10B981",       // Light Emerald
-        gold: "#D4AF37",         // Luxury Gold
-        soft: "#F5F5F4",         // Soft Gray
-        darkbg: "#0F172A",       // Deep Background
+        brand: {
+          dark: "#064E3B",      // Dark Green
+          emerald: "#047857",   // Emerald
+          accent: "#10B981",    // Accent
+          gold: "#D4AF37",      // Gold
+          gray: "#F5F5F4",      // Soft gray
+        },
+        background: {
+          dark: "#0F172A",      // Dark background
+        }
       },
+      fontFamily: {
+        inter: ['var(--font-inter)'],
+        outfit: ['var(--font-outfit)'],
+      },
+      borderRadius: {
+        'luxury': '0.75rem',
+      }
     },
   },
   plugins: [],

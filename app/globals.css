@@ -2,6 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 15, 23, 42;
+  --background-end-rgb: 15, 23, 42;
+}
+
 body {
-  @apply bg-darkbg text-white;
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-dark hover:bg-brand-emerald text-white font-medium py-2 px-4 rounded-luxury transition-all duration-300;
+  }
+  
+  .btn-gold {
+    @apply bg-brand-gold hover:opacity-90 text-background-dark font-semibold py-2 px-4 rounded-luxury transition-all duration-300;
+  }
+
+  .card-luxury {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-luxury p-4 hover:border-brand-accent/50 transition-all duration-300;
+  }
+
+  .input-luxury {
+    @apply bg-white/5 border border-white/10 rounded-luxury px-4 py-2 focus:outline-none focus:border-brand-accent text-white transition-all;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-background-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-brand-dark rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-brand-emerald;
 }
