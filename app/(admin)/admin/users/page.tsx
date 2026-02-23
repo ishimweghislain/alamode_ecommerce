@@ -37,7 +37,7 @@ export default async function AdminUsersPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {users.map((user) => (
+                        {users.map((user: any) => (
                             <tr key={user.id} className="hover:bg-white/5 transition-colors">
                                 <td className="p-4">
                                     <div className="flex items-center gap-3">
@@ -54,8 +54,8 @@ export default async function AdminUsersPage() {
                                 </td>
                                 <td className="p-4">
                                     <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${user.role === 'ADMIN' ? 'bg-purple-500/10 text-purple-400' :
-                                            user.role === 'VENDOR' ? 'bg-brand-gold/10 text-brand-gold' :
-                                                'bg-gray-500/10 text-gray-400'
+                                        user.role === 'VENDOR' ? 'bg-brand-gold/10 text-brand-gold' :
+                                            'bg-gray-500/10 text-gray-400'
                                         }`}>
                                         {user.role}
                                     </span>

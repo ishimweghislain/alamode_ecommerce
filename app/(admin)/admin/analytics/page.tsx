@@ -28,7 +28,7 @@ export default async function AdminAnalyticsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat) => (
+                {stats.map((stat: any) => (
                     <div key={stat.label} className="card-luxury p-6 flex flex-col justify-between h-32 relative overflow-hidden">
                         <div className="flex justify-between items-start relative z-10">
                             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{stat.label}</p>

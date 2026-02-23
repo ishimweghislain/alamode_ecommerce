@@ -54,7 +54,7 @@ export default async function AdminVendorsPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {vendors.map((vendor) => (
+                        {vendors.map((vendor: any) => (
                             <tr key={vendor.id} className="hover:bg-white/5 transition-colors">
                                 <td className="p-4">
                                     <div className="flex items-center gap-3">
