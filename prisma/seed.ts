@@ -1,5 +1,5 @@
-const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -9,7 +9,7 @@ async function main() {
     console.log("Seeding database...");
 
     // 1. Create Admin
-    const admin = await prisma.user.upsert({
+    await prisma.user.upsert({
         where: { email: "admin@alamode.rw" },
         update: { password: hashedPassword },
         create: {
@@ -46,7 +46,7 @@ async function main() {
     console.log("Vendor created: vendor@alamode.rw");
 
     // 3. Create Customer
-    const customer = await prisma.user.upsert({
+    await prisma.user.upsert({
         where: { email: "customer@alamode.rw" },
         update: { password: hashedPassword },
         create: {
@@ -79,32 +79,35 @@ async function main() {
     console.log("Categories seeded.");
 
     // 5. Create some products for the vendor
-    await prisma.product.createMany({
-        data: [
-            {
-                name: "Diamond Encrusted Watch",
-                description: "A timeless masterpiece of luxury and precision.",
-                price: 4500000,
-                stock: 5,
-                categoryId: tech.id,
-                vendorId: (await prisma.vendor.findUnique({ where: { userId: vendorUser.id } })).id,
-                images: ["https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1999&auto=format&fit=crop"],
-                isFeatured: true,
-            },
-            {
-                name: "Handcrafted Leather Bag",
-                description: "Pure Rwandan craftsmanship with imported Italian leather.",
-                price: 125000,
-                stock: 12,
-                categoryId: fashion.id,
-                vendorId: (await prisma.vendor.findUnique({ where: { userId: vendorUser.id } })).id,
-                images: ["https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"],
-                isFeatured: true,
-            }
-        ],
-        skipDuplicates: true,
-    });
-    console.log("Products seeded.");
+    const vendor = await prisma.vendor.findUnique({ where: { userId: vendorUser.id } });
+    if (vendor) {
+        await prisma.product.deleteMany({ where: { vendorId: vendor.id } });
+        await prisma.product.createMany({
+            data: [
+                {
+                    name: "Diamond Encrusted Watch",
+                    description: "A timeless masterpiece of luxury and precision.",
+                    price: 4500000,
+                    stock: 5,
+                    categoryId: tech.id,
+                    vendorId: vendor.id,
+                    images: ["https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1999&auto=format&fit=crop"],
+                    isFeatured: true,
+                },
+                {
+                    name: "Handcrafted Leather Bag",
+                    description: "Pure Rwandan craftsmanship with imported Italian leather.",
+                    price: 125000,
+                    stock: 12,
+                    categoryId: fashion.id,
+                    vendorId: vendor.id,
+                    images: ["https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"],
+                    isFeatured: true,
+                }
+            ],
+        });
+        console.log("Products seeded.");
+    }
 
     console.log("Seed finished successfully.");
 }
