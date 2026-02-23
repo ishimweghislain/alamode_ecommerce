@@ -49,7 +49,7 @@ export default async function AdminOrdersPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {orders.map((order) => (
+                        {orders.map((order: any) => (
                             <tr key={order.id} className="hover:bg-white/5 transition-colors">
                                 <td className="p-4 font-mono text-xs text-brand-accent">
                                     #{order.id.slice(-8).toUpperCase()}
@@ -63,10 +63,10 @@ export default async function AdminOrdersPage() {
                                 </td>
                                 <td className="p-4">
                                     <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 w-fit ${order.status === 'PAID' ? 'bg-brand-accent/10 text-brand-accent' :
-                                            order.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-500' :
-                                                order.status === 'DELIVERED' ? 'bg-green-500/10 text-green-500' :
-                                                    order.status === 'CANCELLED' ? 'bg-red-500/10 text-red-500' :
-                                                        'bg-brand-gold/10 text-brand-gold'
+                                        order.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-500' :
+                                            order.status === 'DELIVERED' ? 'bg-green-500/10 text-green-500' :
+                                                order.status === 'CANCELLED' ? 'bg-red-500/10 text-red-500' :
+                                                    'bg-brand-gold/10 text-brand-gold'
                                         }`}>
                                         {order.status === 'PAID' && <CheckCircle2 className="h-3 w-3" />}
                                         {order.status === 'PENDING' && <Clock className="h-3 w-3" />}
