@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ToastProvider";
 import Navbar from "@/components/layout/Navbar";
 import BottomNav from "@/components/layout/BottomNav";
 import Footer from "@/components/layout/Footer";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-});
+// Fallback to system fonts if build environment restricts Google Fonts access
+const inter = { variable: "font-inter" };
+const outfit = { variable: "font-outfit" };
 
 export const metadata: Metadata = {
   title: "ALAMODE.RW | Premium Multi-Vendor Marketplace Rwanda",
