@@ -72,7 +72,7 @@ export default async function ProfilePage() {
                 </div>
 
                 <div className="space-y-4">
-                    {userData.orders.map((order) => (
+                    {userData.orders.map((order: any) => (
                         <div key={order.id} className="flex items-center justify-between p-4 border border-white/5 rounded-luxury hover:bg-white/5 transition-colors">
                             <div className="flex gap-4 items-center">
                                 <div className="h-10 w-10 bg-white/5 rounded-full flex items-center justify-center">
