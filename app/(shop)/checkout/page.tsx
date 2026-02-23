@@ -33,14 +33,26 @@ export default function CheckoutPage() {
         setIsLoading(true);
 
         try {
-            // Simulate API call for order creation
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            const response = await axios.post("/api/orders", {
+                items: items.map(item => ({
+                    id: item.id,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                shippingAddress: formData.shippingAddress,
+                phone: formData.phone,
+                paymentMethod: paymentMethod,
+                totalAmount: subtotal
+            });
 
-            toast.success("Order placed successfully! Redirecting to payment...");
-            clearCart();
-            router.push("/orders/success");
-        } catch (error) {
-            toast.error("Failed to place order. Please try again.");
+            if (response.status === 200) {
+                toast.success("Order placed successfully! Please authorize payment on your device.");
+                clearCart();
+                router.push("/orders/success");
+            }
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error.response?.data || "Failed to place order. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -119,8 +131,8 @@ export default function CheckoutPage() {
                                     type="button"
                                     onClick={() => setPaymentMethod(method.id)}
                                     className={`p-6 rounded-luxury border flex flex-col items-center gap-3 transition-all ${paymentMethod === method.id
-                                            ? "bg-brand-accent/10 border-brand-accent"
-                                            : "bg-white/5 border-white/10 opacity-60 hover:opacity-100"
+                                        ? "bg-brand-accent/10 border-brand-accent"
+                                        : "bg-white/5 border-white/10 opacity-60 hover:opacity-100"
                                         }`}
                                 >
                                     <method.icon className={`h-8 w-8 ${method.id === paymentMethod ? 'text-brand-accent' : method.color}`} />

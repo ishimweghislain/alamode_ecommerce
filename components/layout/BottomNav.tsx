@@ -5,15 +5,30 @@ import { usePathname } from "next/navigation";
 import { Home, LayoutGrid, ShoppingCart, ShoppingBag, User } from "lucide-react";
 import { clsx } from "clsx";
 
+import { useSession } from "next-auth/react";
+
 const BottomNav = () => {
     const pathname = usePathname();
+    const { data: session } = useSession();
+
+    const getOrdersHref = () => {
+        if (session?.user.role === "ADMIN") return "/admin/orders";
+        if (session?.user.role === "VENDOR") return "/vendor/orders";
+        return "/profile/orders";
+    };
+
+    const getProfileHref = () => {
+        if (session?.user.role === "ADMIN") return "/admin";
+        if (session?.user.role === "VENDOR") return "/vendor";
+        return "/profile";
+    };
 
     const navItems = [
         { label: "Home", icon: Home, href: "/" },
         { label: "Categories", icon: LayoutGrid, href: "/categories" },
         { label: "Cart", icon: ShoppingCart, href: "/cart" },
-        { label: "Orders", icon: ShoppingBag, href: "/orders" },
-        { label: "Profile", icon: User, href: "/profile" },
+        { label: "Orders", icon: ShoppingBag, href: getOrdersHref() },
+        { label: "Profile", icon: User, href: getProfileHref() },
     ];
 
     return (
