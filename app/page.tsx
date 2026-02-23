@@ -16,14 +16,14 @@ const featuredProducts = [
     id: "2",
     name: "Minimalist Ceramic Pendant Lamp",
     price: 45000,
-    image: "https://images.unsplash.com/photo-1507473885765-e6ed457f782c?q=80&w=2070&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1513506494266-1030ad266f91?q=80&w=2070&auto=format&fit=crop",
     category: "Home Decor",
   },
   {
     id: "3",
     name: "Ultra-Slim Wireless Mechanical Keyboard",
     price: 85000,
-    image: "https://images.unsplash.com/photo-1587829741301-dc798b83aca2?q=80&w=2020&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?q=80&w=2020&auto=format&fit=crop",
     category: "Technology",
   },
   {
@@ -61,7 +61,7 @@ const trendingProducts = [
     id: "8",
     name: "Handcrafted Geometric Rug",
     price: 155000,
-    image: "https://images.unsplash.com/photo-1575308610149-d3369ca4162e?q=80&w=2070&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1534349762230-e0cadf78f5db?q=80&w=2070&auto=format&fit=crop",
     category: "Home Decor",
   },
 ];

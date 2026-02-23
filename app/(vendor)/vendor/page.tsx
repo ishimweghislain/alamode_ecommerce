@@ -64,7 +64,7 @@ export default async function VendorDashboard() {
                         <Link href="/vendor/products" className="text-sm text-brand-accent hover:underline">View All</Link>
                     </div>
                     <div className="space-y-4">
-                        {vendor.products.map((product) => (
+                        {vendor.products.map((product: any) => (
                             <div key={product.id} className="flex items-center gap-4 p-3 hover:bg-white/5 rounded-luxury transition-colors">
                                 <div className="h-12 w-12 rounded-luxury bg-white/10 flex-shrink-0"></div>
                                 <div className="flex-1">
