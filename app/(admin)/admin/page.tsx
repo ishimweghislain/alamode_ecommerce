@@ -22,7 +22,7 @@ export default async function AdminDashboard() {
         <div className="space-y-8">
             <div>
                 <h1 className="text-3xl font-outfit font-bold text-white mb-2">Admin Command Center</h1>
-                <p className="text-gray-400">Overview of the ALAMODE.RW ecosystem.</p>
+                <p className="text-gray-400">Overview of the ALAMODE ecosystem.</p>
             </div>
 
             {pendingVendors > 0 && (

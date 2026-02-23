@@ -16,23 +16,23 @@ async function main() {
 
     // 1. Create Admin
     await prisma.user.upsert({
-        where: { email: "admin@alamode.rw" },
+        where: { email: "admin@alamode.com" },
         update: { password: hashedPassword },
         create: {
-            email: "admin@alamode.rw",
+            email: "admin@alamode.com",
             name: "Super Admin",
             password: hashedPassword,
             role: "ADMIN",
         },
     });
-    console.log("Admin created: admin@alamode.rw");
+    console.log("Admin created: admin@alamode.com");
 
     // 2. Create Vendor
     const vendorUser = await prisma.user.upsert({
-        where: { email: "vendor@alamode.rw" },
+        where: { email: "vendor@alamode.com" },
         update: { password: hashedPassword },
         create: {
-            email: "vendor@alamode.rw",
+            email: "vendor@alamode.com",
             name: "Luxury Vendor",
             password: hashedPassword,
             role: "VENDOR",
@@ -49,20 +49,20 @@ async function main() {
             description: "Premium luxury items for the discerning customer.",
         },
     });
-    console.log("Vendor created: vendor@alamode.rw");
+    console.log("Vendor created: vendor@alamode.com");
 
     // 3. Create Customer
     await prisma.user.upsert({
-        where: { email: "customer@alamode.rw" },
+        where: { email: "customer@alamode.com" },
         update: { password: hashedPassword },
         create: {
-            email: "customer@alamode.rw",
+            email: "customer@alamode.com",
             name: "Valued Customer",
             password: hashedPassword,
             role: "CUSTOMER",
         },
     });
-    console.log("Customer created: customer@alamode.rw");
+    console.log("Customer created: customer@alamode.com");
 
     // 4. Create Categories
     const fashion = await prisma.category.upsert({

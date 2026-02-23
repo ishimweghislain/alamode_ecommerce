@@ -10,7 +10,7 @@ const inter = { variable: "font-inter" };
 const outfit = { variable: "font-outfit" };
 
 export const metadata: Metadata = {
-  title: "ALAMODE.RW | Premium Multi-Vendor Marketplace Rwanda",
+  title: "ALAMODE | Premium Multi-Vendor Marketplace Rwanda",
   description: "Experience luxury shopping in Rwanda. Curated collections from elite vendors.",
 };
 
