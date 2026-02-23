@@ -18,7 +18,7 @@ export default async function SettingsPage() {
                     <div className="card-luxury p-0 overflow-hidden sticky top-32">
                         <div className="p-6 bg-white/5 border-b border-white/5 flex items-center gap-4">
                             <div className="h-12 w-12 rounded-full bg-brand-accent flex items-center justify-center text-white font-bold text-xl">
-                                {user.name?.charAt(0) || user.email.charAt(0)}
+                                {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
                             </div>
                             <div>
                                 <h3 className="text-white font-bold">{user.name || "Guest"}</h3>
@@ -59,7 +59,7 @@ export default async function SettingsPage() {
                                 </label>
                                 <input
                                     className="input-luxury w-full py-3 opacity-60"
-                                    defaultValue={user.email}
+                                    defaultValue={user.email || ""}
                                     disabled
                                 />
                             </div>
