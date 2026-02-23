@@ -69,7 +69,7 @@ export default async function ShopPage({
                             <button className={`block w-full text-left px-4 py-2 rounded-luxury text-sm transition-all ${!category ? 'bg-brand-accent text-white font-bold' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
                                 All Items
                             </button>
-                            {categories.map((cat) => (
+                            {categories.map((cat: any) => (
                                 <button key={cat.id} className={`block w-full text-left px-4 py-2 rounded-luxury text-sm transition-all ${category === cat.slug ? 'bg-brand-accent text-white font-bold' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
                                     {cat.name}
                                 </button>
@@ -91,7 +91,7 @@ export default async function ShopPage({
 
                 <div className="flex-1">
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                        {products.map((product) => (
+                        {products.map((product: any) => (
                             <ProductCard
                                 key={product.id}
                                 id={product.id}

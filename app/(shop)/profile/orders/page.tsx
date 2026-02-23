@@ -27,7 +27,7 @@ export default async function UserOrdersPage() {
             </div>
 
             <div className="space-y-6">
-                {orders.map((order) => (
+                {orders.map((order: any) => (
                     <div key={order.id} className="card-luxury p-0 overflow-hidden group border-white/5 hover:border-brand-accent/30 transition-all">
                         <div className="bg-white/5 p-6 flex flex-wrap justify-between items-center gap-6 border-b border-white/5">
                             <div className="flex gap-12 text-xs uppercase tracking-widest font-bold">
@@ -51,7 +51,7 @@ export default async function UserOrdersPage() {
 
                         <div className="p-6">
                             <div className="space-y-6">
-                                {order.items.map((item) => (
+                                {order.items.map((item: any) => (
                                     <div key={item.id} className="flex gap-6">
                                         <div className="h-20 w-20 relative rounded overflow-hidden flex-shrink-0 bg-white/5">
                                             <Image
