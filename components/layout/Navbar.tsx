@@ -17,7 +17,7 @@ const Navbar = () => {
                 <div className="flex justify-between items-center h-20">
                     <div className="flex items-center gap-8">
                         <Link href="/" className="text-2xl font-bold text-brand-gold tracking-tighter">
-                            ALAMODE<span className="text-white">.RW</span>
+                            ALAMODE
                         </Link>
 
                         <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">

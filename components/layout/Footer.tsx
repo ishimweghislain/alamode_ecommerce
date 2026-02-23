@@ -7,7 +7,7 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
                     <div className="col-span-1 md:col-span-1">
                         <Link href="/" className="text-2xl font-bold text-brand-gold tracking-tighter">
-                            ALAMODE<span className="text-white">.RW</span>
+                            ALAMODE
                         </Link>
                         <p className="mt-4 text-gray-400 text-sm leading-relaxed">
                             Experience the pinnacle of luxury shopping in Rwanda. A curated marketplace for those who appreciate the finer things.
@@ -50,7 +50,7 @@ const Footer = () => {
                 </div>
 
                 <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                    <p>© {new Date().getFullYear()} ALAMODE.RW - Designed for Excellence.</p>
+                    <p>© {new Date().getFullYear()} ALAMODE - Designed for Excellence.</p>
                     <div className="flex gap-6">
                         <Link href="/privacy" className="hover:text-white">Privacy</Link>
                         <Link href="/terms" className="hover:text-white">Terms</Link>

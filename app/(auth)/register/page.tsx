@@ -38,7 +38,7 @@ export default function RegisterPage() {
                 <div className="card-luxury p-8 md:p-10">
                     <div className="text-center mb-10">
                         <h1 className="text-3xl font-outfit font-bold text-white mb-2">Create Account</h1>
-                        <p className="text-gray-400">Join the elite ALAMODE.RW community</p>
+                        <p className="text-gray-400">Join the elite ALAMODE community</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -48,8 +48,8 @@ export default function RegisterPage() {
                                 type="button"
                                 onClick={() => setFormData({ ...formData, role: "CUSTOMER" })}
                                 className={`p-4 rounded-luxury border flex flex-col items-center gap-2 transition-all ${formData.role === "CUSTOMER"
-                                        ? "bg-brand-accent/10 border-brand-accent text-brand-accent"
-                                        : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
+                                    ? "bg-brand-accent/10 border-brand-accent text-brand-accent"
+                                    : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
                                     }`}
                             >
                                 <ShoppingBag className="h-6 w-6" />
@@ -59,8 +59,8 @@ export default function RegisterPage() {
                                 type="button"
                                 onClick={() => setFormData({ ...formData, role: "VENDOR" })}
                                 className={`p-4 rounded-luxury border flex flex-col items-center gap-2 transition-all ${formData.role === "VENDOR"
-                                        ? "bg-brand-gold/10 border-brand-gold text-brand-gold"
-                                        : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
+                                    ? "bg-brand-gold/10 border-brand-gold text-brand-gold"
+                                    : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
                                     }`}
                             >
                                 <Store className="h-6 w-6" />

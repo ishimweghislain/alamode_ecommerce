@@ -29,7 +29,7 @@ export default function LoginPage() {
             if (result?.error) {
                 toast.error("Invalid email or password");
             } else {
-                toast.success("Welcome back to ALAMODE.RW");
+                toast.success("Welcome back to ALAMODE");
                 router.push("/");
                 router.refresh();
             }
