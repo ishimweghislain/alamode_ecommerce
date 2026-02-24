@@ -16,8 +16,13 @@ const Navbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-20">
                     <div className="flex items-center gap-8">
-                        <Link href="/" className="text-2xl font-bold text-brand-gold tracking-tighter">
-                            ALAMODE
+                        <Link href="/" className="flex items-center gap-3 group">
+                            <div className="h-10 w-10 relative overflow-hidden rounded-lg border border-brand-gold/20">
+                                <img src="/favicontobeusedandicon.png" alt="ALAMODE" className="object-cover h-full w-full group-hover:scale-110 transition-transform duration-500" />
+                            </div>
+                            <span className="text-2xl font-bold text-brand-gold tracking-tighter uppercase font-outfit">
+                                ALAMODE
+                            </span>
                         </Link>
 
                         <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">
