@@ -1,19 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { User, Lock, Mail, ChevronRight } from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(false);
+
+    const callbackUrl = searchParams.get("callbackUrl") || "/";
+
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     });
+
+    // If user is already logged in, redirect them
+    useEffect(() => {
+        if (status === "authenticated" && session?.user) {
+            if (session.user.role === "ADMIN") {
+                router.push("/admin");
+            } else if (session.user.role === "VENDOR") {
+                router.push("/vendor");
+            } else {
+                router.push(callbackUrl);
+            }
+        }
+    }, [status, session, router, callbackUrl]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,17 +46,25 @@ export default function LoginPage() {
 
             if (result?.error) {
                 toast.error("Invalid email or password");
+                setIsLoading(false);
             } else {
                 toast.success("Welcome back to ALAMODE");
-                router.push("/");
+                // The useEffect will handle redirection once the session updates
                 router.refresh();
             }
         } catch (error) {
             toast.error("Something went wrong. Please try again.");
-        } finally {
             setIsLoading(false);
         }
     };
+
+    if (status === "loading") {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-accent"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-[80vh] flex items-center justify-center px-4 py-20">

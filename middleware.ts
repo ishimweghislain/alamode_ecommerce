@@ -2,15 +2,18 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(
-    function proxy(req) {
+    function middleware(req) {
         const token = req.nextauth.token;
         const path = req.nextUrl.pathname;
+        const userRole = token?.role as string;
 
-        if (path.startsWith("/admin") && token?.role !== "ADMIN") {
+        // Redirect if trying to access admin pages without ADMIN role
+        if (path.startsWith("/admin") && userRole !== "ADMIN") {
             return NextResponse.redirect(new URL("/", req.url));
         }
 
-        if (path.startsWith("/vendor") && token?.role !== "VENDOR") {
+        // Redirect if trying to access vendor pages without VENDOR role
+        if (path.startsWith("/vendor") && userRole !== "VENDOR") {
             return NextResponse.redirect(new URL("/", req.url));
         }
     },
@@ -18,6 +21,7 @@ export default withAuth(
         callbacks: {
             authorized: ({ token }) => !!token,
         },
+        secret: process.env.NEXTAUTH_SECRET,
     }
 );
 
