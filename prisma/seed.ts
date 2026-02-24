@@ -39,11 +39,20 @@ async function main() {
         },
     });
 
+    // Use a unique store name for the seed to avoid constraint conflicts if re-running
+    const storeName = "Elite Boutique";
+    const existingStore = await prisma.vendor.findFirst({
+        where: { storeName, NOT: { userId: vendorUser.id } }
+    });
+
     await prisma.vendor.upsert({
         where: { userId: vendorUser.id },
-        update: { isApproved: true },
+        update: {
+            isApproved: true,
+            storeName: existingStore ? `${storeName} ${Math.floor(Math.random() * 1000)}` : storeName
+        },
         create: {
-            storeName: "Elite Boutique",
+            storeName: existingStore ? `${storeName} ${Math.floor(Math.random() * 1000)}` : storeName,
             userId: vendorUser.id,
             isApproved: true,
             description: "Premium luxury items for the discerning customer.",

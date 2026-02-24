@@ -18,7 +18,7 @@ const featuredProducts = [
     id: "2",
     name: "Minimalist Ceramic Pendant Lamp",
     price: 45000,
-    image: "https://images.unsplash.com/photo-1543198075-8493198a964a?q=80&w=2070&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1543157145-f78c636d023d?q=80&w=2070&auto=format&fit=crop",
     category: "Home Decor",
   },
   {

@@ -5,11 +5,10 @@ import { PrismaClient } from '@prisma/client'
 // Fix for BigInt serialization in pg
 types.setTypeParser(20, (val) => parseInt(val, 10))
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient }
+const globalForPrisma = global as any
 
 const connectionString = process.env.DATABASE_URL
 
-// Configure SSL based on the connection string to avoid warnings and ensure production connectivity
 const poolConfig = {
     connectionString,
     ssl: connectionString?.includes('sslmode=require') || connectionString?.includes('verify-full') || process.env.NODE_ENV === 'production'
@@ -20,7 +19,7 @@ const poolConfig = {
 const pool = new Pool(poolConfig)
 const adapter = new PrismaPg(pool)
 
-export const prisma =
+export const prisma: any =
     globalForPrisma.prisma ||
     new PrismaClient({
         adapter,
