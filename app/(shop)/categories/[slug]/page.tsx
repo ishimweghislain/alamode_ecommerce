@@ -1,6 +1,8 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ui/ProductCard";
 import { notFound } from "next/navigation";
+
 
 interface CategoryPageProps {
     params: {

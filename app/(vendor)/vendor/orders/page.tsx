@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { formatPrice } from "@/lib/utils";
+import Link from "next/link";
 import { ShoppingBag, Eye, Truck, CheckCircle2, Clock, MapPin } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default async function VendorOrdersPage() {
     const user = await getCurrentUser();
@@ -83,8 +86,8 @@ export default async function VendorOrdersPage() {
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${order.status === 'PAID' ? 'bg-brand-accent/10 text-brand-accent' :
-                                            order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
-                                                'bg-gray-500/10 text-gray-400'
+                                                order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
+                                                    'bg-gray-500/10 text-gray-400'
                                             }`}>
                                             {order.status}
                                         </span>

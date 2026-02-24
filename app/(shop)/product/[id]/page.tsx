@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star } from "lucide-react";

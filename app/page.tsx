@@ -4,6 +4,8 @@ import CategoryHighlights from "@/components/ui/CategoryHighlights";
 import Link from "next/link";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+
 const featuredProducts = [
   {
     id: "1",

@@ -4,6 +4,8 @@ import { formatPrice } from "@/lib/utils";
 import { Package, ShoppingBag, CreditCard, TrendingUp, ArrowUpRight, Store } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function VendorDashboard() {
     const user = await getCurrentUser();
     if (!user) return null;
