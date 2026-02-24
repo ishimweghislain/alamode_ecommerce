@@ -1,6 +1,6 @@
 import { Pool, types } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '../prisma/generated/prisma'
+import { PrismaClient } from '@prisma/client'
 
 // Fix for BigInt serialization in pg
 types.setTypeParser(20, (val) => parseInt(val, 10))
@@ -12,7 +12,7 @@ const connectionString = process.env.DATABASE_URL
 // Configure SSL based on the connection string to avoid warnings and ensure production connectivity
 const poolConfig = {
     connectionString,
-    ssl: connectionString?.includes('sslmode=require') || process.env.NODE_ENV === 'production'
+    ssl: connectionString?.includes('sslmode=require') || connectionString?.includes('verify-full') || process.env.NODE_ENV === 'production'
         ? { rejectUnauthorized: false }
         : false
 }

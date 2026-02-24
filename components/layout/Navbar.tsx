@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { ShoppingCart, User, Search, LogOut, ChevronDown } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
@@ -18,7 +19,12 @@ const Navbar = () => {
                     <div className="flex items-center gap-8">
                         <Link href="/" className="flex items-center gap-3 group">
                             <div className="h-10 w-10 relative overflow-hidden rounded-lg border border-brand-gold/20">
-                                <img src="/favicontobeusedandicon.png" alt="ALAMODE" className="object-cover h-full w-full group-hover:scale-110 transition-transform duration-500" />
+                                <Image
+                                    src="/favicontobeusedandicon.png"
+                                    alt="ALAMODE"
+                                    fill
+                                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
                             </div>
                             <span className="text-2xl font-bold text-brand-gold tracking-tighter uppercase font-outfit">
                                 ALAMODE
