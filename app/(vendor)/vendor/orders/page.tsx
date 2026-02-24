@@ -60,7 +60,7 @@ export default async function VendorOrdersPage() {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {orders.map((order: any) => {
-                            const vendorSubtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                            const vendorSubtotal = order.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
                             return (
                                 <tr key={order.id} className="hover:bg-white/5 transition-colors">
                                     <td className="p-4 font-mono text-xs text-brand-accent">
