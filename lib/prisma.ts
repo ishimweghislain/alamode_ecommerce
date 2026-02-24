@@ -1,5 +1,6 @@
 import { Pool, types } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
+// @ts-ignore
 import { PrismaClient } from '@prisma/client'
 
 // Fix for BigInt serialization in pg
