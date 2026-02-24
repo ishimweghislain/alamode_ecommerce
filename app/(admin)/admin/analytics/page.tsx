@@ -75,7 +75,7 @@ export default async function AdminAnalyticsPage() {
                             { name: 'Technology', value: 30, color: 'bg-blue-500' },
                             { name: 'Home Decor', value: 15, color: 'bg-brand-gold' },
                             { name: 'Accessories', value: 10, color: 'bg-purple-500' },
-                        ].map((cat) => (
+                        ].map((cat: any) => (
                             <div key={cat.name} className="space-y-2">
                                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                                     <span className="text-gray-400">{cat.name}</span>

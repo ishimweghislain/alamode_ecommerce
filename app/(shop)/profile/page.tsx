@@ -52,7 +52,7 @@ export default async function ProfilePage() {
                     { label: "Orders Placed", value: userData._count.orders, icon: ShoppingBag, color: "text-blue-400" },
                     { label: "Items in Wishlist", value: userData._count.wishlist, icon: Heart, color: "text-red-400" },
                     { label: "Reviews Written", value: userData._count.reviews, icon: Shield, color: "text-brand-accent" },
-                ].map((stat) => (
+                ].map((stat: any) => (
                     <div key={stat.label} className="card-luxury p-6 flex items-center gap-6">
                         <div className={`p-4 rounded-luxury bg-white/5 ${stat.color}`}>
                             <stat.icon className="h-6 w-6" />

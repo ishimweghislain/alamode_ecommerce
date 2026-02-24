@@ -59,7 +59,7 @@ export default async function VendorOrdersPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {orders.map((order) => {
+                        {orders.map((order: any) => {
                             const vendorSubtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                             return (
                                 <tr key={order.id} className="hover:bg-white/5 transition-colors">
@@ -71,7 +71,7 @@ export default async function VendorOrdersPage() {
                                     </td>
                                     <td className="p-4">
                                         <div className="flex -space-x-2">
-                                            {order.items.map((item, idx) => (
+                                            {order.items.map((item: any, idx: number) => (
                                                 <div key={idx} className="h-8 w-8 rounded bg-white/10 border border-background-dark flex items-center justify-center overflow-hidden" title={item.product.name}>
                                                     <img src={item.product.images[0]} alt={item.product.name} className="object-cover h-full w-full" />
                                                 </div>
@@ -83,8 +83,8 @@ export default async function VendorOrdersPage() {
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${order.status === 'PAID' ? 'bg-brand-accent/10 text-brand-accent' :
-                                                order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
-                                                    'bg-gray-500/10 text-gray-400'
+                                            order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
+                                                'bg-gray-500/10 text-gray-400'
                                             }`}>
                                             {order.status}
                                         </span>

@@ -125,7 +125,7 @@ export default function CheckoutPage() {
                                 { id: "MOMO", label: "Mobile Money", icon: Smartphone, color: "text-brand-gold" },
                                 { id: "CARD", label: "Visa / Master", icon: CreditCard, color: "text-blue-400" },
                                 { id: "AIRTEL", label: "Airtel Money", icon: Smartphone, color: "text-red-400" },
-                            ].map((method) => (
+                            ].map((method: any) => (
                                 <button
                                     key={method.id}
                                     type="button"

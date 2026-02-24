@@ -53,7 +53,7 @@ export default async function VendorDashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {stats.map((stat) => (
+                {stats.map((stat: any) => (
                     <div key={stat.label} className="card-luxury p-6 relative overflow-hidden group">
                         <div className="relative z-10 flex justify-between items-start">
                             <div>

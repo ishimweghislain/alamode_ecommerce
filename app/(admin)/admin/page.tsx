@@ -40,7 +40,7 @@ export default async function AdminDashboard() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat) => (
+                {stats.map((stat: any) => (
                     <div key={stat.label} className="card-luxury p-6 flex items-center gap-6">
                         <div className={`p-4 rounded-luxury bg-white/5 ${stat.color}`}>
                             <stat.icon className="h-6 w-6" />
