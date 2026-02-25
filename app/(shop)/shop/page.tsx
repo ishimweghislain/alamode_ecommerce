@@ -7,10 +7,11 @@ export const dynamic = "force-dynamic";
 export default async function ShopPage({
     searchParams
 }: {
-    searchParams: { [key: string]: string | string[] | undefined }
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-    const query = typeof searchParams.q === 'string' ? searchParams.q : undefined;
-    const category = typeof searchParams.category === 'string' ? searchParams.category : undefined;
+    const params = await searchParams;
+    const query = typeof params.q === 'string' ? params.q : undefined;
+    const category = typeof params.category === 'string' ? params.category : undefined;
 
     const products = await prisma.product.findMany({
         where: {
