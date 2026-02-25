@@ -1,15 +1,20 @@
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { prisma } = require('./lib/prisma');
 
 async function main() {
+    console.log('Testing DB connection...');
     try {
         const userCount = await prisma.user.count();
+        console.log('--- SUCCESS ---');
         console.log('User count:', userCount);
     } catch (e) {
-        console.error('Error connecting to DB:', e);
+        console.error('--- FAILURE ---');
+        console.error(e);
     } finally {
-        await prisma.$disconnect();
+        if (prisma.$disconnect) {
+            console.log('Disconnecting...');
+            await prisma.$disconnect();
+        }
     }
 }
 
