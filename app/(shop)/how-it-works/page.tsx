@@ -82,8 +82,8 @@ export default function HowItWorks() {
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-brand-gold text-xs font-bold tracking-widest uppercase">
                         <Sparkles className="h-3 w-3" /> Step-by-Step Guide
                     </div>
-                    <h1 className="text-6xl md:text-8xl font-outfit font-bold tracking-tighter uppercase leading-[0.9]">
-                        You are Confused ? <br /><span className="text-brand-accent">Follow this steps to get to where you want .</span>
+                    <h1 className="text-3xl md:text-5xl font-outfit font-bold tracking-tighter uppercase leading-[0.9]">
+                        Are You are Confused ? Follow these steps as you are a  <br /><span className="text-brand-accent"> Customer or vendor.</span>
                     </h1>
                     <p className="text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed">
                         A seamless experience meticulously designed for the modern luxury marketplace. Here is exactly how to navigate ALAMODE.
