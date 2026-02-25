@@ -7,7 +7,7 @@ export async function GET(
     { params }: { params: { productId: string } }
 ) {
     try {
-        const product = await (prisma.product.findUnique as any)({
+        const product = await (prisma as any).product.findUnique({
             where: { id: params.productId },
             include: {
                 category: true,
@@ -55,7 +55,7 @@ export async function PATCH(
             }
         }
 
-        const updatedProduct = await (prisma.product.update as any)({
+        const updatedProduct = await (prisma as any).product.update({
             where: { id: params.productId },
             data: {
                 name,

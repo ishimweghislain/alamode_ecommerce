@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 export default async function NewProductPage() {
-    const categories = await (prisma.category.findMany as any)({
+    const categories = await (prisma as any).category.findMany({
         include: {
             subcategories: true
         }

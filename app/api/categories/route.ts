@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/session";
 
 export async function GET() {
     try {
-        const categories = await (prisma.category.findMany as any)({
+        const categories = await (prisma as any).category.findMany({
             include: {
                 subcategories: true,
                 _count: {
