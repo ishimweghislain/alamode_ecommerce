@@ -12,7 +12,8 @@ import {
     Package,
     Store,
     CreditCard,
-    Menu
+    Menu,
+    HelpCircle
 } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { clsx } from "clsx";
@@ -27,7 +28,7 @@ export default function MobileNav() {
     // Standard Shop Navigation
     const shopLinks = [
         { label: "Home", icon: Home, href: "/" },
-        { label: "Search", icon: Search, href: "/search" },
+        { label: "Help", icon: HelpCircle, href: "/how-it-works" },
         { label: "Cart", icon: ShoppingCart, href: "/cart", badge: items.length },
         { label: "Profile", icon: User, href: session ? (session.user.role === "ADMIN" ? "/admin" : session.user.role === "VENDOR" ? "/vendor" : "/profile") : "/login" },
     ];

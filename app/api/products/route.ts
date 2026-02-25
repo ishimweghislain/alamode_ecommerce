@@ -26,7 +26,7 @@ export async function POST(req: Request) {
             return new NextResponse("Missing required fields", { status: 400 });
         }
 
-        const product = await prisma.product.create({
+        const product = await (prisma.product.create as any)({
             data: {
                 name,
                 description,

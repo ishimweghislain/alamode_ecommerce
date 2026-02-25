@@ -15,7 +15,7 @@ export async function PATCH(
         const body = await req.json();
         const { name, slug, categoryId } = body;
 
-        const subcategory = await prisma.subcategory.update({
+        const subcategory = await (prisma as any).subcategory.update({
             where: { id: params.subcategoryId },
             data: { name, slug, categoryId }
         });
@@ -37,7 +37,7 @@ export async function DELETE(
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        await prisma.subcategory.delete({
+        await (prisma as any).subcategory.delete({
             where: { id: params.subcategoryId }
         });
 

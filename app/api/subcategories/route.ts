@@ -16,7 +16,7 @@ export async function POST(req: Request) {
             return new NextResponse("Missing required fields", { status: 400 });
         }
 
-        const subcategory = await prisma.subcategory.create({
+        const subcategory = await (prisma as any).subcategory.create({
             data: { name, slug, categoryId }
         });
 
