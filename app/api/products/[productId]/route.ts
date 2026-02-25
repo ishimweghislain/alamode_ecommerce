@@ -4,11 +4,12 @@ import { getCurrentUser } from "@/lib/session";
 
 export async function GET(
     req: Request,
-    { params }: { params: { productId: string } }
+    { params }: { params: Promise<{ productId: string }> }
 ) {
     try {
+        const { productId } = await params;
         const product = await (prisma as any).product.findUnique({
-            where: { id: params.productId },
+            where: { id: productId },
             include: {
                 category: true,
                 subcategory: true,
@@ -29,9 +30,10 @@ export async function GET(
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { productId: string } }
+    { params }: { params: Promise<{ productId: string }> }
 ) {
     try {
+        const { productId } = await params;
         const user = await getCurrentUser();
         if (!user || (user.role !== "VENDOR" && user.role !== "ADMIN")) {
             return new NextResponse("Unauthorized", { status: 401 });
@@ -41,7 +43,7 @@ export async function PATCH(
         const { name, description, price, stock, categoryId, subcategoryId, images, isFeatured } = body;
 
         const product = await prisma.product.findUnique({
-            where: { id: params.productId },
+            where: { id: productId },
             include: { vendor: true }
         });
 
@@ -56,7 +58,7 @@ export async function PATCH(
         }
 
         const updatedProduct = await (prisma as any).product.update({
-            where: { id: params.productId },
+            where: { id: productId },
             data: {
                 name,
                 description,
@@ -78,16 +80,17 @@ export async function PATCH(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { productId: string } }
+    { params }: { params: Promise<{ productId: string }> }
 ) {
     try {
+        const { productId } = await params;
         const user = await getCurrentUser();
         if (!user || (user.role !== "VENDOR" && user.role !== "ADMIN")) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
         const product = await prisma.product.findUnique({
-            where: { id: params.productId }
+            where: { id: productId }
         });
 
         if (!product) return new NextResponse("Product not found", { status: 404 });
@@ -101,7 +104,7 @@ export async function DELETE(
         }
 
         await prisma.product.delete({
-            where: { id: params.productId }
+            where: { id: productId }
         });
 
         return new NextResponse("Deleted", { status: 200 });

@@ -4,9 +4,10 @@ import { getCurrentUser } from "@/lib/session";
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { categoryId: string } }
+    { params }: { params: Promise<{ categoryId: string }> }
 ) {
     try {
+        const { categoryId } = await params;
         const user = await getCurrentUser();
         if (!user || user.role !== "ADMIN") {
             return new NextResponse("Unauthorized", { status: 401 });
@@ -16,7 +17,7 @@ export async function PATCH(
         const { name, slug, image } = body;
 
         const category = await prisma.category.update({
-            where: { id: params.categoryId },
+            where: { id: categoryId },
             data: { name, slug, image }
         });
 
@@ -29,16 +30,17 @@ export async function PATCH(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { categoryId: string } }
+    { params }: { params: Promise<{ categoryId: string }> }
 ) {
     try {
+        const { categoryId } = await params;
         const user = await getCurrentUser();
         if (!user || user.role !== "ADMIN") {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
         await prisma.category.delete({
-            where: { id: params.categoryId }
+            where: { id: categoryId }
         });
 
         return new NextResponse("Deleted", { status: 200 });
