@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/utils";
 import { ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star } from "lucide-react";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
+import ProductGallery from "@/components/ui/ProductGallery";
 
 interface ProductPageProps {
     params: {
@@ -38,24 +39,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                 {/* Image Gallery */}
-                <div className="space-y-4">
-                    <div className="relative aspect-square rounded-luxury overflow-hidden bg-white/5 border border-white/10">
-                        <Image
-                            src={product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
-                            priority
-                        />
-                    </div>
-                    <div className="grid grid-cols-4 gap-4">
-                        {product.images.map((img: string, i: number) => (
-                            <div key={i} className="relative aspect-square rounded-luxury overflow-hidden border border-white/10 hover:border-brand-accent transition-all cursor-pointer">
-                                <Image src={img} alt={`${product.name} ${i}`} fill className="object-cover" />
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <ProductGallery images={product.images} name={product.name} />
 
                 {/* Product Info */}
                 <div className="flex flex-col">

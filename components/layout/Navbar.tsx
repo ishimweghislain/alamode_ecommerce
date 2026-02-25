@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-import { ShoppingCart, User, Search, LogOut, ChevronDown } from "lucide-react";
+import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBag, HelpCircle } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { useState } from "react";
 
@@ -13,7 +13,7 @@ const Navbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     return (
-        <nav className="hidden md:block sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-white/10">
+        <nav className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-white/10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-20">
                     <div className="flex items-center gap-8">
@@ -31,14 +31,27 @@ const Navbar = () => {
                             </span>
                         </Link>
 
-                        <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">
-                            <Link href="/categories" className="hover:text-brand-gold transition-colors">Categories</Link>
-                            <Link href="/shop" className="hover:text-brand-gold transition-colors">Shop</Link>
-                            <Link href="/premium" className="hover:text-brand-gold transition-colors">Premium</Link>
+                        <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-300">
+                            <Link href="/categories" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
+                                <LayoutGrid className="h-4 w-4" />
+                                Categories
+                            </Link>
+                            <Link href="/shop" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
+                                <ShoppingBag className="h-4 w-4" />
+                                Shop
+                            </Link>
+                            <Link href="/premium" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
+                                <User className="h-4 w-4" />
+                                Premium
+                            </Link>
+                            <Link href="/how-it-works" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
+                                <HelpCircle className="h-4 w-4" />
+                                How It Works
+                            </Link>
                         </div>
                     </div>
 
-                    <div className="flex-1 max-w-md mx-8">
+                    <div className="hidden md:flex flex-1 max-w-md mx-8">
                         <div className="relative">
                             <input
                                 type="text"
@@ -50,7 +63,7 @@ const Navbar = () => {
                     </div>
 
                     <div className="flex items-center gap-5">
-                        <Link href="/cart" className="relative p-2 text-gray-300 hover:text-brand-gold transition-colors">
+                        <Link href="/cart" className="hidden md:relative p-2 text-gray-300 hover:text-brand-gold transition-colors">
                             <ShoppingCart className="h-6 w-6" />
                             {items.length > 0 && (
                                 <span className="absolute top-0 right-0 bg-brand-accent text-white text-[10px] font-bold px-1.5 rounded-full min-w-[18px] text-center">

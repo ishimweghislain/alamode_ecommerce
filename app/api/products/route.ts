@@ -6,20 +6,21 @@ export async function POST(req: Request) {
     try {
         const user = await getCurrentUser();
 
-        if (!user || user.role !== "VENDOR") {
+        if (!user || (user.role !== "VENDOR" && user.role !== "ADMIN")) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const vendor = await prisma.vendor.findUnique({
-            where: { userId: user.id },
-        });
-
-        if (!vendor) {
-            return new NextResponse("Vendor profile not found", { status: 404 });
+        let vendorId;
+        if (user.role === "VENDOR") {
+            const vendor = await prisma.vendor.findUnique({
+                where: { userId: user.id },
+            });
+            if (!vendor) return new NextResponse("Vendor profile not found", { status: 404 });
+            vendorId = vendor.id;
         }
 
         const body = await req.json();
-        const { name, description, price, stock, categoryId, images } = body;
+        const { name, description, price, stock, categoryId, subcategoryId, images, vendorId: bodyVendorId } = body;
 
         if (!name || !description || !price || !categoryId || !images || images.length === 0) {
             return new NextResponse("Missing required fields", { status: 400 });
@@ -29,10 +30,11 @@ export async function POST(req: Request) {
             data: {
                 name,
                 description,
-                price,
-                stock: stock || 0,
+                price: parseFloat(price),
+                stock: parseInt(stock) || 0,
                 categoryId,
-                vendorId: vendor.id,
+                subcategoryId,
+                vendorId: user.role === "ADMIN" ? bodyVendorId : vendorId,
                 images,
             },
         });

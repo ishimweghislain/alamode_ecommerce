@@ -55,7 +55,7 @@ const Sidebar = ({ role }: SidebarProps) => {
     const links = role === "ADMIN" ? adminLinks : role === "VENDOR" ? vendorLinks : customerLinks;
 
     return (
-        <div className="w-64 h-[calc(100vh-80px)] sticky top-20 bg-background-dark/50 border-r border-white/10 p-6 flex flex-col">
+        <div className="hidden lg:flex w-64 h-[calc(100vh-80px)] sticky top-20 bg-background-dark/50 border-r border-white/10 p-6 flex-col">
             <div className="space-y-2 flex-1">
                 {links.map((link) => {
                     const isActive = pathname === link.href;

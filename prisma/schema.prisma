@@ -58,13 +58,25 @@ model Vendor {
 }
 
 model Category {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  slug      String    @unique
-  image     String?
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  name          String    @unique
+  slug          String    @unique
+  image         String?
+  subcategories Subcategory[]
+  products      Product[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Subcategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Product {
@@ -81,6 +93,9 @@ model Product {
   
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
+  
+  subcategoryId String?
+  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
   
   orderItems  OrderItem[]
   reviews     Review[]

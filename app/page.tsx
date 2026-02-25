@@ -111,9 +111,9 @@ export default function Home() {
             <p className="text-gray-200 mb-8 leading-relaxed">
               Join our exclusive membership program for early access to limited edition releases and white-glove delivery services.
             </p>
-            <button className="btn-gold px-8 py-3">
+            <Link href="/how-it-works" className="btn-gold px-8 py-3 inline-block">
               Learn More
-            </button>
+            </Link>
           </div>
         </div>
       </section>

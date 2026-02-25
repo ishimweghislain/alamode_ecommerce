@@ -38,6 +38,7 @@ export const authOptions: NextAuthOptions = {
     ],
     session: {
         strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
     },
     callbacks: {
         async jwt({ token, user }) {
@@ -49,15 +50,31 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             if (session.user) {
+                // @ts-ignore
                 session.user.role = token.role;
+                // @ts-ignore
                 session.user.id = token.id;
             }
             return session;
         },
     },
     secret: process.env.NEXTAUTH_SECRET,
+    // Add these for better production behavior on Vercel
+    useSecureCookies: process.env.NODE_ENV === "production",
+    cookies: {
+        sessionToken: {
+            name: process.env.NODE_ENV === "production" ? `__Secure-next-auth.session-token` : `next-auth.session-token`,
+            options: {
+                httpOnly: true,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === "production"
+            }
+        }
+    },
     pages: {
         signIn: "/login",
+        error: "/login",
     },
     debug: process.env.NODE_ENV === "development",
 };

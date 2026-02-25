@@ -33,6 +33,17 @@ export default function CheckoutPage() {
         setIsLoading(true);
 
         try {
+            if (paymentMethod === "CARD") {
+                const response = await axios.post("/api/checkout", {
+                    items: items,
+                    shippingAddress: formData.shippingAddress,
+                    phone: formData.phone,
+                });
+                window.location = response.data.url;
+                return;
+            }
+
+            // Fallback for other methods (MOMO/AIRTEL)
             const response = await axios.post("/api/orders", {
                 items: items.map(item => ({
                     id: item.id,
@@ -46,7 +57,7 @@ export default function CheckoutPage() {
             });
 
             if (response.status === 200) {
-                toast.success("Order placed successfully! Please authorize payment on your device.");
+                toast.success("Order placed successfully!");
                 clearCart();
                 router.push("/orders/success");
             }

@@ -73,12 +73,31 @@ async function main() {
     });
     console.log("Customer created: customer@alamode.com");
 
-    // 4. Create Categories
+    // 4. Create Categories & Subcategories
     const fashion = await prisma.category.upsert({
         where: { slug: "fashion" },
         update: {},
         create: { name: "Fashion", slug: "fashion", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071&auto=format&fit=crop" },
     });
+
+    // Seed Subcategories for Fashion
+    const fashionSubs = [
+        { name: "Women", slug: "women" },
+        { name: "Men", slug: "men" },
+        { name: "Kids", slug: "kids" },
+    ];
+
+    for (const sub of fashionSubs) {
+        await prisma.subcategory.upsert({
+            where: { slug: sub.slug },
+            update: { categoryId: fashion.id },
+            create: {
+                name: sub.name,
+                slug: sub.slug,
+                categoryId: fashion.id
+            },
+        });
+    }
 
     await prisma.category.upsert({
         where: { slug: "decoration" },
@@ -91,7 +110,7 @@ async function main() {
         update: {},
         create: { name: "Technology", slug: "technology", image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop" },
     });
-    console.log("Categories seeded.");
+    console.log("Categories and Subcategories seeded.");
 
     // 5. Create some products for the vendor
     const vendor = await prisma.vendor.findUnique({ where: { userId: vendorUser.id } });
