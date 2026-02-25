@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function POST(req: Request) {
     try {
@@ -28,6 +31,7 @@ export async function POST(req: Request) {
             },
         }));
 
+        const stripe = getStripe();
         const session = await stripe.checkout.sessions.create({
             line_items,
             mode: "payment",
