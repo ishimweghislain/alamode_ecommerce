@@ -34,7 +34,7 @@ export default function HowItWorks() {
         },
         {
             icon: CreditCard,
-            title: "Secure Checkout",
+            title: "Secure Checkout ✔",
             desc: "Add items to your cart and pay securely. We support all major Credit Cards via Stripe and Mobile Money (MTN/Airtel).",
             action: "View Cart"
         },
