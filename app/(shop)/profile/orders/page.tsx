@@ -77,7 +77,7 @@ export default async function UserOrdersPage() {
 
                             <div className="mt-8 pt-8 border-t border-white/5 flex justify-end gap-4">
                                 <Link
-                                    href={`/orders/${order.id}`}
+                                    href={`/profile/orders/${order.id}`}
                                     className="px-6 py-2 border border-white/10 rounded-luxury text-sm font-bold text-gray-300 hover:bg-white/5 transition-all flex items-center gap-2"
                                 >
                                     Track Acquisition

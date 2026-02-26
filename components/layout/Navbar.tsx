@@ -7,6 +7,8 @@ import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBa
 import { useCart } from "@/components/CartProvider";
 import { useState } from "react";
 
+import NotificationsBell from "@/components/ui/NotificationsBell";
+
 const Navbar = () => {
     const { data: session } = useSession();
     const { items } = useCart();
@@ -64,6 +66,8 @@ const Navbar = () => {
                     </div>
 
                     <div className="flex items-center gap-5">
+                        {session && <NotificationsBell />}
+
                         <Link href="/cart" className="hidden md:relative p-2 text-gray-300 hover:text-brand-gold transition-colors">
                             <ShoppingCart className="h-6 w-6" />
                             {items.length > 0 && (

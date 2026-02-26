@@ -14,7 +14,8 @@ import {
     HelpCircle,
     LogOut,
     ChevronRight,
-    Store
+    Store,
+    Heart
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { clsx } from "clsx";
@@ -44,15 +45,17 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Products", icon: Package, href: "/vendor/products" },
         { label: "Orders", icon: ShoppingBag, href: "/vendor/orders" },
         { label: "Withdrawals", icon: CreditCard, href: "/vendor/withdrawals" },
+        { label: "Support", icon: HelpCircle, href: "/support" },
         { label: "Analytics", icon: BarChart3, href: "/vendor/analytics" },
     ];
 
     const customerLinks = [
         { label: "My Profile", icon: Users, href: "/profile" },
         { label: "My Orders", icon: ShoppingBag, href: "/profile/orders" },
-        { label: "Wishlist", icon: Package, href: "/profile/wishlist" },
+        { label: "Wishlist", icon: Heart, href: "/profile/wishlist" },
         { label: "Payments", icon: CreditCard, href: "/profile/payments" },
         { label: "Settings", icon: Settings, href: "/profile/settings" },
+        { label: "Help & Support", icon: HelpCircle, href: "/support" },
     ];
 
     const links = role === "ADMIN" ? adminLinks : role === "VENDOR" ? vendorLinks : customerLinks;
@@ -89,14 +92,7 @@ const Sidebar = ({ role }: SidebarProps) => {
                     })}
                 </div>
 
-                <div className="pt-6 border-t border-white/10 space-y-2">
-                    <Link
-                        href="/support"
-                        className="flex items-center gap-3 p-3 rounded-luxury text-gray-400 hover:bg-white/5 hover:text-white transition-all"
-                    >
-                        <HelpCircle className="h-5 w-5" />
-                        <span className="font-medium">Support</span>
-                    </Link>
+                <div className="pt-6 border-t border-white/10">
                     <button
                         onClick={() => setShowLogoutConfirm(true)}
                         className="w-full flex items-center gap-3 p-3 rounded-luxury text-red-400 hover:bg-red-400/10 transition-all font-medium"
