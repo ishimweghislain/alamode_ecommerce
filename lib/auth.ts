@@ -61,8 +61,8 @@ export const authOptions: NextAuthOptions = {
             });
 
             if (dbUser) {
-                token.address = dbUser.address;
-                token.phoneNumber = dbUser.phoneNumber;
+                token.address = dbUser.address || undefined;
+                token.phoneNumber = dbUser.phoneNumber || undefined;
             }
 
             return token;
