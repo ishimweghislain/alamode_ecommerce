@@ -34,6 +34,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Orders", icon: ShoppingBag, href: "/admin/orders" },
         { label: "Withdrawals", icon: CreditCard, href: "/admin/withdrawals" },
         { label: "Users", icon: Users, href: "/admin/users" },
+        { label: "Support", icon: HelpCircle, href: "/admin/support" },
         { label: "Analytics", icon: BarChart3, href: "/admin/analytics" },
     ];
 

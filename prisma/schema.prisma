@@ -44,7 +44,19 @@ model User {
   orders        Order[]
   reviews       Review[]
   tickets       Ticket[]
+  notifications Notification[]
   wishlist      Product[] @relation("UserWishlist")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING, ERROR
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 model Ticket {
