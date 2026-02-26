@@ -120,7 +120,8 @@ export default function CheckoutPage() {
                                 <input
                                     required
                                     className="input-luxury w-full py-3"
-                                    defaultValue="Kigali"
+                                    value={formData.city}
+                                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                                 />
                             </div>
                         </div>
