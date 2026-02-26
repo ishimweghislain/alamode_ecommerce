@@ -2,7 +2,8 @@
 
 import { useCart } from "@/components/CartProvider";
 import { formatPrice } from "@/lib/utils";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { MapPin, Phone, CreditCard, Smartphone, CheckCircle2, ShieldCheck, ArrowLeft } from "lucide-react";
@@ -16,11 +17,24 @@ export default function CheckoutPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("MOMO");
 
+    const { data: session } = useSession();
+
     const [formData, setFormData] = useState({
         shippingAddress: "",
         phone: "",
         city: "Kigali",
     });
+
+    useEffect(() => {
+        if (session?.user) {
+            const user = session.user as any;
+            setFormData(prev => ({
+                ...prev,
+                shippingAddress: user.address || prev.shippingAddress,
+                phone: user.phoneNumber || prev.phone,
+            }));
+        }
+    }, [session]);
 
     if (items.length === 0) {
         return null; // Should redirect in useEffect or middleware
