@@ -36,7 +36,7 @@ export default function StatusUpdateModal({ orderId, currentStatus, onClose }: S
         } catch (error) {
             toast.error("Failed to update status");
         } finally {
-            setLoading(null);
+            setLoading(false);
         }
     };
 

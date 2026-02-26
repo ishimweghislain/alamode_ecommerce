@@ -97,6 +97,7 @@ export default function MobileNav() {
                             >
                                 <link.icon className="h-6 w-6" />
                                 <span className="text-[10px] font-medium">{link.label}</span>
+                                {/* @ts-ignore */}
                                 {link.badge && link.badge > 0 ? (
                                     <span className="absolute top-1 right-1 bg-brand-accent text-white text-[8px] font-bold px-1 rounded-full min-w-[14px] text-center">
                                         {link.badge}
