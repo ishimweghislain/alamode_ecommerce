@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
-                    throw new Error("Invalid credentials");
+                    return null;
                 }
 
                 const user = await prisma.user.findUnique({
@@ -23,16 +23,23 @@ export const authOptions: NextAuthOptions = {
                 });
 
                 if (!user || !user.password) {
-                    throw new Error("User not found");
+                    return null;
                 }
 
                 const isValid = await bcrypt.compare(credentials.password, user.password);
 
                 if (!isValid) {
-                    throw new Error("Invalid password");
+                    return null;
                 }
 
-                return user;
+                return {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role,
+                    address: user.address || undefined,
+                    phoneNumber: user.phoneNumber || undefined,
+                };
             },
         }),
     ],
@@ -62,13 +69,9 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             if (session.user) {
-                // @ts-ignore
                 session.user.role = token.role;
-                // @ts-ignore
                 session.user.id = token.id;
-                // @ts-ignore
                 session.user.address = token.address;
-                // @ts-ignore
                 session.user.phoneNumber = token.phoneNumber;
             }
             return session;
