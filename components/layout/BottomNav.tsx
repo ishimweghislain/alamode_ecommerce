@@ -17,6 +17,13 @@ import {
 import { useCart } from "@/components/CartProvider";
 import { clsx } from "clsx";
 
+interface NavLink {
+    label: string;
+    icon: any;
+    href: string;
+    badge?: number;
+}
+
 export default function BottomNav() {
     const pathname = usePathname();
     const { data: session } = useSession();
@@ -25,7 +32,7 @@ export default function BottomNav() {
     const isDashboardRoute = pathname.startsWith("/admin") || pathname.startsWith("/vendor") || pathname.startsWith("/profile");
 
     // Standard Shop Navigation
-    const shopLinks = [
+    const shopLinks: NavLink[] = [
         { label: "Home", icon: Home, href: "/" },
         { label: "Shop", icon: LayoutGrid, href: "/shop" },
         { label: "Cart", icon: ShoppingCart, href: "/cart", badge: items.length },
@@ -33,21 +40,21 @@ export default function BottomNav() {
     ];
 
     // Dashboard Navigation (Role based)
-    const adminLinks = [
+    const adminLinks: NavLink[] = [
         { label: "Stats", icon: LayoutDashboard, href: "/admin" },
         { label: "Vendors", icon: Store, href: "/admin/vendors" },
         { label: "Catalog", icon: LayoutGrid, href: "/admin/categories" },
         { label: "Sales", icon: CreditCard, href: "/admin/orders" },
     ];
 
-    const vendorLinks = [
+    const vendorLinks: NavLink[] = [
         { label: "Stats", icon: LayoutDashboard, href: "/vendor" },
         { label: "Products", icon: Package, href: "/vendor/products" },
         { label: "Store", icon: Store, href: "/vendor/profile" },
         { label: "Orders", icon: CreditCard, href: "/vendor/orders" },
     ];
 
-    const customerLinks = [
+    const customerLinks: NavLink[] = [
         { label: "Home", icon: Home, href: "/" },
         { label: "Orders", icon: Package, href: "/profile/orders" },
         { label: "Payments", icon: CreditCard, href: "/profile/payments" },
@@ -75,7 +82,6 @@ export default function BottomNav() {
                         >
                             <link.icon className="h-5 w-5" />
                             <span className="text-[10px] font-medium">{link.label}</span>
-                            {/* @ts-ignore */}
                             {link.badge && link.badge > 0 ? (
                                 <span className="absolute top-1 right-1 bg-brand-accent text-white text-[8px] font-bold px-1 rounded-full min-w-[14px] text-center">
                                     {link.badge}
