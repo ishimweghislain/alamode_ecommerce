@@ -1,55 +1,129 @@
 import { prisma } from "@/lib/prisma";
-
-export const dynamic = "force-dynamic";
-import { Users, Store, Package, CreditCard, TrendingUp, AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import { Users, Store, Package, CreditCard, TrendingUp, AlertTriangle, DollarSign, ShoppingBag, ArrowUpRight } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
-    const [userCount, vendorCount, productCount, orderCount, pendingVendors] = await Promise.all([
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [
+        userCount,
+        vendorCount,
+        productCount,
+        orderCount,
+        pendingVendors,
+        totalRevenue,
+        dailySales,
+        monthlySales,
+        recentOrders,
+        topProducts
+    ] = await Promise.all([
         prisma.user.count(),
         prisma.vendor.count(),
         prisma.product.count(),
         prisma.order.count(),
         prisma.vendor.count({ where: { isApproved: false } }),
+        prisma.order.aggregate({
+            _sum: { totalAmount: true },
+            where: { status: { not: "CANCELLED" } }
+        }),
+        prisma.order.aggregate({
+            _sum: { totalAmount: true },
+            where: {
+                createdAt: { gte: startOfDay },
+                status: { not: "CANCELLED" }
+            }
+        }),
+        prisma.order.aggregate({
+            _sum: { totalAmount: true },
+            where: {
+                createdAt: { gte: startOfMonth },
+                status: { not: "CANCELLED" }
+            }
+        }),
+        prisma.order.findMany({
+            take: 5,
+            orderBy: { createdAt: 'desc' },
+            include: { user: { select: { name: true } } }
+        }),
+        prisma.product.findMany({
+            take: 5,
+            orderBy: { orderItems: { _count: 'desc' } },
+            select: { name: true, price: true, _count: { select: { orderItems: true } } }
+        })
     ]);
 
     const stats = [
-        { label: "Total Users", value: userCount, icon: Users, color: "text-blue-400" },
-        { label: "Total Vendors", value: vendorCount, icon: Store, color: "text-brand-accent" },
-        { label: "Total Products", value: productCount, icon: Package, color: "text-brand-gold" },
-        { label: "Total Orders", value: orderCount, icon: CreditCard, color: "text-purple-400" },
+        { label: "Total Users", value: userCount, icon: Users, color: "text-blue-400", href: "/admin/users" },
+        { label: "Total Vendors", value: vendorCount, icon: Store, color: "text-brand-accent", href: "/admin/vendors" },
+        { label: "Total Products", value: productCount, icon: Package, color: "text-brand-gold", href: "/admin/products" },
+        { label: "Total Orders", value: orderCount, icon: CreditCard, color: "text-purple-400", href: "/admin/orders" },
+    ];
+
+    const revenueStats = [
+        { label: "Total Revenue", value: formatPrice(totalRevenue._sum.totalAmount || 0), icon: DollarSign, color: "text-green-400" },
+        { label: "Daily Sales", value: formatPrice(dailySales._sum.totalAmount || 0), icon: TrendingUp, color: "text-brand-accent" },
+        { label: "Monthly Sales", value: formatPrice(monthlySales._sum.totalAmount || 0), icon: ShoppingBag, color: "text-brand-gold" },
     ];
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 pb-10">
             <div>
                 <h1 className="text-3xl font-outfit font-bold text-white mb-2">Admin Command Center</h1>
-                <p className="text-gray-400">Overview of the ALAMODE ecosystem.</p>
+                <p className="text-gray-400">Manage and monitor the ALAMODE ecosystem with real-time analytics.</p>
             </div>
 
             {pendingVendors > 0 && (
-                <div className="bg-brand-gold/10 border border-brand-gold/20 p-4 rounded-luxury flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <AlertTriangle className="text-brand-gold h-5 w-5" />
-                        <p className="text-sm text-brand-gold font-medium">
-                            You have {pendingVendors} pending vendor approvals.
-                        </p>
+                <Link href="/admin/vendors?status=pending" className="block transform hover:scale-[1.01] transition-all">
+                    <div className="bg-brand-gold/10 border border-brand-gold/20 p-5 rounded-3xl flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="h-10 w-10 bg-brand-gold/20 rounded-full flex items-center justify-center">
+                                <AlertTriangle className="text-brand-gold h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="text-brand-gold font-bold">Pending Approvals</p>
+                                <p className="text-sm text-brand-gold/70">
+                                    You have {pendingVendors} vendor{pendingVendors > 1 ? 's' : ''} waiting for verification.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-brand-gold font-bold text-sm">
+                            REVIEW NOW <ArrowUpRight className="h-4 w-4" />
+                        </div>
                     </div>
-                    <button className="text-xs font-bold uppercase tracking-widest text-brand-gold hover:underline">
-                        Review Now
-                    </button>
-                </div>
+                </Link>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat: any) => (
-                    <div key={stat.label} className="card-luxury p-6 flex items-center gap-6">
-                        <div className={`p-4 rounded-luxury bg-white/5 ${stat.color}`}>
+                {stats.map((stat) => (
+                    <Link key={stat.label} href={stat.href} className="card-luxury p-6 flex items-center gap-6 hover:border-brand-accent/50 transition-all group">
+                        <div className={`p-4 rounded-2xl bg-white/5 ${stat.color} group-hover:scale-110 transition-transform`}>
                             <stat.icon className="h-6 w-6" />
                         </div>
                         <div>
                             <p className="text-gray-400 text-sm font-medium">{stat.label}</p>
-                            <h3 className="text-2xl font-bold text-white">{stat.value}</h3>
+                            <h3 className="text-2xl font-bold text-white uppercase">{stat.value}</h3>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {revenueStats.map((stat) => (
+                    <div key={stat.label} className="card-luxury p-6 flex flex-col gap-4 border-l-4 border-l-brand-accent">
+                        <div className="flex justify-between items-center">
+                            <div className={`p-3 rounded-xl bg-white/5 ${stat.color}`}>
+                                <stat.icon className="h-5 w-5" />
+                            </div>
+                            <TrendingUp className="h-4 w-4 text-brand-accent opacity-50" />
+                        </div>
+                        <div>
+                            <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{stat.label}</p>
+                            <h3 className="text-2xl font-bold text-white mt-1">{stat.value}</h3>
                         </div>
                     </div>
                 ))}
@@ -58,36 +132,50 @@ export default async function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="card-luxury p-6">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-bold text-white text-lg">System Health</h3>
-                        <span className="text-xs text-brand-accent font-bold uppercase tracking-wider">Operational</span>
+                        <h3 className="font-bold text-white text-lg">Recent Transactions</h3>
+                        <Link href="/admin/orders" className="text-xs text-brand-accent font-bold hover:underline">VIEW ALL</Link>
                     </div>
-                    <div className="space-y-4 text-sm">
-                        <div className="flex justify-between text-gray-400">
-                            <span>Database Status</span>
-                            <span className="text-green-400">Connected</span>
-                        </div>
-                        <div className="flex justify-between text-gray-400">
-                            <span>NextAuth Session Strategy</span>
-                            <span className="text-brand-accent font-mono text-xs">JWT</span>
-                        </div>
-                        <div className="flex justify-between text-gray-400">
-                            <span>Prisma Client</span>
-                            <span className="text-brand-accent font-mono text-xs">Initialized</span>
-                        </div>
+                    <div className="space-y-4">
+                        {recentOrders.length > 0 ? recentOrders.map((order) => (
+                            <div key={order.id} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+                                <div>
+                                    <p className="text-sm font-bold text-white">{order.user.name || 'Anonymous'}</p>
+                                    <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm font-bold text-brand-gold">{formatPrice(order.totalAmount)}</p>
+                                    <p className={`text-[10px] font-bold uppercase ${order.status === 'PAID' ? 'text-green-400' : 'text-brand-accent'}`}>{order.status}</p>
+                                </div>
+                            </div>
+                        )) : (
+                            <p className="text-gray-500 text-center py-4 text-sm">No orders yet.</p>
+                        )}
                     </div>
                 </div>
 
-                <div className="card-luxury p-6 flex flex-col justify-center items-center text-center">
-                    <div className="p-4 rounded-full bg-brand-accent/10 mb-4 font-bold text-brand-accent">
-                        <TrendingUp />
+                <div className="card-luxury p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="font-bold text-white text-lg">Top Performing Products</h3>
+                        <Link href="/admin/products" className="text-xs text-brand-accent font-bold hover:underline">VIEW CATALOG</Link>
                     </div>
-                    <h3 className="font-bold text-white text-lg mb-2">Marketplace Growth</h3>
-                    <p className="text-gray-400 text-sm leading-relaxed mb-6">
-                        Analytics are being compiled. Check back in 24 hours for detailed traffic and sales reports.
-                    </p>
-                    <button className="btn-primary w-full max-w-[200px] text-sm py-2">
-                        Configure Reports
-                    </button>
+                    <div className="space-y-4">
+                        {topProducts.length > 0 ? topProducts.map((product) => (
+                            <div key={product.name} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-lg bg-brand-accent/20 flex items-center justify-center font-bold text-brand-accent text-xs">
+                                        {product.name.charAt(0)}
+                                    </div>
+                                    <p className="text-sm font-medium text-white truncate max-w-[150px]">{product.name}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm font-bold text-white">{product._count.orderItems} Sales</p>
+                                    <p className="text-xs text-gray-500">{formatPrice(product.price)} avg</p>
+                                </div>
+                            </div>
+                        )) : (
+                            <p className="text-gray-500 text-center py-4 text-sm">No sales data available.</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

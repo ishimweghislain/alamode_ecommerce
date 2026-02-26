@@ -11,6 +11,7 @@ const Navbar = () => {
     const { data: session } = useSession();
     const { items } = useCart();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     return (
         <nav className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-white/10">
@@ -100,7 +101,7 @@ const Navbar = () => {
                                             Settings
                                         </Link>
                                         <button
-                                            onClick={() => signOut()}
+                                            onClick={() => setShowLogoutConfirm(true)}
                                             className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-400/10 flex items-center gap-2"
                                         >
                                             <LogOut className="h-4 w-4" /> Sign Out
@@ -117,6 +118,40 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Logout Confirmation Modal */}
+            {showLogoutConfirm && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => {
+                        setShowLogoutConfirm(false);
+                        setIsDropdownOpen(false);
+                    }} />
+                    <div className="relative bg-background-dark border border-white/10 p-8 rounded-3xl max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="h-16 w-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <LogOut className="h-8 w-8 text-red-500" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white text-center mb-2">Confirm Logout</h3>
+                        <p className="text-gray-400 text-center mb-8">Are you sure you want to sign out of your account?</p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowLogoutConfirm(false);
+                                    setIsDropdownOpen(false);
+                                }}
+                                className="flex-1 py-3 px-4 rounded-xl bg-white/5 text-white font-medium hover:bg-white/10 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => signOut({ callbackUrl: "/" })}
+                                className="flex-1 py-3 px-4 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
+                            >
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </nav>
     );
 };

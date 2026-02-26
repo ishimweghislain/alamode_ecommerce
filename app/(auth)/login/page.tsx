@@ -27,8 +27,9 @@ function LoginContent() {
 
             // If they just logged into the home page, send them to their dashboard
             if (callbackUrl === "/" || callbackUrl.includes("/login")) {
-                if (session.user.role === "ADMIN") destination = "/admin";
-                else if (session.user.role === "VENDOR") destination = "/vendor";
+                if (session.user.role === "ADMIN") destination = "/admin/dashboard";
+                else if (session.user.role === "VENDOR") destination = "/vendor/dashboard";
+                else if (session.user.role === "CUSTOMER") destination = "/customer/dashboard";
             }
 
             // Use window.location.href for a hard redirect to ensure 

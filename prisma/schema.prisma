@@ -34,6 +34,7 @@ model User {
   password      String
   role          Role      @default(CUSTOMER)
   image         String?
+  isActive      Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
@@ -73,7 +74,7 @@ model Subcategory {
   name        String
   slug        String    @unique
   categoryId  String
-  category    Category  @relation(fields: [categoryId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   products    Product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -92,10 +93,10 @@ model Product {
   vendor      Vendor   @relation(fields: [vendorId], references: [id])
   
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   
   subcategoryId String?
-  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
+  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
   
   orderItems  OrderItem[]
   reviews     Review[]

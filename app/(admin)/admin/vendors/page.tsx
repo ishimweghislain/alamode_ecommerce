@@ -81,7 +81,21 @@ export default async function AdminVendorsPage() {
                                 </td>
                                 <td className="p-4">
                                     <div className="flex gap-2">
-                                        {!vendor.isApproved && (
+                                        {vendor.isApproved ? (
+                                            <form action={async () => {
+                                                'use server';
+                                                await prisma.vendor.update({
+                                                    where: { id: vendor.id },
+                                                    data: { isApproved: false }
+                                                });
+                                                revalidatePath('/admin/vendors');
+                                            }}>
+                                                <button className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500 text-[10px] font-bold uppercase rounded-luxury transition-all" title="Deactivate Vendor">
+                                                    <ShieldAlert className="h-3.5 w-3.5" />
+                                                    Deactivate
+                                                </button>
+                                            </form>
+                                        ) : (
                                             <form action={async () => {
                                                 'use server';
                                                 await prisma.vendor.update({
@@ -90,14 +104,12 @@ export default async function AdminVendorsPage() {
                                                 });
                                                 revalidatePath('/admin/vendors');
                                             }}>
-                                                <button className="p-2 hover:bg-green-500/20 text-green-500 rounded transition-colors" title="Approve">
-                                                    <Check className="h-4 w-4" />
+                                                <button className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 text-green-500 hover:bg-green-500 text-[10px] font-bold uppercase rounded-luxury transition-all" title="Activate Vendor">
+                                                    <Check className="h-3.5 w-3.5" />
+                                                    Activate
                                                 </button>
                                             </form>
                                         )}
-                                        <button className="p-2 hover:bg-red-500/20 text-red-500 rounded transition-colors" title="Reject/Suspend">
-                                            <X className="h-4 w-4" />
-                                        </button>
                                     </div>
                                 </td>
                             </tr>

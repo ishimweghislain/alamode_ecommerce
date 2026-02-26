@@ -1,13 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-
-export const dynamic = "force-dynamic";
+import { getCurrentUser } from "@/lib/session";
+import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, MoreVertical, Edit, Trash, BarChart3 } from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
-import { ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star } from "lucide-react";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
 import ProductGallery from "@/components/ui/ProductGallery";
+
+import WishlistToggle from "@/components/ui/WishlistToggle";
+
+export const dynamic = "force-dynamic";
 
 interface ProductPageProps {
     params: Promise<{
@@ -17,12 +20,15 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
     const { id } = await params;
+    const user = await getCurrentUser();
+    const isAdmin = user?.role === "ADMIN";
 
     const product = await prisma.product.findUnique({
         where: { id },
         include: {
             category: true,
             vendor: true,
+            wishlistedBy: user?.id ? { where: { id: user.id } } : false,
             reviews: {
                 include: {
                     user: true
@@ -31,12 +37,36 @@ export default async function ProductPage({ params }: ProductPageProps) {
         }
     });
 
+    const isWishlisted = !!(product as any)?.wishlistedBy?.length;
+
     if (!product) {
         return notFound();
     }
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            {/* Navigation Bar */}
+            <div className="flex items-center justify-between mb-12">
+                <Link
+                    href={isAdmin ? "/admin/products" : "/shop"}
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
+                >
+                    <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                    <span className="text-sm font-medium">Back to {isAdmin ? "Inventory" : "Shop"}</span>
+                </Link>
+
+                {isAdmin && (
+                    <div className="flex gap-3">
+                        <Link href={`/vendor/products/${product.id}/edit`} className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-gray-400 hover:text-white transition-all">
+                            <Edit className="h-5 w-5" />
+                        </Link>
+                        <button className="p-2.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 hover:bg-red-500 hover:text-white transition-all">
+                            <Trash className="h-5 w-5" />
+                        </button>
+                    </div>
+                )}
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                 {/* Image Gallery */}
                 <ProductGallery images={product.images} name={product.name} />
@@ -48,9 +78,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             <span className="bg-brand-dark text-brand-accent text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
                                 {product.category.name}
                             </span>
-                            <button className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-red-500 transition-colors">
-                                <Heart className="h-5 w-5" />
-                            </button>
+                            {!isAdmin && (
+                                <WishlistToggle productId={product.id} initialIsWishlisted={isWishlisted} />
+                            )}
                         </div>
                         <h1 className="text-4xl font-outfit font-bold text-white mb-4 leading-tight">
                             {product.name}
@@ -91,19 +121,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                        <AddToCartButton
-                            product={{
-                                id: product.id,
-                                name: product.name,
-                                price: product.price,
-                                image: product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"
-                            }}
-                        />
-                        <button className="btn-gold h-14 px-8">
-                            Buy Now
-                        </button>
-                    </div>
+                    {!isAdmin && (
+                        <div className="flex flex-col sm:flex-row gap-4 mb-10">
+                            <AddToCartButton
+                                product={{
+                                    id: product.id,
+                                    name: product.name,
+                                    price: product.price,
+                                    image: product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"
+                                }}
+                            />
+                            <button className="btn-gold h-14 px-8">
+                                Buy Now
+                            </button>
+                        </div>
+                    )}
 
                     {/* Vendor Info */}
                     <div className="card-luxury p-4 flex items-center gap-4">
@@ -118,11 +150,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         </div>
                         <div>
                             <p className="text-xs text-brand-accent font-bold uppercase tracking-wider">Sold by</p>
-                            <Link href={`/vendor/${product.vendor.id}`} className="text-white font-bold hover:text-brand-gold transition-colors">
+                            <Link href={`/vendors#${product.vendor.id}`} className="text-white font-bold hover:text-brand-gold transition-colors">
                                 {product.vendor.storeName}
                             </Link>
                         </div>
-                        <Link href={`/vendor/${product.vendor.id}`} className="ml-auto text-sm text-gray-400 hover:text-white transition-colors">
+                        <Link href={`/vendors#${product.vendor.id}`} className="ml-auto text-sm text-gray-400 hover:text-white transition-colors">
                             View Store →
                         </Link>
                     </div>

@@ -16,11 +16,54 @@ export async function PATCH(
         }
 
         const body = await req.json();
-        const { name, slug, image } = body;
+        const { name, slug, image, subcategories } = body;
 
-        const category = await prisma.category.update({
-            where: { id: categoryId },
-            data: { name, slug, image }
+        // Perform the update in a transaction to ensure consistency
+        const category = await prisma.$transaction(async (tx) => {
+            // 1. Update the category basic info
+            const updatedCategory = await tx.category.update({
+                where: { id: categoryId },
+                data: { name, slug, image }
+            });
+
+            if (subcategories) {
+                // 2. Get existing subcategories to identify deletions
+                const existingSubcategories = await tx.subcategory.findMany({
+                    where: { categoryId }
+                });
+
+                const existingIds = existingSubcategories.map(s => s.id);
+                const incomingIds = subcategories.map((s: any) => s.id).filter(Boolean);
+
+                const toDelete = existingIds.filter(id => !incomingIds.includes(id));
+
+                // 3. Delete removed subcategories
+                if (toDelete.length > 0) {
+                    await tx.subcategory.deleteMany({
+                        where: { id: { in: toDelete } }
+                    });
+                }
+
+                // 4. Upsert incoming subcategories
+                for (const sub of subcategories) {
+                    if (sub.id) {
+                        await tx.subcategory.update({
+                            where: { id: sub.id },
+                            data: { name: sub.name, slug: sub.slug }
+                        });
+                    } else {
+                        await tx.subcategory.create({
+                            data: {
+                                name: sub.name,
+                                slug: sub.slug,
+                                categoryId
+                            }
+                        });
+                    }
+                }
+            }
+
+            return updatedCategory;
         });
 
         return NextResponse.json(category);

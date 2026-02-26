@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, UploadCloud } from "lucide-react";
+import { X, UploadCloud, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,27 @@ export default function CategoryModal({ isOpen, onClose, initialData }: Category
         name: initialData?.name || "",
         slug: initialData?.slug || "",
     });
+    const [subcategories, setSubcategories] = useState<{ id?: string, name: string, slug: string }[]>(
+        initialData?.subcategories || []
+    );
+
+    const addSubcategory = () => {
+        setSubcategories([...subcategories, { name: "", slug: "" }]);
+    };
+
+    const removeSubcategory = (index: number) => {
+        setSubcategories(subcategories.filter((_, i) => i !== index));
+    };
+
+    const updateSubcategory = (index: number, name: string) => {
+        const newSubs = [...subcategories];
+        newSubs[index] = {
+            ...newSubs[index],
+            name,
+            slug: name.toLowerCase().replace(/ /g, '-')
+        };
+        setSubcategories(newSubs);
+    };
 
     if (!isOpen) return null;
 
@@ -49,10 +70,10 @@ export default function CategoryModal({ isOpen, onClose, initialData }: Category
         setLoading(true);
         try {
             if (initialData) {
-                await axios.patch(`/api/categories/${initialData.id}`, { ...formData, image });
+                await axios.patch(`/api/categories/${initialData.id}`, { ...formData, image, subcategories });
                 toast.success("Category updated");
             } else {
-                await axios.post("/api/categories", { ...formData, image });
+                await axios.post("/api/categories", { ...formData, image, subcategories });
                 toast.success("Category created");
             }
             router.refresh();
@@ -117,6 +138,43 @@ export default function CategoryModal({ isOpen, onClose, initialData }: Category
                                 <input type="file" onChange={onUpload} className="hidden" />
                             </label>
                         )}
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm font-bold text-gray-500 uppercase tracking-widest">Subcategories</label>
+                            <button
+                                type="button"
+                                onClick={addSubcategory}
+                                className="text-xs text-brand-accent hover:text-brand-gold flex items-center gap-1 font-bold"
+                            >
+                                <Plus className="h-3 w-3" /> ADD SUB
+                            </button>
+                        </div>
+
+                        <div className="space-y-3 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                            {subcategories.map((sub, index) => (
+                                <div key={index} className="flex gap-2">
+                                    <input
+                                        required
+                                        value={sub.name}
+                                        onChange={(e) => updateSubcategory(index, e.target.value)}
+                                        placeholder="Subcategory Name"
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-lg p-2 text-sm text-white focus:border-brand-accent outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => removeSubcategory(index)}
+                                        className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            ))}
+                            {subcategories.length === 0 && (
+                                <p className="text-xs text-gray-600 italic text-center">No subcategories defined</p>
+                            )}
+                        </div>
                     </div>
 
                     <button

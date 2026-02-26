@@ -32,14 +32,24 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { name, slug, image } = body;
+        const { name, slug, image, subcategories } = body;
 
         if (!name || !slug) {
             return new NextResponse("Missing required fields", { status: 400 });
         }
 
         const category = await prisma.category.create({
-            data: { name, slug, image }
+            data: {
+                name,
+                slug,
+                image,
+                subcategories: {
+                    create: subcategories?.map((sub: { name: string, slug: string }) => ({
+                        name: sub.name,
+                        slug: sub.slug
+                    })) || []
+                }
+            }
         });
 
         return NextResponse.json(category);

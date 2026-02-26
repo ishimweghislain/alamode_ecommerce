@@ -23,7 +23,7 @@ export default async function VendorsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {vendors.map((vendor: any) => (
-                    <div key={vendor.id} className="card-luxury p-0 overflow-hidden group">
+                    <div key={vendor.id} id={vendor.id} className="card-luxury p-0 overflow-hidden group scroll-mt-32">
                         <div className="h-32 bg-gradient-to-r from-brand-dark to-brand-accent/20 relative">
                             <div className="absolute -bottom-8 left-8 h-20 w-20 rounded-luxury bg-background-dark border border-white/10 flex items-center justify-center p-4 shadow-2xl">
                                 <Store className="h-full w-full text-brand-accent" />

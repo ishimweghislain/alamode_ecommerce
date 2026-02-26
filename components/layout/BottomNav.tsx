@@ -56,45 +56,26 @@ export default function BottomNav() {
 
     const dashboardLinks = session?.user.role === "ADMIN" ? adminLinks : session?.user.role === "VENDOR" ? vendorLinks : customerLinks;
 
-    return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 flex flex-col gap-2 pointer-events-none">
-            {/* Second Navigation (Role Dashboard) - Only show when explicitly in dashboard and logged in */}
-            {session && isDashboardRoute && (
-                <div className="bg-background-dark/80 backdrop-blur-xl border border-white/10 rounded-2xl flex justify-around items-center p-2 shadow-2xl pointer-events-auto transition-all animate-in slide-in-from-bottom-4">
-                    {dashboardLinks.map((link) => {
-                        const isActive = pathname === link.href;
-                        return (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={clsx(
-                                    "flex flex-col items-center gap-1 p-2 rounded-xl transition-all",
-                                    isActive ? "text-brand-accent scale-110" : "text-gray-400"
-                                )}
-                            >
-                                <link.icon className="h-5 w-5" />
-                                <span className="text-[10px] font-medium">{link.label}</span>
-                            </Link>
-                        );
-                    })}
-                </div>
-            )}
+    const links = isDashboardRoute ? dashboardLinks : shopLinks;
+    const activeColor = isDashboardRoute ? "text-brand-accent" : "text-brand-gold";
 
-            {/* Main Navigation (Shop) */}
+    return (
+        <div className="md:hidden fixed bottom-4 left-4 right-4 z-50 pointer-events-none">
             <div className="bg-background-dark/90 backdrop-blur-2xl border border-white/10 rounded-2xl flex justify-around items-center p-2 shadow-2xl pointer-events-auto">
-                {shopLinks.map((link) => {
-                    const isActive = pathname === link.href && !isDashboardRoute;
+                {links.map((link) => {
+                    const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
                     return (
                         <Link
                             key={link.href}
                             href={link.href}
                             className={clsx(
-                                "relative flex flex-col items-center gap-1 p-1 py-2 rounded-xl transition-all",
-                                isActive ? "text-brand-gold scale-110" : "text-gray-400 hover:text-white"
+                                "relative flex flex-col items-center gap-1 p-2 rounded-xl transition-all",
+                                isActive ? `${activeColor} scale-110` : "text-gray-400 hover:text-white"
                             )}
                         >
-                            <link.icon className="h-5 w-5 md:h-6 md:w-6" />
+                            <link.icon className="h-5 w-5" />
                             <span className="text-[10px] font-medium">{link.label}</span>
+                            {/* @ts-ignore */}
                             {link.badge && link.badge > 0 ? (
                                 <span className="absolute top-1 right-1 bg-brand-accent text-white text-[8px] font-bold px-1 rounded-full min-w-[14px] text-center">
                                     {link.badge}
