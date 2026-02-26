@@ -35,13 +35,38 @@ model User {
   role          Role      @default(CUSTOMER)
   image         String?
   isActive      Boolean   @default(true)
+  phoneNumber   String?
+  address       String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
   vendor        Vendor?
   orders        Order[]
   reviews       Review[]
+  tickets       Ticket[]
   wishlist      Product[] @relation("UserWishlist")
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  subject     String
+  status      String   @default("OPEN") // OPEN, RESOLVED, CLOSED
+  priority    String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  messages    TicketMessage[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TicketMessage {
+  id        String   @id @default(cuid())
+  message   String
+  isAdmin   Boolean  @default(false)
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
 }
 
 model Vendor {
