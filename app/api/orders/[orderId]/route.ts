@@ -32,7 +32,16 @@ export async function PATCH(
         }
 
         // Check Permissions: ADMIN or VENDOR (if vendor owns a product in the order)
-        const isOwner = order.items.some(item => item.product.vendorId === user.vendor?.id);
+        let isOwner = false;
+        if (user.role === "VENDOR") {
+            const vendor = await prisma.vendor.findUnique({
+                where: { userId: user.id }
+            });
+            if (vendor) {
+                isOwner = order.items.some(item => item.product.vendorId === vendor.id);
+            }
+        }
+
         const isAdmin = user.role === "ADMIN";
 
         if (!isAdmin && !isOwner) {

@@ -300,9 +300,9 @@ export default async function VendorDashboard() {
                                         </td>
                                         <td className="p-4">
                                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${order.status === 'DELIVERED' ? 'bg-green-500/10 text-green-500' :
-                                                    order.status === 'PAID' ? 'bg-blue-500/10 text-blue-500' :
-                                                        order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
-                                                            'bg-white/5 text-gray-400'
+                                                order.status === 'PAID' ? 'bg-blue-500/10 text-blue-500' :
+                                                    order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
+                                                        'bg-white/5 text-gray-400'
                                                 }`}>
                                                 {order.status}
                                             </span>
@@ -324,13 +324,5 @@ export default async function VendorDashboard() {
             </div>
         </div>
     );
-}
-
-function ShieldAlert({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="M12 8v4" /><path d="M12 16h.01" />
-        </svg>
-    )
 }
 
