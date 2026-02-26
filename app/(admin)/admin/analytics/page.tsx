@@ -20,6 +20,37 @@ export default async function AdminAnalyticsPage() {
         { label: "Categories", value: categoriesCount, icon: BarChart3, color: "text-purple-400" },
     ];
 
+    // Real Revenue Growth (Last 12 months)
+    const now = new Date();
+    const monthlyRevenue = await Promise.all(
+        Array.from({ length: 12 }).map(async (_, i) => {
+            const date = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1);
+            const nextDate = new Date(now.getFullYear(), now.getMonth() - (10 - i), 1);
+            const result = await prisma.order.aggregate({
+                where: {
+                    status: 'PAID',
+                    createdAt: { gte: date, lt: nextDate }
+                },
+                _sum: { totalAmount: true }
+            });
+            return result._sum.totalAmount || 0;
+        })
+    );
+
+    const maxMonthly = Math.max(...monthlyRevenue, 1);
+    const chartHeights = monthlyRevenue.map(val => (val / maxMonthly) * 100);
+
+    // Real Category Distribution
+    const categoriesWithProducts = await prisma.category.findMany({
+        include: { _count: { select: { products: true } } }
+    });
+    const totalProducts = categoriesWithProducts.reduce((acc, cat) => acc + cat._count.products, 0) || 1;
+    const categoryDist = categoriesWithProducts.map(cat => ({
+        name: cat.name,
+        value: Math.round((cat._count.products / totalProducts) * 100),
+        color: cat.name === 'Fashion' ? 'bg-brand-accent' : cat.name === 'Electronics' ? 'bg-blue-500' : 'bg-brand-gold'
+    })).sort((a, b) => b.value - a.value).slice(0, 4);
+
     return (
         <div className="space-y-8">
             <div>
@@ -54,14 +85,22 @@ export default async function AdminAnalyticsPage() {
                         </div>
                     </div>
                     <div className="h-64 flex items-end gap-3 px-2">
-                        {[30, 45, 25, 60, 40, 55, 80, 70, 90, 65, 85, 100].map((h, i) => (
-                            <div key={i} className="flex-1 bg-brand-accent/20 hover:bg-brand-accent transition-all rounded-t-luxury" style={{ height: `${h}%` }} />
+                        {chartHeights.map((h, i) => (
+                            <div
+                                key={i}
+                                className="flex-1 bg-brand-accent/20 hover:bg-brand-accent transition-all rounded-t-luxury group relative"
+                                style={{ height: `${h}%` }}
+                            >
+                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md px-2 py-1 rounded text-[10px] text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                    {formatPrice(monthlyRevenue[i])}
+                                </div>
+                            </div>
                         ))}
                     </div>
                     <div className="flex justify-between mt-4 text-[10px] text-gray-500 font-mono">
-                        <span>JAN</span>
-                        <span>JUN</span>
-                        <span>DEC</span>
+                        <span>{new Date(now.getFullYear(), now.getMonth() - 11, 1).toLocaleString('en-US', { month: 'short' })}</span>
+                        <span>{new Date(now.getFullYear(), now.getMonth() - 5, 1).toLocaleString('en-US', { month: 'short' })}</span>
+                        <span>{now.toLocaleString('en-US', { month: 'short' })}</span>
                     </div>
                 </div>
 
@@ -70,12 +109,7 @@ export default async function AdminAnalyticsPage() {
                         <h3 className="text-xl font-bold text-white">Category Distribution</h3>
                     </div>
                     <div className="space-y-6">
-                        {[
-                            { name: 'Fashion', value: 45, color: 'bg-brand-accent' },
-                            { name: 'Technology', value: 30, color: 'bg-blue-500' },
-                            { name: 'Home Decor', value: 15, color: 'bg-brand-gold' },
-                            { name: 'Accessories', value: 10, color: 'bg-purple-500' },
-                        ].map((cat: any) => (
+                        {categoryDist.map((cat: any) => (
                             <div key={cat.name} className="space-y-2">
                                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                                     <span className="text-gray-400">{cat.name}</span>

@@ -51,7 +51,7 @@ export default async function AdminTicketDetailPage({ params }: TicketPageProps)
                     </Link>
                     <h1 className="text-3xl font-outfit font-bold text-white mb-2 leading-tight">Inspecting: {ticket.subject}</h1>
                     <div className="flex items-center gap-4">
-                        <p className="text-[10px] b-gray-500 font-mono text-gray-500">USER: {ticket.user.email} • ID: {ticket.id}</p>
+                        <p className="text-[10px] font-mono text-gray-500">USER: {ticket.user.email} • ID: {ticket.id}</p>
                     </div>
                 </div>
                 <TicketAdminControls ticketId={ticket.id} currentStatus={ticket.status} />

@@ -20,7 +20,10 @@ export default async function AdminDashboard() {
         dailySales,
         monthlySales,
         recentOrders,
-        topProducts
+        topProducts,
+        newUserCount,
+        newVendorCount,
+        orderStatuses
     ] = await Promise.all([
         prisma.user.count(),
         prisma.vendor.count(),
@@ -54,6 +57,12 @@ export default async function AdminDashboard() {
             take: 5,
             orderBy: { orderItems: { _count: 'desc' } },
             select: { name: true, price: true, _count: { select: { orderItems: true } } }
+        }),
+        prisma.user.count({ where: { createdAt: { gte: startOfMonth } } }),
+        prisma.vendor.count({ where: { createdAt: { gte: startOfMonth } } }),
+        prisma.order.groupBy({
+            by: ['status'],
+            _count: { id: true }
         })
     ]);
 
@@ -65,9 +74,9 @@ export default async function AdminDashboard() {
     ];
 
     const revenueStats = [
-        { label: "Total Revenue", value: formatPrice(totalRevenue._sum.totalAmount || 0), icon: DollarSign, color: "text-green-400" },
-        { label: "Daily Sales", value: formatPrice(dailySales._sum.totalAmount || 0), icon: TrendingUp, color: "text-brand-accent" },
-        { label: "Monthly Sales", value: formatPrice(monthlySales._sum.totalAmount || 0), icon: ShoppingBag, color: "text-brand-gold" },
+        { label: "Total Revenue", value: formatPrice(totalRevenue._sum.totalAmount || 0), icon: DollarSign, color: "text-green-400", href: "/admin/analytics" },
+        { label: "Daily Sales", value: formatPrice(dailySales._sum.totalAmount || 0), icon: TrendingUp, color: "text-brand-accent", href: "/admin/orders" },
+        { label: "Monthly Sales", value: formatPrice(monthlySales._sum.totalAmount || 0), icon: ShoppingBag, color: "text-brand-gold", href: "/admin/analytics" },
     ];
 
     return (
@@ -114,19 +123,49 @@ export default async function AdminDashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {revenueStats.map((stat) => (
-                    <div key={stat.label} className="card-luxury p-6 flex flex-col gap-4 border-l-4 border-l-brand-accent">
+                    <Link key={stat.label} href={stat.href} className="card-luxury p-6 flex flex-col gap-4 border-l-4 border-l-brand-accent hover:border-brand-accent/50 transition-all group">
                         <div className="flex justify-between items-center">
-                            <div className={`p-3 rounded-xl bg-white/5 ${stat.color}`}>
+                            <div className={`p-3 rounded-xl bg-white/5 ${stat.color} group-hover:scale-110 transition-transform`}>
                                 <stat.icon className="h-5 w-5" />
                             </div>
-                            <TrendingUp className="h-4 w-4 text-brand-accent opacity-50" />
+                            <ArrowUpRight className="h-4 w-4 text-brand-accent opacity-0 group-hover:opacity-50 transition-all" />
                         </div>
                         <div>
                             <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{stat.label}</p>
                             <h3 className="text-2xl font-bold text-white mt-1">{stat.value}</h3>
                         </div>
-                    </div>
+                    </Link>
                 ))}
+            </div>
+
+            {/* Growth & Status Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="card-luxury p-6 bg-blue-500/5 border border-blue-500/10">
+                    <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4">Marketplace Growth</p>
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-400 text-sm">New Customers </span>
+                            <span className="text-white font-bold bg-blue-500/20 px-2 py-1 rounded-md">+{newUserCount}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-400 text-sm">New Vendors </span>
+                            <span className="text-white font-bold bg-brand-accent/20 px-2 py-1 rounded-md">+{newVendorCount}</span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 italic mt-2">Data since {startOfMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+                    </div>
+                </div>
+
+                <div className="md:col-span-2 card-luxury p-6 overflow-hidden">
+                    <p className="text-xs font-bold text-purple-400 uppercase tracking-widest mb-4">Order Status Summary</p>
+                    <div className="flex flex-wrap gap-4">
+                        {orderStatuses.map((status: any) => (
+                            <div key={status.status} className="flex-1 min-w-[120px] p-3 rounded-xl bg-white/5 border border-white/5 text-center">
+                                <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{status.status}</p>
+                                <p className="text-xl font-bold text-white">{status._count.id}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
