@@ -97,11 +97,26 @@ export async function DELETE(
             return new NextResponse("Cannot delete yourself", { status: 400 });
         }
 
-        await prisma.user.delete({
-            where: { id: userId },
-        });
+        // Manually handle all relations as a failsafe
+        await prisma.$transaction([
+            // Delete vendor-specific data
+            prisma.withdrawalRequest.deleteMany({ where: { vendor: { userId } } }),
+            prisma.product.deleteMany({ where: { vendor: { userId } } }),
+            prisma.vendor.deleteMany({ where: { userId } }),
 
-        return new NextResponse(null, { status: 204 });
+            // Delete customer-specific data
+            prisma.orderItem.deleteMany({ where: { order: { userId } } }),
+            prisma.order.deleteMany({ where: { userId } }),
+            prisma.review.deleteMany({ where: { userId } }),
+            prisma.notification.deleteMany({ where: { userId } }),
+            prisma.ticketMessage.deleteMany({ where: { userId } }),
+            prisma.ticket.deleteMany({ where: { userId } }),
+
+            // Finally delete the user
+            prisma.user.delete({ where: { id: userId } }),
+        ]);
+
+        return new NextResponse("User deleted successfully", { status: 200 });
     } catch (error) {
         console.error("[USER_DELETE_ERROR]", error);
         return new NextResponse(`Internal Error: ${(error as any).message}`, { status: 500 });
