@@ -3,6 +3,8 @@ import ProductCard from "@/components/ui/ProductCard";
 import CategoryHighlights from "@/components/ui/CategoryHighlights";
 import Link from "next/link";
 import Image from "next/image";
+import { getCurrentUser } from "@/lib/session";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +70,15 @@ const trendingProducts = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrentUser();
+
+  if (user) {
+    if (user.role === "ADMIN") redirect("/admin");
+    if (user.role === "VENDOR") redirect("/vendor");
+    if (user.role === "CUSTOMER") redirect("/profile");
+  }
+
   return (
     <div className="flex flex-col">
       <Hero />
