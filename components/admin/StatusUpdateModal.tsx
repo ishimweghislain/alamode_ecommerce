@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Truck, CheckCircle2, Clock, X, ChevronDown } from "lucide-react";
+import { Truck, CheckCircle2, Clock, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
+import Portal from "../ui/Portal";
 
 interface StatusUpdateModalProps {
     orderId: string;
@@ -41,53 +42,66 @@ export default function StatusUpdateModal({ orderId, currentStatus, onClose }: S
     };
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-            <div className="relative bg-background-dark border border-white/10 p-8 rounded-3xl max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
-                <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-white/5 rounded-full text-gray-500 transition-colors">
-                    <X className="h-5 w-5" />
-                </button>
-
-                <h2 className="text-2xl font-bold text-white mb-2">Update Order Flow</h2>
-                <p className="text-sm text-gray-500 mb-8 font-mono">ID: #{orderId.slice(-8).toUpperCase()}</p>
-
-                <div className="space-y-3 mb-8">
-                    {statuses.map((s) => (
-                        <button
-                            key={s.value}
-                            onClick={() => setStatus(s.value)}
-                            className={clsx(
-                                "w-full p-4 rounded-2xl border flex items-center justify-between transition-all duration-300",
-                                status === s.value
-                                    ? "bg-brand-accent/10 border-brand-accent/50 text-white"
-                                    : "bg-white/5 border-transparent text-gray-400 hover:bg-white/10"
-                            )}
-                        >
-                            <div className="flex items-center gap-3">
-                                <s.icon className={clsx("h-5 w-5", status === s.value ? "text-brand-accent" : "text-gray-500")} />
-                                <span className="text-sm font-bold uppercase tracking-widest">{s.label}</span>
-                            </div>
-                            {status === s.value && <CheckCircle2 className="h-4 w-4 text-brand-accent" />}
-                        </button>
-                    ))}
-                </div>
-
-                <div className="flex gap-3">
+        <Portal>
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                <div
+                    className="absolute inset-0 bg-background-dark/80 backdrop-blur-xl animate-in fade-in duration-500"
+                    onClick={onClose}
+                />
+                <div className="relative bg-background-dark/95 border border-white/10 p-8 rounded-[2.5rem] max-w-md w-full shadow-[0_0_100px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-300">
                     <button
                         onClick={onClose}
-                        className="flex-1 py-4 px-4 rounded-2xl bg-white/5 text-white font-bold hover:bg-white/10 transition-colors border border-white/10"
+                        className="absolute top-6 right-6 p-2 hover:bg-white/5 rounded-full text-gray-500 hover:text-white transition-colors"
                     >
-                        Discard
+                        <X className="h-5 w-5" />
                     </button>
-                    <button
-                        onClick={onUpdate}
-                        disabled={loading || status === currentStatus}
-                        className="flex-[2] py-4 px-4 rounded-2xl bg-brand-accent text-background-dark font-bold hover:bg-brand-gold transition-all shadow-[0_0_20px_rgba(255,184,0,0.3)] disabled:opacity-50 disabled:shadow-none"
-                    >
-                        {loading ? "Updating..." : "Commit Update"}
-                    </button>
+
+                    <h2 className="text-2xl font-outfit font-bold text-white mb-2">Update Order Flow</h2>
+                    <p className="text-xs text-gray-500 mb-8 font-mono opacity-60">TRACKING ID: #{orderId.slice(-12).toUpperCase()}</p>
+
+                    <div className="space-y-3 mb-10">
+                        {statuses.map((s) => (
+                            <button
+                                key={s.value}
+                                onClick={() => setStatus(s.value)}
+                                className={clsx(
+                                    "w-full p-4 rounded-2xl border flex items-center justify-between transition-all duration-300 group",
+                                    status === s.value
+                                        ? "bg-brand-accent/10 border-brand-accent/50 text-white"
+                                        : "bg-white/5 border-transparent text-gray-400 hover:bg-white/10 hover:border-white/10"
+                                )}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className={clsx(
+                                        "h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-300",
+                                        status === s.value ? "bg-brand-accent/20" : "bg-white/5 group-hover:bg-white/10"
+                                    )}>
+                                        <s.icon className={clsx("h-5 w-5", status === s.value ? "text-brand-accent" : "text-gray-500")} />
+                                    </div>
+                                    <span className="text-sm font-bold uppercase tracking-widest">{s.label}</span>
+                                </div>
+                                {status === s.value && <CheckCircle2 className="h-5 w-5 text-brand-accent animate-in zoom-in" />}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={onClose}
+                            className="flex-1 py-4 px-4 rounded-2xl bg-white/5 text-white font-bold hover:bg-white/10 transition-colors border border-white/10"
+                        >
+                            Back
+                        </button>
+                        <button
+                            onClick={onUpdate}
+                            disabled={loading || status === currentStatus}
+                            className="flex-[2] py-4 px-4 rounded-2xl bg-brand-accent text-white font-bold hover:bg-brand-gold hover:shadow-[0_0_30px_rgba(255,184,76,0.3)] transition-all disabled:opacity-50 disabled:shadow-none active:scale-[0.98]"
+                        >
+                            {loading ? "Synching..." : "Commit Update"}
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Portal>
     );
 }

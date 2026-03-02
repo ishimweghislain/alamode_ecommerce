@@ -65,14 +65,15 @@ const Sidebar = ({ role }: SidebarProps) => {
 
     return (
         <>
-            <div className="hidden lg:flex w-72 h-[calc(100vh-80px)] sticky top-20 bg-white/[0.02] backdrop-blur-xl border-r border-white/5 p-8 flex-col shadow-[20px_0_50px_rgba(0,0,0,0.2)] overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 hover:scrollbar-thumb-brand-gold/20 transition-all">
-                <div className="mb-10 shrink-0">
+            <div className="hidden lg:flex w-72 h-[calc(100vh-80px)] sticky top-20 bg-white/[0.02] backdrop-blur-xl border-r border-white/5 p-8 flex-col shadow-[20px_0_50px_rgba(0,0,0,0.2)]">
+                <div className="mb-6 shrink-0">
                     <h2 className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4 px-3">
                         {role === "ADMIN" ? "Administrator" : role === "VENDOR" ? "Merchant Portal" : "Customer Hub"}
                     </h2>
                 </div>
 
-                <div className="space-y-1.5 flex-1 min-h-0">
+                {/* Scrollable Links Area */}
+                <div className="flex-1 overflow-y-auto pr-2 -mr-2 space-y-1.5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 hover:scrollbar-thumb-brand-gold/20 transition-all custom-scrollbar">
                     {links.map((link) => {
                         const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
                         return (
@@ -115,7 +116,7 @@ const Sidebar = ({ role }: SidebarProps) => {
                     })}
                 </div>
 
-                <div className="pt-8 mt-4 border-t border-white/5 shrink-0">
+                <div className="pt-6 mt-6 border-t border-white/5 shrink-0">
                     <button
                         onClick={() => setShowLogoutConfirm(true)}
                         className="w-full flex items-center gap-4 p-4 rounded-2xl text-red-400/80 hover:text-red-400 hover:bg-red-400/5 transition-all duration-300 font-semibold group"
