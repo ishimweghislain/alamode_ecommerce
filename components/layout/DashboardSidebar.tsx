@@ -134,16 +134,13 @@ const Sidebar = ({ role }: SidebarProps) => {
                 <div className="p-6 pt-4 border-t border-white/5 bg-background-dark/50 backdrop-blur-md shadow-[0_-15px_40px_rgba(0,0,0,0.4)] shrink-0">
                     <button
                         onClick={() => setShowLogoutConfirm(true)}
-                        className="w-full flex items-center gap-4 p-4 rounded-2xl text-red-500/80 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 border border-transparent transition-all duration-300 font-bold text-xs group"
+                        className="w-full flex items-center gap-3 p-3 rounded-xl text-red-500/80 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 border border-transparent transition-all duration-300 font-bold text-[10px] group"
                     >
-                        <div className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-red-500/20 transition-all">
-                            <LogOut className="h-5 w-5" />
+                        <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-red-500/20 transition-all">
+                            <LogOut className="h-4 w-4" />
                         </div>
-                        <span className="tracking-[0.2em] uppercase">Terminate Session</span>
+                        <span className="tracking-[0.2em] uppercase">Leave System</span>
                     </button>
-                    <p className="text-[10px] text-gray-700 text-center mt-4 uppercase font-bold tracking-widest opacity-40">
-                        v1.0.4 Platinum
-                    </p>
                 </div>
             </div>
 
