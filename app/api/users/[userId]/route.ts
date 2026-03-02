@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { userId: string } }
+    { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
         const user = await getCurrentUser();
@@ -34,7 +34,7 @@ export async function PATCH(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { userId: string } }
+    { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
         const user = await getCurrentUser();
