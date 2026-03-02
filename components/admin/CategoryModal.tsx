@@ -57,10 +57,17 @@ export default function CategoryModal({ isOpen, onClose, initialData }: Category
             const data = new FormData();
             data.append("file", file);
             const res = await axios.post("/api/upload", data);
-            setImage(res.data.secure_url);
-            toast.success("Image uploaded", { id: toastId });
-        } catch (error) {
-            toast.error("Upload failed", { id: toastId });
+
+            if (res.data.secure_url) {
+                setImage(res.data.secure_url);
+                toast.success("Image uploaded successfully!", { id: toastId });
+            } else {
+                throw new Error("Missing secure_url in response");
+            }
+        } catch (error: any) {
+            console.error("[CATEGORY_UPLOAD_CLIENT_ERROR]", error);
+            const message = error.response?.data || error.message || "Upload failed. Please try again.";
+            toast.error(`Error: ${message}`, { id: toastId, duration: 4000 });
         } finally {
             setLoading(false);
         }
@@ -91,11 +98,11 @@ export default function CategoryModal({ isOpen, onClose, initialData }: Category
             <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                 {/* Sophisticated glass backdrop */}
                 <div
-                    className="absolute inset-0 bg-background-dark/80 backdrop-blur-xl animate-in fade-in duration-500"
+                    className="absolute inset-0 bg-white/[0.02] backdrop-blur-2xl animate-in fade-in duration-700"
                     onClick={onClose}
                 />
 
-                <div className="relative bg-background-dark/95 border border-white/10 rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in duration-300">
+                <div className="relative bg-[#0A0F1C]/95 border border-white/10 rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-[0_0_120px_rgba(0,0,0,0.9)] animate-in fade-in zoom-in duration-500">
                     {/* Decorative gradients */}
                     <div className="absolute -top-24 -left-24 w-64 h-64 bg-brand-accent/20 rounded-full blur-3xl pointer-events-none" />
                     <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-brand-gold/10 rounded-full blur-3xl pointer-events-none" />

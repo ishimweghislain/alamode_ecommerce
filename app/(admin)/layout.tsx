@@ -16,7 +16,7 @@ export default async function AdminLayout({
     return (
         <div className="flex bg-background-dark min-h-screen">
             <DashboardSidebar role="ADMIN" />
-            <main className="flex-1 p-4 md:p-8 mb-40 lg:mb-0">
+            <main className="flex-1 p-4 md:p-8">
                 {children}
             </main>
         </div>
