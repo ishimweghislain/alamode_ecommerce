@@ -9,12 +9,13 @@ import {
     ShieldCheck,
     MoreVertical,
     Trash2,
-    Key,
-    Edit
+    Edit,
+    UserPlus
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import UserModal from "./UserModal";
 
 interface UsersClientProps {
     users: any[];
@@ -24,6 +25,7 @@ export default function UsersClient({ users }: UsersClientProps) {
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const filteredUsers = users.filter((user) =>
         user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -57,19 +59,6 @@ export default function UsersClient({ users }: UsersClientProps) {
         }
     };
 
-    const onResetPassword = async (userId: string) => {
-        if (!confirm("Reset password to 'ALAMODE123'? User will be prompted to change it on next login (logic not implemented yet, just resetting password).")) return;
-        setLoading(userId);
-        try {
-            await axios.post(`/api/users/${userId}/reset-password`);
-            toast.success("Password reset successfully");
-        } catch (error) {
-            toast.error("Failed to reset password");
-        } finally {
-            setLoading(null);
-        }
-    };
-
     const onChangeRole = async (userId: string, newRole: string) => {
         setLoading(userId);
         try {
@@ -96,10 +85,16 @@ export default function UsersClient({ users }: UsersClientProps) {
                         <input
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search names or emails..."
+                            placeholder="Search names..."
                             className="bg-white/5 border border-white/10 rounded-luxury py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-brand-accent transition-all w-64 text-white"
                         />
                     </div>
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-brand-accent hover:bg-brand-gold text-white font-bold py-2 px-4 rounded-luxury transition-all flex items-center gap-2"
+                    >
+                        <UserPlus className="h-4 w-4" /> Add User
+                    </button>
                 </div>
             </div>
 
@@ -155,14 +150,6 @@ export default function UsersClient({ users }: UsersClientProps) {
                                 <td className="p-4 text-right">
                                     <div className="flex justify-end gap-2">
                                         <button
-                                            onClick={() => onResetPassword(user.id)}
-                                            disabled={loading === user.id}
-                                            className="p-2 hover:bg-white/10 text-gray-400 hover:text-brand-gold rounded transition-colors"
-                                            title="Reset Password"
-                                        >
-                                            <Key className="h-4 w-4" />
-                                        </button>
-                                        <button
                                             onClick={() => onToggleStatus(user.id, user.isActive)}
                                             disabled={loading === user.id}
                                             className={`p-2 rounded transition-colors ${user.isActive ? 'hover:bg-red-500/10 text-red-500' : 'hover:bg-green-500/10 text-green-500'}`}
@@ -190,6 +177,8 @@ export default function UsersClient({ users }: UsersClientProps) {
                     </div>
                 )}
             </div>
+
+            <UserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 }

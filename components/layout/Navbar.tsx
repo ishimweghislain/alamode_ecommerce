@@ -132,12 +132,12 @@ const Navbar = () => {
                                 <span className="text-sm font-medium text-white hidden sm:inline-block">
                                     {session.user.name}
                                 </span>
-                                <Link
-                                    href="/"
+                                <button
+                                    onClick={() => setShowLogoutConfirm(true)}
                                     className="text-xs text-brand-gold hover:text-white transition-colors border border-brand-gold/30 px-3 py-1.5 rounded-full"
                                 >
                                     Back to Site
-                                </Link>
+                                </button>
                             </div>
                         )}
 
