@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, UploadCloud, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -17,14 +17,24 @@ interface CategoryModalProps {
 export default function CategoryModal({ isOpen, onClose, initialData }: CategoryModalProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [image, setImage] = useState(initialData?.image || "");
+    const [image, setImage] = useState("");
     const [formData, setFormData] = useState({
-        name: initialData?.name || "",
-        slug: initialData?.slug || "",
+        name: "",
+        slug: "",
     });
-    const [subcategories, setSubcategories] = useState<{ id?: string, name: string, slug: string }[]>(
-        initialData?.subcategories || []
-    );
+    const [subcategories, setSubcategories] = useState<{ id?: string, name: string, slug: string }[]>([]);
+
+    // Sync state with initialData when modal opens or initialData changes
+    useEffect(() => {
+        if (isOpen) {
+            setImage(initialData?.image || "");
+            setFormData({
+                name: initialData?.name || "",
+                slug: initialData?.slug || "",
+            });
+            setSubcategories(initialData?.subcategories || []);
+        }
+    }, [isOpen, initialData]);
 
     const addSubcategory = () => {
         setSubcategories([...subcategories, { name: "", slug: "" }]);

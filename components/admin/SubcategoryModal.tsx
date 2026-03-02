@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -19,9 +19,19 @@ export default function SubcategoryModal({ isOpen, onClose, categoryId, initialD
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        name: initialData?.name || "",
-        slug: initialData?.slug || "",
+        name: "",
+        slug: "",
     });
+
+    // Sync state with initialData when modal opens or initialData changes
+    useEffect(() => {
+        if (isOpen) {
+            setFormData({
+                name: initialData?.name || "",
+                slug: initialData?.slug || "",
+            });
+        }
+    }, [isOpen, initialData]);
 
     if (!isOpen) return null;
 
