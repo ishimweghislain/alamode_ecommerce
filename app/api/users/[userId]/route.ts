@@ -92,9 +92,9 @@ export async function DELETE(
             return new NextResponse("User not found", { status: 404 });
         }
 
-        // Prevent admin from deleting themselves
+        // Prevent admin from deleting themselves (Safety Restriction)
         if (userToDelete.id === user.id) {
-            return new NextResponse("Cannot delete yourself", { status: 400 });
+            return new NextResponse("CRITICAL: You cannot delete your own account from the panel. Please contact the Development Team for manual account removal.", { status: 403 });
         }
 
         // Manually handle all relations as a failsafe

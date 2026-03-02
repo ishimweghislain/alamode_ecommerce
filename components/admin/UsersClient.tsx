@@ -15,6 +15,7 @@ import {
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import UserModal from "./UserModal";
 
 interface UsersClientProps {
@@ -22,6 +23,7 @@ interface UsersClientProps {
 }
 
 export default function UsersClient({ users }: UsersClientProps) {
+    const { data: session } = useSession();
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState<string | null>(null);
@@ -149,22 +151,30 @@ export default function UsersClient({ users }: UsersClientProps) {
                                 </td>
                                 <td className="p-4 text-right">
                                     <div className="flex justify-end gap-2">
-                                        <button
-                                            onClick={() => onToggleStatus(user.id, user.isActive)}
-                                            disabled={loading === user.id}
-                                            className={`p-2 rounded transition-colors ${user.isActive ? 'hover:bg-red-500/10 text-red-500' : 'hover:bg-green-500/10 text-green-500'}`}
-                                            title={user.isActive ? "Deactivate User" : "Activate User"}
-                                        >
-                                            {user.isActive ? <UserX className="h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}
-                                        </button>
-                                        <button
-                                            onClick={() => onDeleteUser(user.id)}
-                                            disabled={loading === user.id}
-                                            className="p-2 hover:bg-red-500/10 text-red-500 rounded transition-colors"
-                                            title="Delete User"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </button>
+                                        {session?.user.id !== user.id ? (
+                                            <>
+                                                <button
+                                                    onClick={() => onToggleStatus(user.id, user.isActive)}
+                                                    disabled={loading === user.id}
+                                                    className={`p-2 rounded transition-colors ${user.isActive ? 'hover:bg-red-500/10 text-red-500' : 'hover:bg-green-500/10 text-green-500'}`}
+                                                    title={user.isActive ? "Deactivate User" : "Activate User"}
+                                                >
+                                                    {user.isActive ? <UserX className="h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}
+                                                </button>
+                                                <button
+                                                    onClick={() => onDeleteUser(user.id)}
+                                                    disabled={loading === user.id}
+                                                    className="p-2 hover:bg-red-500/10 text-red-500 rounded transition-colors"
+                                                    title="Delete User"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <span className="text-[10px] text-brand-gold font-bold px-3 py-1 bg-brand-gold/10 border border-brand-gold/20 rounded-full tracking-widest uppercase">
+                                                Self (Protected)
+                                            </span>
+                                        )}
                                     </div>
                                 </td>
                             </tr>

@@ -19,6 +19,9 @@ export const metadata: Metadata = {
 import { CartProvider } from "@/components/CartProvider";
 import { AuthProvider } from "@/components/AuthProvider";
 
+import Footer from "@/components/layout/Footer";
+import BottomNav from "@/components/layout/BottomNav";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,6 +39,8 @@ export default function RootLayout({
             <main className="flex-grow">
               {children}
             </main>
+            <Footer />
+            <BottomNav />
           </CartProvider>
         </AuthProvider>
       </body>
