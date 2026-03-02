@@ -32,6 +32,7 @@ export default function RootLayout({
         <AuthProvider>
           <ToastProvider />
           <CartProvider>
+            <Navbar />
             <main className="flex-grow">
               {children}
             </main>

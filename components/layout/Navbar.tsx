@@ -20,6 +20,8 @@ const Navbar = () => {
 
     const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/vendor") || pathname.startsWith("/profile");
 
+    if (isDashboard) return null;
+
     return (
         <>
             <nav className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-white/10">
