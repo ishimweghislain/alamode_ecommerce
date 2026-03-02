@@ -14,7 +14,7 @@ export default async function VendorLayout({
     }
 
     return (
-        <div className="flex max-w-7xl mx-auto bg-background-dark min-h-screen">
+        <div className="flex bg-background-dark min-h-screen">
             <DashboardSidebar role="VENDOR" />
             <main className="flex-1 p-4 md:p-8 mb-40 lg:mb-0">
                 {children}

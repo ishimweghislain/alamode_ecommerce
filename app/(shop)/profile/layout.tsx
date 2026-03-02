@@ -14,7 +14,7 @@ export default async function ProfileLayout({
     }
 
     return (
-        <div className="flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-background-dark min-h-screen">
+        <div className="flex bg-background-dark min-h-screen">
             <DashboardSidebar role="CUSTOMER" />
             <main className="flex-1 p-8">
                 {children}
