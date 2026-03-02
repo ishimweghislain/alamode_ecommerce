@@ -64,6 +64,7 @@ model Ticket {
   subject     String
   status      String   @default("OPEN") // OPEN, RESOLVED, CLOSED
   priority    String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages    TicketMessage[]
   createdAt   DateTime @default(now())
@@ -87,7 +88,7 @@ model Vendor {
   description String?
   isApproved  Boolean  @default(false)
   userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   products    Product[]
   withdrawals WithdrawalRequest[]
   createdAt   DateTime @default(now())
