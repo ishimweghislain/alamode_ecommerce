@@ -127,7 +127,7 @@ model Product {
   isFeatured  Boolean  @default(false)
   
   vendorId    String
-  vendor      Vendor   @relation(fields: [vendorId], references: [id])
+  vendor      Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -155,6 +155,7 @@ model Order {
   paymentMethod   String?
   paymentId       String?
   items           OrderItem[]
+  disputes        Dispute[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
@@ -162,9 +163,9 @@ model Order {
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
   price     Float
 }
@@ -176,7 +177,7 @@ model Review {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 
@@ -185,7 +186,7 @@ model WithdrawalRequest {
   amount    Float
   status    WithdrawalStatus @default(PENDING)
   vendorId  String
-  vendor    Vendor           @relation(fields: [vendorId], references: [id])
+  vendor    Vendor           @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 }
@@ -193,6 +194,7 @@ model WithdrawalRequest {
 model Dispute {
   id        String   @id @default(cuid())
   orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   reason    String
   status    String   @default("OPEN")
   createdAt DateTime @default(now())

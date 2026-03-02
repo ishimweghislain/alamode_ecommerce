@@ -46,7 +46,7 @@ export default function UsersClient({ users }: UsersClientProps) {
     };
 
     const onDeleteUser = async (userId: string) => {
-        if (!confirm("Are you sure? This action cannot be undone.")) return;
+        if (!confirm("⚠️ CRITICAL WARNING: Deleting this user will permanently remove all associated data including Orders, Products (if they are a Vendor), Reviews, and Support Tickets. This action CANNOT be undone.\n\nAre you absolutely sure you want to proceed?")) return;
         setLoading(userId);
         try {
             await axios.delete(`/api/users/${userId}`);

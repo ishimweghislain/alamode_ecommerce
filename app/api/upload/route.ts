@@ -1,16 +1,5 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/session";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import crypto from "crypto";
-import { v2 as cloudinary } from "cloudinary";
-
-// Configure Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 export const dynamic = "force-dynamic";
 
@@ -28,72 +17,24 @@ export async function POST(req: Request) {
             return new NextResponse("No file provided", { status: 400 });
         }
 
+        // Limit file size to 2MB to prevent database bloat
+        if (file.size > 2 * 1024 * 1024) {
+            return new NextResponse("File too large (Max 2MB)", { status: 400 });
+        }
+
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Check if Cloudinary is configured
-        const hasCloudinary =
-            process.env.CLOUDINARY_CLOUD_NAME &&
-            process.env.CLOUDINARY_API_KEY &&
-            process.env.CLOUDINARY_API_SECRET;
-
-        if (hasCloudinary) {
-            // Upload to Cloudinary
-            try {
-                const result: any = await new Promise((resolve, reject) => {
-                    const uploadStream = cloudinary.uploader.upload_stream(
-                        {
-                            folder: "alamode",
-                            resource_type: "auto"
-                        },
-                        (error, result) => {
-                            if (error) {
-                                console.error("[CLOUDINARY_ERROR]", error);
-                                reject(error);
-                            } else {
-                                resolve(result);
-                            }
-                        }
-                    );
-                    uploadStream.end(buffer);
-                });
-
-                return NextResponse.json({
-                    secure_url: result.secure_url,
-                    public_id: result.public_id
-                });
-            } catch (uploadError) {
-                console.error("[UPLOAD_STREAM_ERROR]", uploadError);
-                return new NextResponse(`Cloudinary Upload Failed: ${(uploadError as any).message || 'Unknown Error'}`, { status: 500 });
-            }
-        }
-
-        // Log if configuration is missing in production
-        if (process.env.NODE_ENV === "production") {
-            console.error("[CONFIG_ERROR] Cloudinary credentials missing in production environment");
-        }
-
-        // Fallback to local (only works in non-serverless environments)
-        const uniqueId = crypto.randomBytes(8).toString("hex");
-        const filename = `${Date.now()}-${uniqueId}-${file.name.replace(/\s/g, "-")}`;
-        const relativePath = `/uploads/${filename}`;
-        const uploadsDir = path.join(process.cwd(), "public", "uploads");
-        const absolutePath = path.join(uploadsDir, filename);
-
-        try {
-            await mkdir(uploadsDir, { recursive: true });
-            await writeFile(absolutePath, buffer);
-        } catch (fsError) {
-            console.error("[FS_ERROR]", fsError);
-            return new NextResponse("Cloud storage not configured and local write failed (likely read-only filesystem)", { status: 500 });
-        }
+        // Convert to Base64 string including the data URI prefix
+        // This allows the image to be stored as a string directly in the database field
+        const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`;
 
         return NextResponse.json({
-            secure_url: relativePath,
-            public_id: filename
+            secure_url: base64Image,
+            public_id: `db-${Date.now()}`
         });
     } catch (error) {
-        console.error("[UPLOAD_MAIN_ERROR]", error);
-        return new NextResponse(`Internal Upload Error: ${(error as any).message || 'Unknown'}`, { status: 500 });
+        console.error("[UPLOAD_DB_ERROR]", error);
+        return new NextResponse("Internal Server Error during DB upload", { status: 500 });
     }
 }
