@@ -1,6 +1,8 @@
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 
+import Navbar from "@/components/layout/Navbar";
+
 export default function ShopLayout({
     children,
 }: {
@@ -8,6 +10,7 @@ export default function ShopLayout({
 }) {
     return (
         <>
+            <Navbar />
             <div className="flex-grow">
                 {children}
             </div>

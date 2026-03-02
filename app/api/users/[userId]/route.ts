@@ -2,6 +2,41 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 
+export async function GET(
+    req: Request,
+    { params }: { params: Promise<{ userId: string }> }
+) {
+    try {
+        const currentUser = await getCurrentUser();
+        const { userId } = await params;
+
+        if (!currentUser || currentUser.role !== "ADMIN") {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+            }
+        });
+
+        if (!user) {
+            return new NextResponse("User not found", { status: 404 });
+        }
+
+        return NextResponse.json(user);
+    } catch (error) {
+        console.error("[USER_GET_ERROR]", error);
+        return new NextResponse(`Internal Error: ${(error as any).message}`, { status: 500 });
+    }
+}
+
 export async function PATCH(
     req: Request,
     { params }: { params: Promise<{ userId: string }> }
@@ -10,8 +45,12 @@ export async function PATCH(
         const user = await getCurrentUser();
         const { userId } = await params;
 
-        if (user?.role !== "ADMIN") {
+        if (!user || user.role !== "ADMIN") {
             return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        if (!userId) {
+            return new NextResponse("Missing User ID", { status: 400 });
         }
 
         const body = await req.json();
@@ -27,8 +66,8 @@ export async function PATCH(
 
         return NextResponse.json(updatedUser);
     } catch (error) {
-        console.error("[USER_PATCH]", error);
-        return new NextResponse("Internal Error", { status: 500 });
+        console.error("[USER_PATCH_ERROR]", error);
+        return new NextResponse(`Internal Error: ${(error as any).message}`, { status: 500 });
     }
 }
 
@@ -40,7 +79,7 @@ export async function DELETE(
         const user = await getCurrentUser();
         const { userId } = await params;
 
-        if (user?.role !== "ADMIN") {
+        if (!user || user.role !== "ADMIN") {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
@@ -64,7 +103,7 @@ export async function DELETE(
 
         return new NextResponse(null, { status: 204 });
     } catch (error) {
-        console.error("[USER_DELETE]", error);
-        return new NextResponse("Internal Error", { status: 500 });
+        console.error("[USER_DELETE_ERROR]", error);
+        return new NextResponse(`Internal Error: ${(error as any).message}`, { status: 500 });
     }
 }

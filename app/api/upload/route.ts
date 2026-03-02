@@ -32,22 +32,45 @@ export async function POST(req: Request) {
         const buffer = Buffer.from(bytes);
 
         // Check if Cloudinary is configured
-        if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY) {
-            // Upload to Cloudinary
-            const result: any = await new Promise((resolve, reject) => {
-                cloudinary.uploader.upload_stream(
-                    { folder: "alamode" },
-                    (error, result) => {
-                        if (error) reject(error);
-                        else resolve(result);
-                    }
-                ).end(buffer);
-            });
+        const hasCloudinary =
+            process.env.CLOUDINARY_CLOUD_NAME &&
+            process.env.CLOUDINARY_API_KEY &&
+            process.env.CLOUDINARY_API_SECRET;
 
-            return NextResponse.json({
-                secure_url: result.secure_url,
-                public_id: result.public_id
-            });
+        if (hasCloudinary) {
+            // Upload to Cloudinary
+            try {
+                const result: any = await new Promise((resolve, reject) => {
+                    const uploadStream = cloudinary.uploader.upload_stream(
+                        {
+                            folder: "alamode",
+                            resource_type: "auto"
+                        },
+                        (error, result) => {
+                            if (error) {
+                                console.error("[CLOUDINARY_ERROR]", error);
+                                reject(error);
+                            } else {
+                                resolve(result);
+                            }
+                        }
+                    );
+                    uploadStream.end(buffer);
+                });
+
+                return NextResponse.json({
+                    secure_url: result.secure_url,
+                    public_id: result.public_id
+                });
+            } catch (uploadError) {
+                console.error("[UPLOAD_STREAM_ERROR]", uploadError);
+                return new NextResponse(`Cloudinary Upload Failed: ${(uploadError as any).message || 'Unknown Error'}`, { status: 500 });
+            }
+        }
+
+        // Log if configuration is missing in production
+        if (process.env.NODE_ENV === "production") {
+            console.error("[CONFIG_ERROR] Cloudinary credentials missing in production environment");
         }
 
         // Fallback to local (only works in non-serverless environments)
@@ -62,7 +85,7 @@ export async function POST(req: Request) {
             await writeFile(absolutePath, buffer);
         } catch (fsError) {
             console.error("[FS_ERROR]", fsError);
-            return new NextResponse("Cloud storage not configured and local write failed", { status: 500 });
+            return new NextResponse("Cloud storage not configured and local write failed (likely read-only filesystem)", { status: 500 });
         }
 
         return NextResponse.json({
@@ -70,7 +93,7 @@ export async function POST(req: Request) {
             public_id: filename
         });
     } catch (error) {
-        console.error("[UPLOAD_ERROR]", error);
-        return new NextResponse("Internal Error", { status: 500 });
+        console.error("[UPLOAD_MAIN_ERROR]", error);
+        return new NextResponse(`Internal Upload Error: ${(error as any).message || 'Unknown'}`, { status: 500 });
     }
 }
