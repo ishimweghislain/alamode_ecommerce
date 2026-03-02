@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBag, HelpCircle } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 import NotificationsBell from "@/components/ui/NotificationsBell";
 import LogoutModal from "@/components/ui/LogoutModal";
@@ -13,8 +14,11 @@ import LogoutModal from "@/components/ui/LogoutModal";
 const Navbar = () => {
     const { data: session } = useSession();
     const { items } = useCart();
+    const pathname = usePathname();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+    const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/vendor") || pathname.startsWith("/profile");
 
     return (
         <nav className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-white/10">
@@ -35,36 +39,40 @@ const Navbar = () => {
                             </span>
                         </Link>
 
-                        <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-300">
-                            <Link href="/categories" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                <LayoutGrid className="h-4 w-4" />
-                                Categories
-                            </Link>
-                            <Link href="/shop" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                <ShoppingBag className="h-4 w-4" />
-                                Shop
-                            </Link>
-                            <Link href="/premium" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                <User className="h-4 w-4" />
-                                Premium
-                            </Link>
-                            <Link href="/how-it-works" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                <HelpCircle className="h-4 w-4" />
-                                How It Works
-                            </Link>
-                        </div>
+                        {!isDashboard && (
+                            <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-300">
+                                <Link href="/categories" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
+                                    <LayoutGrid className="h-4 w-4" />
+                                    Categories
+                                </Link>
+                                <Link href="/shop" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
+                                    <ShoppingBag className="h-4 w-4" />
+                                    Shop
+                                </Link>
+                                <Link href="/premium" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
+                                    <User className="h-4 w-4" />
+                                    Premium
+                                </Link>
+                                <Link href="/how-it-works" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
+                                    <HelpCircle className="h-4 w-4" />
+                                    How It Works
+                                </Link>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="hidden md:flex flex-1 max-w-md mx-8">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Search luxury products..."
-                                className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-brand-accent transition-all"
-                            />
-                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-600" />
+                    {!isDashboard && (
+                        <div className="hidden md:flex flex-1 max-w-md mx-8">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search luxury products..."
+                                    className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-brand-accent transition-all"
+                                />
+                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-600" />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="flex items-center gap-5">
                         {session && <NotificationsBell />}
@@ -78,7 +86,7 @@ const Navbar = () => {
                             )}
                         </Link>
 
-                        {session ? (
+                        {session && !isDashboard && (
                             <div className="relative">
                                 <button
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -114,7 +122,26 @@ const Navbar = () => {
                                     </div>
                                 )}
                             </div>
-                        ) : (
+                        )}
+
+                        {session && isDashboard && (
+                            <div className="flex items-center gap-4">
+                                <div className="h-8 w-8 rounded-full bg-brand-accent flex items-center justify-center text-white font-bold text-xs uppercase">
+                                    {session.user.name?.charAt(0)}
+                                </div>
+                                <span className="text-sm font-medium text-white hidden sm:inline-block">
+                                    {session.user.name}
+                                </span>
+                                <Link
+                                    href="/"
+                                    className="text-xs text-brand-gold hover:text-white transition-colors border border-brand-gold/30 px-3 py-1.5 rounded-full"
+                                >
+                                    Back to Site
+                                </Link>
+                            </div>
+                        )}
+
+                        {!session && (
                             <Link href="/login" className="btn-primary flex items-center gap-2 px-6">
                                 <User className="h-4 w-4" />
                                 <span>Login</span>
