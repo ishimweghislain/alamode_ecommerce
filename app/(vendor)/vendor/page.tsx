@@ -52,7 +52,7 @@ export default async function VendorDashboard() {
         }
     });
 
-    const totalRevenue = revenueItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const totalRevenue = revenueItems.reduce((acc, item) => acc + (item.price * item.quantity * 0.95), 0);
 
     // 2. Pending Orders Count
     const pendingOrdersCount = await prisma.orderItem.count({

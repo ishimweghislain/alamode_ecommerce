@@ -1,149 +1,132 @@
-import "dotenv/config";
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 
-const connectionString = process.env.DATABASE_URL;
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 async function main() {
-    const hashedPassword = await bcrypt.hash("password123", 10);
-
-    console.log("Seeding database...");
+    console.log("Seeding verified data for Linda and Ghislain...");
 
     // 1. Create Admin
+    const hashedAdminPassword = await bcrypt.hash("admin123", 10);
     await prisma.user.upsert({
         where: { email: "admin@alamode.com" },
-        update: { password: hashedPassword },
+        update: {},
         create: {
+            name: "Admin User",
             email: "admin@alamode.com",
-            name: "Super Admin",
-            password: hashedPassword,
+            password: hashedAdminPassword,
             role: "ADMIN",
         },
     });
-    console.log("Admin created: admin@alamode.com");
 
-    // 2. Create Vendor
+    // 2. Create Vendor (Ghislain)
+    const hashedVendorPassword = await bcrypt.hash("ghislain123", 10);
     const vendorUser = await prisma.user.upsert({
-        where: { email: "vendor@alamode.com" },
-        update: { password: hashedPassword },
+        where: { email: "ghislain@gmail.com" },
+        update: { role: "VENDOR" },
         create: {
-            email: "vendor@alamode.com",
-            name: "Luxury Vendor",
-            password: hashedPassword,
+            name: "Ishimwe Ghislain",
+            email: "ghislain@gmail.com",
+            password: hashedVendorPassword,
             role: "VENDOR",
         },
     });
 
-    // Use a unique store name for the seed to avoid constraint conflicts if re-running
-    const storeName = "Elite Boutique";
-    const existingStore = await prisma.vendor.findFirst({
-        where: { storeName, NOT: { userId: vendorUser.id } }
-    });
-
-    await prisma.vendor.upsert({
+    const vendor = await prisma.vendor.upsert({
         where: { userId: vendorUser.id },
-        update: {
-            isApproved: true,
-            storeName: existingStore ? `${storeName} ${Math.floor(Math.random() * 1000)}` : storeName
-        },
+        update: { isApproved: true },
         create: {
-            storeName: existingStore ? `${storeName} ${Math.floor(Math.random() * 1000)}` : storeName,
-            userId: vendorUser.id,
+            storeName: "Ishimwe Ghislain's Luxury",
+            description: "Exclusive luxury items curated by Ghislain.",
             isApproved: true,
-            description: "Premium luxury items for the discerning customer.",
+            userId: vendorUser.id,
         },
     });
-    console.log("Vendor created: vendor@alamode.com");
 
-    // 3. Create Customer
-    await prisma.user.upsert({
-        where: { email: "customer@alamode.com" },
-        update: { password: hashedPassword },
+    // 3. Create Customer (Linda)
+    const hashedCustomerPassword = await bcrypt.hash("linda123", 10);
+    const customerUser = await prisma.user.upsert({
+        where: { email: "linda@gmail.com" },
+        update: {},
         create: {
-            email: "customer@alamode.com",
-            name: "Valued Customer",
-            password: hashedPassword,
+            name: "Linda",
+            email: "linda@gmail.com",
+            password: hashedCustomerPassword,
             role: "CUSTOMER",
         },
     });
-    console.log("Customer created: customer@alamode.com");
 
-    // 4. Create Categories & Subcategories
-    const fashion = await prisma.category.upsert({
-        where: { slug: "fashion" },
+    // 4. Create Category
+    const category = await prisma.category.upsert({
+        where: { slug: "luxury-watches" },
         update: {},
-        create: { name: "Fashion", slug: "fashion", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071&auto=format&fit=crop" },
+        create: {
+            name: "Luxury Watches",
+            slug: "luxury-watches",
+        },
     });
 
-    // Seed Subcategories for Fashion
-    const fashionSubs = [
-        { name: "Women", slug: "women" },
-        { name: "Men", slug: "men" },
-        { name: "Kids", slug: "kids" },
+    // 5. Create Product for Ghislain (Only one)
+    const watch = await prisma.product.upsert({
+        where: { id: "luxury-watch-01" },
+        update: {
+            vendorId: vendor.id,
+            categoryId: category.id,
+        },
+        create: {
+            id: "luxury-watch-01",
+            name: "Rolex Submariner Gold",
+            description: "The classic divers' watch, now in 18ct yellow gold. Waterproof to 300 metres.",
+            price: 35000,
+            stock: 10,
+            images: ["https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=1974&auto=format&fit=crop"],
+            vendorId: vendor.id,
+            categoryId: category.id,
+            isFeatured: true,
+        },
+    });
+
+    // 6. Delete old orders for these users to avoid confusion
+    await prisma.order.deleteMany({
+        where: { userId: customerUser.id }
+    });
+
+    // 7. Create Multiple Orders for Linda (Many revenues for Ghislain)
+    console.log("Creating specific orders for Linda buying from Ghislain...");
+    const orderDates = [
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+        new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+        new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),  // 5 days ago
+        new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),  // 1 day ago
     ];
 
-    for (const sub of fashionSubs) {
-        await prisma.subcategory.upsert({
-            where: { slug: sub.slug },
-            update: { categoryId: fashion.id },
-            create: {
-                name: sub.name,
-                slug: sub.slug,
-                categoryId: fashion.id
+    for (let i = 0; i < orderDates.length; i++) {
+        const paymentMethod = i % 2 === 0 ? "MOMO" : "CARD";
+        const amount = watch.price;
+        const tax = amount * 0.05;
+        const total = amount + tax;
+
+        await prisma.order.create({
+            data: {
+                userId: customerUser.id,
+                status: "PAID",
+                totalAmount: total,
+                shippingAddress: "Kigali, Rwanda",
+                phone: "0788123456",
+                paymentMethod: paymentMethod,
+                createdAt: orderDates[i],
+                items: {
+                    create: {
+                        productId: watch.id,
+                        quantity: 1,
+                        price: watch.price,
+                    },
+                },
             },
         });
     }
 
-    await prisma.category.upsert({
-        where: { slug: "decoration" },
-        update: {},
-        create: { name: "Decoration", slug: "decoration", image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop" },
-    });
-
-    const tech = await prisma.category.upsert({
-        where: { slug: "technology" },
-        update: {},
-        create: { name: "Technology", slug: "technology", image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop" },
-    });
-    console.log("Categories and Subcategories seeded.");
-
-    // 5. Create some products for the vendor
-    const vendor = await prisma.vendor.findUnique({ where: { userId: vendorUser.id } });
-    if (vendor) {
-        await prisma.product.deleteMany({ where: { vendorId: vendor.id } });
-        await prisma.product.createMany({
-            data: [
-                {
-                    name: "Diamond Encrusted Watch",
-                    description: "A timeless masterpiece of luxury and precision.",
-                    price: 4500000,
-                    stock: 5,
-                    categoryId: tech.id,
-                    vendorId: vendor.id,
-                    images: ["https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1999&auto=format&fit=crop"],
-                    isFeatured: true,
-                },
-                {
-                    name: "Handcrafted Leather Bag",
-                    description: "Pure Rwandan craftsmanship with imported Italian leather.",
-                    price: 125000,
-                    stock: 12,
-                    categoryId: fashion.id,
-                    vendorId: vendor.id,
-                    images: ["https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"],
-                    isFeatured: true,
-                }
-            ],
-        });
-        console.log("Products seeded.");
-    }
-
-    console.log("Seed finished successfully.");
+    console.log("Seeding completed successfully!");
 }
 
 main()

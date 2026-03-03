@@ -79,12 +79,12 @@ export default async function AdminOrdersPage() {
                                 </td>
                                 <td className="p-4 text-right">
                                     <div className="flex justify-end gap-2">
-                                        <button className="p-2 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-colors" title="View Details">
+                                        <Link href={`/admin/orders/${order.id}`} className="p-2 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-colors" title="View Details">
                                             <Eye className="h-4 w-4" />
-                                        </button>
-                                        <button className="p-2 hover:bg-white/10 text-gray-400 hover:text-brand-accent rounded transition-colors" title="Update Status">
+                                        </Link>
+                                        <Link href={`/admin/orders/${order.id}`} className="p-2 hover:bg-white/10 text-gray-400 hover:text-brand-accent rounded transition-colors" title="Update Status">
                                             <Truck className="h-4 w-4" />
-                                        </button>
+                                        </Link>
                                     </div>
                                 </td>
                             </tr>

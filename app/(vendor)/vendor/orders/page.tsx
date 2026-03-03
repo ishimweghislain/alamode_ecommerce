@@ -86,20 +86,20 @@ export default async function VendorOrdersPage() {
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${order.status === 'PAID' ? 'bg-brand-accent/10 text-brand-accent' :
-                                                order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
-                                                    'bg-gray-500/10 text-gray-400'
+                                            order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
+                                                'bg-gray-500/10 text-gray-400'
                                             }`}>
                                             {order.status}
                                         </span>
                                     </td>
                                     <td className="p-4 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <button className="p-2 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-colors" title="View Order Details">
+                                            <Link href={`/vendor/orders/${order.id}`} className="p-2 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-colors" title="View Order Details">
                                                 <Eye className="h-4 w-4" />
-                                            </button>
-                                            <button className="p-2 hover:bg-white/10 text-gray-400 hover:text-brand-accent rounded transition-colors" title="Update Shipping">
+                                            </Link>
+                                            <Link href={`/vendor/orders/${order.id}`} className="p-2 hover:bg-white/10 text-gray-400 hover:text-brand-accent rounded transition-colors" title="Update Shipping">
                                                 <Truck className="h-4 w-4" />
-                                            </button>
+                                            </Link>
                                         </div>
                                     </td>
                                 </tr>
