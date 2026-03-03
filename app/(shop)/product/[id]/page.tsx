@@ -6,6 +6,7 @@ import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/ui/AddToCartButton";
+import { BuyNowButton } from "@/components/ui/BuyNowButton";
 import ProductGallery from "@/components/ui/ProductGallery";
 
 import WishlistToggle from "@/components/ui/WishlistToggle";
@@ -131,21 +132,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                     image: product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"
                                 }}
                             />
-                            <Link
-                                href="/checkout"
-                                onClick={() => {
-                                    (window as any).addItem({
-                                        id: product.id,
-                                        name: product.name,
-                                        price: product.price,
-                                        image: product.images[0] || "",
-                                        quantity: 1
-                                    });
+                            <BuyNowButton
+                                product={{
+                                    id: product.id,
+                                    name: product.name,
+                                    price: product.price,
+                                    image: product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"
                                 }}
-                                className="btn-gold h-14 px-8 flex items-center justify-center"
-                            >
-                                Buy Now
-                            </Link>
+                            />
                         </div>
                     )}
 
