@@ -131,9 +131,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                     image: product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"
                                 }}
                             />
-                            <button className="btn-gold h-14 px-8">
+                            <Link
+                                href="/checkout"
+                                onClick={() => {
+                                    (window as any).addItem({
+                                        id: product.id,
+                                        name: product.name,
+                                        price: product.price,
+                                        image: product.images[0] || "",
+                                        quantity: 1
+                                    });
+                                }}
+                                className="btn-gold h-14 px-8 flex items-center justify-center"
+                            >
                                 Buy Now
-                            </button>
+                            </Link>
                         </div>
                     )}
 

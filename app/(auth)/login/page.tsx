@@ -137,7 +137,7 @@ function LoginContent() {
                     <div className="mt-8 pt-8 border-t border-white/10 text-center">
                         <p className="text-gray-400 text-sm">
                             Don't have an account?{" "}
-                            <Link href="/register" className="text-brand-accent font-bold hover:text-brand-gold transition-colors">
+                            <Link href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-brand-accent font-bold hover:text-brand-gold transition-colors">
                                 Create Account
                             </Link>
                         </p>

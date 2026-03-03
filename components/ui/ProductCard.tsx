@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, Heart, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { useCart } from "@/components/CartProvider";
 import { clsx } from "clsx";
 
 interface ProductCardProps {
@@ -18,6 +19,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ id, name, price, image, images, category, rating = 4.5 }: ProductCardProps) => {
+    const { addItem } = useCart();
     const productImages = images && images.length > 0 ? images : image ? [image] : ["/placeholder.png"];
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
@@ -106,7 +108,20 @@ const ProductCard = ({ id, name, price, image, images, category, rating = 4.5 }:
                             {formatPrice(price)}
                         </span>
                     </div>
-                    <button className="p-3 bg-brand-accent hover:bg-brand-gold text-white rounded-2xl shadow-lg shadow-brand-accent/20 transition-all hover:scale-105 active:scale-95 group/btn">
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            addItem({
+                                id,
+                                name,
+                                price,
+                                image: productImages[0],
+                                quantity: 1
+                            });
+                        }}
+                        className="p-3 bg-brand-accent hover:bg-brand-gold text-white rounded-2xl shadow-lg shadow-brand-accent/20 transition-all hover:scale-105 active:scale-95 group/btn"
+                    >
                         <ShoppingCart className="h-5 w-5 group-hover/btn:animate-bounce" />
                     </button>
                 </div>

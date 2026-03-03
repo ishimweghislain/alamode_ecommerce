@@ -39,12 +39,17 @@ function RegisterContent() {
 
             if (result?.error) {
                 toast.error("Account created, but failed to log in automatically. Please login manually.");
-                router.push("/login");
+                router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
             } else {
                 toast.success("Account created and logged in!");
-                const target = formData.role === "ADMIN" ? "/admin" : formData.role === "VENDOR" ? "/vendor" : "/profile";
-                router.push(target);
-                router.refresh();
+
+                let destination = callbackUrl;
+                if (callbackUrl === "/" || callbackUrl.includes("/register") || callbackUrl.includes("/login")) {
+                    destination = formData.role === "ADMIN" ? "/admin" : formData.role === "VENDOR" ? "/vendor" : "/profile";
+                }
+
+                // Hard redirect to ensure session is picked up
+                window.location.href = destination;
             }
         } catch (error: any) {
             toast.error(error.response?.data || "Something went wrong.");
@@ -153,7 +158,7 @@ function RegisterContent() {
                     <div className="mt-8 pt-8 border-t border-white/10 text-center">
                         <p className="text-gray-400 text-sm">
                             Already have an account?{" "}
-                            <Link href="/login" className="text-brand-accent font-bold hover:text-brand-gold transition-colors">
+                            <Link href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-brand-accent font-bold hover:text-brand-gold transition-colors">
                                 Sign In
                             </Link>
                         </p>
@@ -161,5 +166,17 @@ function RegisterContent() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-accent"></div>
+            </div>
+        }>
+            <RegisterContent />
+        </Suspense>
     );
 }
