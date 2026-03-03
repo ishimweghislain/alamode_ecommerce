@@ -4,10 +4,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { productId: string } }
+    { params }: { params: Promise<{ productId: string }> }
 ) {
     try {
         const user = await getCurrentUser();
+        const { productId } = await params;
 
         if (user?.role !== "ADMIN") {
             return new NextResponse("Unauthorized", { status: 401 });
@@ -17,7 +18,7 @@ export async function PATCH(
         const { isFeatured, isTrending } = body;
 
         const product = await (prisma.product as any).update({
-            where: { id: params.productId },
+            where: { id: productId },
             data: {
                 ...(typeof isFeatured === "boolean" && { isFeatured }),
                 ...(typeof isTrending === "boolean" && { isTrending }),
