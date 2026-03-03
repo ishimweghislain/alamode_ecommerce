@@ -22,20 +22,31 @@ const Hero = () => {
                     <span className="text-brand-gold font-bold tracking-widest uppercase text-sm mb-4 block">
                         Exclusively for Rwanda
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-outfit font-bold text-white leading-tight mb-6">
-                        Redefining <span className="text-brand-accent">Luxury</span> <br />
-                        Shopping
+                    <h1 className="text-5xl md:text-7xl font-outfit font-bold text-white leading-tight mb-6 uppercase tracking-tighter">
+                        Sell Well <br />
+                        <span className="text-brand-accent">&</span> Buy Better
                     </h1>
-                    <p className="text-gray-300 text-lg md:text-xl mb-10 leading-relaxed">
-                        Discover a curated world of premium fashion, decor, and technology from elite vendors. Excellence delivered to your doorstep.
+                    <p className="text-gray-300 text-lg md:text-xl mb-10 leading-relaxed max-w-lg">
+                        Experience Rwanda's most exclusive marketplace for high-end fashion, technology, and home masterpieces.
                     </p>
                     <div className="flex flex-wrap gap-4">
-                        <Link href="/categories" className="btn-primary flex items-center justify-center min-w-[160px] h-14 text-lg">
+                        <Link href="/shop" className="btn-primary flex items-center justify-center min-w-[200px] h-14 text-sm font-bold uppercase tracking-widest">
                             Shop Now
                         </Link>
-                        <Link href="/login" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 rounded-luxury flex items-center justify-center min-w-[160px] h-14 text-lg transition-all">
+                        <Link href="/login" className="bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/10 rounded-luxury flex items-center justify-center min-w-[200px] h-14 text-sm font-bold uppercase tracking-widest transition-all">
                             Sell on Alamode
                         </Link>
+                    </div>
+
+                    <div className="mt-12 flex items-center gap-8 border-t border-white/10 pt-10">
+                        <a href="#featured-products" className="text-xs font-black text-gray-500 hover:text-brand-accent uppercase tracking-[0.3em] transition-all flex items-center gap-2 group">
+                            <span className="w-8 h-[1px] bg-gray-500 group-hover:bg-brand-accent group-hover:w-12 transition-all" />
+                            View Featured
+                        </a>
+                        <a href="#trending-products" className="text-xs font-black text-gray-500 hover:text-brand-gold uppercase tracking-[0.3em] transition-all flex items-center gap-2 group">
+                            <span className="w-8 h-[1px] bg-gray-500 group-hover:bg-brand-gold group-hover:w-12 transition-all" />
+                            View Trending
+                        </a>
                     </div>
                 </div>
             </div>

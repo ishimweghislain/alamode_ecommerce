@@ -49,7 +49,7 @@ export default async function Home() {
       <CategoryHighlights />
 
       {/* Featured Products */}
-      <section className="py-20">
+      <section id="featured-products" className="py-20 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
@@ -92,7 +92,7 @@ export default async function Home() {
       </section>
 
       {/* Trending Products */}
-      <section className="py-20 mb-20">
+      <section id="trending-products" className="py-20 mb-20 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
