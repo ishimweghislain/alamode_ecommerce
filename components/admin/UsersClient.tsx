@@ -61,18 +61,6 @@ export default function UsersClient({ users }: UsersClientProps) {
         }
     };
 
-    const onChangeRole = async (userId: string, newRole: string) => {
-        setLoading(userId);
-        try {
-            await axios.patch(`/api/users/${userId}`, { role: newRole });
-            toast.success(`Role updated to ${newRole}`);
-            router.refresh();
-        } catch (error) {
-            toast.error("Failed to update role");
-        } finally {
-            setLoading(null);
-        }
-    };
 
     return (
         <div className="space-y-8">
@@ -128,16 +116,9 @@ export default function UsersClient({ users }: UsersClientProps) {
                                     </div>
                                 </td>
                                 <td className="p-4">
-                                    <select
-                                        defaultValue={user.role}
-                                        onChange={(e) => onChangeRole(user.id, e.target.value)}
-                                        disabled={loading === user.id}
-                                        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-accent outline-none"
-                                    >
-                                        <option value="CUSTOMER">CUSTOMER</option>
-                                        <option value="VENDOR">VENDOR</option>
-                                        <option value="ADMIN">ADMIN</option>
-                                    </select>
+                                    <span className="bg-white/5 border border-white/10 rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-accent">
+                                        {user.role}
+                                    </span>
                                 </td>
                                 <td className="p-4 text-xs">
                                     {user.isActive ? (

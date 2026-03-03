@@ -3,6 +3,8 @@ import { getCurrentUser } from "@/lib/session";
 import { Store, MapPin, Globe, Mail, Phone, Edit, User, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 
+import VendorProfileHeader from "@/components/vendor/VendorProfileHeader";
+
 export default async function VendorProfilePage() {
     const user = await getCurrentUser();
     if (!user) return null;
@@ -18,16 +20,7 @@ export default async function VendorProfilePage() {
 
     return (
         <div className="space-y-8">
-            <div className="flex justify-between items-end">
-                <div>
-                    <h1 className="text-3xl font-outfit font-bold text-white mb-2">Store Profile</h1>
-                    <p className="text-gray-400">Manage your public brand identity.</p>
-                </div>
-                <button className="btn-primary flex items-center gap-2 px-6">
-                    <Edit className="h-4 w-4" />
-                    <span>Edit Profile</span>
-                </button>
-            </div>
+            <VendorProfileHeader vendor={vendor} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1 space-y-6">

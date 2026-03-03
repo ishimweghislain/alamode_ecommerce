@@ -46,7 +46,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Products", icon: Package, href: "/vendor/products" },
         { label: "Orders", icon: ShoppingBag, href: "/vendor/orders" },
         { label: "Withdrawals", icon: CreditCard, href: "/vendor/withdrawals" },
-        { label: "Support", icon: HelpCircle, href: "/support" },
+        { label: "Support", icon: HelpCircle, href: "/vendor/support" },
         { label: "Analytics", icon: BarChart3, href: "/vendor/analytics" },
     ];
 
@@ -56,7 +56,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Wishlist", icon: Heart, href: "/profile/wishlist" },
         { label: "Payments", icon: CreditCard, href: "/profile/payments" },
         { label: "Settings", icon: Settings, href: "/profile/settings" },
-        { label: "Help & Support", icon: HelpCircle, href: "/support" },
+        { label: "Help & Support", icon: HelpCircle, href: "/profile/support" },
     ];
 
     const links = role === "ADMIN" ? adminLinks : role === "VENDOR" ? vendorLinks : customerLinks;
@@ -92,7 +92,10 @@ const Sidebar = ({ role }: SidebarProps) => {
                             </h2>
                         </div>
                         {links.map((link) => {
-                            const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+                            const isBaseDashboard = link.href === "/admin" || link.href === "/vendor" || link.href === "/profile";
+                            const isActive = isBaseDashboard
+                                ? pathname === link.href
+                                : pathname.startsWith(link.href);
                             return (
                                 <Link
                                     key={link.href}

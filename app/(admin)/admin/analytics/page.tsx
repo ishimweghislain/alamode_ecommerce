@@ -51,6 +51,12 @@ export default async function AdminAnalyticsPage() {
         color: cat.name === 'Fashion' ? 'bg-brand-accent' : cat.name === 'Electronics' ? 'bg-blue-500' : 'bg-brand-gold'
     })).sort((a, b) => b.value - a.value).slice(0, 4);
 
+    const currentMonthRev = monthlyRevenue[11];
+    const lastMonthRev = monthlyRevenue[10];
+    const growth = lastMonthRev > 0
+        ? ((currentMonthRev - lastMonthRev) / lastMonthRev) * 100
+        : currentMonthRev > 0 ? 100 : 0;
+
     return (
         <div className="space-y-8">
             <div>
@@ -79,9 +85,9 @@ export default async function AdminAnalyticsPage() {
                 <div className="card-luxury p-8">
                     <div className="flex justify-between items-center mb-8">
                         <h3 className="text-xl font-bold text-white">Revenue Growth</h3>
-                        <div className="flex items-center gap-2 text-brand-accent text-sm font-bold">
-                            <ArrowUpRight className="h-4 w-4" />
-                            +12.5% vs last month
+                        <div className={`flex items-center gap-2 text-sm font-bold ${growth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            <TrendingUp className={`h-4 w-4 ${growth < 0 ? 'rotate-180' : ''}`} />
+                            {growth >= 0 ? '+' : ''}{growth.toFixed(1)}% vs last month
                         </div>
                     </div>
                     <div className="h-64 flex items-end gap-3 px-2">

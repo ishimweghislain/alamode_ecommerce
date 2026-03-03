@@ -18,7 +18,7 @@ const Navbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-    const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/vendor") || pathname.startsWith("/profile");
+    const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/vendor") || pathname.startsWith("/profile") || pathname === "/support";
 
     if (isDashboard) return null;
 

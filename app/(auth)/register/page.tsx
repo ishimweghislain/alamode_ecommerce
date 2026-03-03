@@ -7,6 +7,8 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { User, Lock, Mail, ChevronRight, Store, ShoppingBag } from "lucide-react";
 
+import { signIn } from "next-auth/react";
+
 export default function RegisterPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
@@ -23,8 +25,23 @@ export default function RegisterPage() {
 
         try {
             await axios.post("/api/register", formData);
-            toast.success("Account created successfully! Please login.");
-            router.push("/login");
+
+            // Auto login after registration
+            const result = await signIn("credentials", {
+                email: formData.email,
+                password: formData.password,
+                redirect: false,
+            });
+
+            if (result?.error) {
+                toast.error("Account created, but failed to log in automatically. Please login manually.");
+                router.push("/login");
+            } else {
+                toast.success("Account created and logged in!");
+                const target = formData.role === "ADMIN" ? "/admin" : formData.role === "VENDOR" ? "/vendor" : "/profile";
+                router.push(target);
+                router.refresh();
+            }
         } catch (error: any) {
             toast.error(error.response?.data || "Something went wrong.");
         } finally {
