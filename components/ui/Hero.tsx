@@ -33,7 +33,7 @@ const Hero = () => {
                         <Link href="/categories" className="btn-primary flex items-center justify-center min-w-[160px] h-14 text-lg">
                             Shop Now
                         </Link>
-                        <Link href="/register" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 rounded-luxury flex items-center justify-center min-w-[160px] h-14 text-lg transition-all">
+                        <Link href="/login" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 rounded-luxury flex items-center justify-center min-w-[160px] h-14 text-lg transition-all">
                             Sell on Alamode
                         </Link>
                     </div>

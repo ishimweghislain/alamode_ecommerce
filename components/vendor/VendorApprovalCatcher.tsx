@@ -13,14 +13,14 @@ export default function VendorApprovalCatcher() {
 
             <div className="space-y-4">
                 <h1 className="text-4xl font-outfit font-bold text-white leading-tight">
-                    Application Under Review
+                    Account Under Review
                 </h1>
                 <p className="text-gray-400 text-lg">
-                    Your vendor application has been received and is currently being reviewed by our luxury curation team.
-                    You will be notified once your store is activated.
+                    We have received your request to become a vendor. Our team is now checking your application.
                 </p>
-                <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-brand-accent">
-                    <p className="font-medium">Please contact the admin to be approved before you can start using the system.</p>
+                <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-brand-accent space-y-2">
+                    <p className="font-bold text-lg">You cannot use the system yet.</p>
+                    <p className="text-sm">Please contact the administrator to get approved. Once you are approved, you can start selling.</p>
                 </div>
             </div>
 
@@ -29,7 +29,7 @@ export default function VendorApprovalCatcher() {
                     onClick={() => signOut({ callbackUrl: "/" })}
                     className="btn-primary px-10 py-4 h-auto text-base"
                 >
-                    Log Out & Back to Marketplace
+                    Log Out and Go to Home Page
                 </button>
             </div>
 

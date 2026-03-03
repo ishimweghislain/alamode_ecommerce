@@ -16,7 +16,7 @@ export async function PATCH(
         const body = await req.json();
         const { isFeatured, isTrending } = body;
 
-        const product = await prisma.product.update({
+        const product = await (prisma.product as any).update({
             where: { id: params.productId },
             data: {
                 ...(typeof isFeatured === "boolean" && { isFeatured }),

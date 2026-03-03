@@ -18,28 +18,28 @@ export default async function Home() {
     if (user.role === "CUSTOMER") redirect("/profile");
   }
 
-  const featuredProductsRaw = await prisma.product.findMany({
+  const featuredProductsRaw = await (prisma.product as any).findMany({
     where: { isFeatured: true },
     include: { category: true },
     take: 4,
     orderBy: { updatedAt: 'desc' }
   });
 
-  const trendingProductsRaw = await prisma.product.findMany({
+  const trendingProductsRaw = await (prisma.product as any).findMany({
     where: { isTrending: true },
     include: { category: true },
     take: 4,
     orderBy: { updatedAt: 'desc' }
   });
 
-  const featuredProducts = featuredProductsRaw.map(p => ({
+  const featuredProducts = (featuredProductsRaw as any[]).map(p => ({
     ...p,
-    category: p.category.name
+    category: p.category?.name || "Category"
   }));
 
-  const trendingProducts = trendingProductsRaw.map(p => ({
+  const trendingProducts = (trendingProductsRaw as any[]).map(p => ({
     ...p,
-    category: p.category.name
+    category: p.category?.name || "Category"
   }));
 
   return (
