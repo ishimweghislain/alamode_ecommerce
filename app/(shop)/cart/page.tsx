@@ -5,9 +5,21 @@ import { formatPrice } from "@/lib/utils";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
     const { items, removeItem, updateQuantity, total } = useCart();
+    const { data: session } = useSession();
+    const router = useRouter();
+
+    const handleCheckout = () => {
+        if (!session) {
+            router.push("/login?callbackUrl=/checkout");
+            return;
+        }
+        router.push("/checkout");
+    };
 
     if (items.length === 0) {
         return (
@@ -100,10 +112,13 @@ export default function CartPage() {
                         </div>
 
                         <div className="space-y-4">
-                            <Link href="/checkout" className="w-full btn-primary h-14 flex items-center justify-center gap-3">
+                            <button
+                                onClick={handleCheckout}
+                                className="w-full btn-primary h-14 flex items-center justify-center gap-3"
+                            >
                                 Proceed to Checkout
                                 <ArrowRight className="h-5 w-5" />
-                            </Link>
+                            </button>
                             <Link href="/categories" className="w-full h-14 border border-white/10 rounded-luxury flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all">
                                 Continue Shopping
                             </Link>

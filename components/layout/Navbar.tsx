@@ -80,7 +80,7 @@ const Navbar = () => {
                         <div className="flex items-center gap-5">
                             {session && <NotificationsBell />}
 
-                            <Link href="/cart" className="hidden md:relative p-2 text-gray-300 hover:text-brand-gold transition-colors">
+                            <Link href="/cart" className="relative p-2 text-gray-300 hover:text-brand-gold transition-colors">
                                 <ShoppingCart className="h-6 w-6" />
                                 {items.length > 0 && (
                                     <span className="absolute top-0 right-0 bg-brand-accent text-white text-[10px] font-bold px-1.5 rounded-full min-w-[18px] text-center">

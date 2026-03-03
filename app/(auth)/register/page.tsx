@@ -7,11 +7,15 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { User, Lock, Mail, ChevronRight, Store, ShoppingBag } from "lucide-react";
 
-import { signIn } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function RegisterPage() {
+function RegisterContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(false);
+    const callbackUrl = searchParams.get("callbackUrl") || "/";
     const [formData, setFormData] = useState({
         name: "",
         email: "",
