@@ -5,70 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-const featuredProducts = [
-  {
-    id: "1",
-    name: "Classic Leather Executive Briefcase",
-    price: 125000,
-    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop",
-    category: "Fashion",
-  },
-  {
-    id: "2",
-    name: "Minimalist Ceramic Pendant Lamp",
-    price: 45000,
-    image: "https://images.unsplash.com/photo-1543157145-f78c636d023d?q=80&w=2070&auto=format&fit=crop",
-    category: "Home Decor",
-  },
-  {
-    id: "3",
-    name: "Ultra-Slim Wireless Mechanical Keyboard",
-    price: 85000,
-    image: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?q=80&w=2020&auto=format&fit=crop",
-    category: "Technology",
-  },
-  {
-    id: "4",
-    name: "Premium Silk Scarf - Midnight Bloom",
-    price: 32000,
-    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1935&auto=format&fit=crop",
-    category: "Accessories",
-  },
-];
-
-const trendingProducts = [
-  {
-    id: "5",
-    name: "Noise-Cancelling Over-Ear Headphones",
-    price: 215000,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=2070&auto=format&fit=crop",
-    category: "Technology",
-  },
-  {
-    id: "6",
-    name: "Mid-Century Modern Velvet Armchair",
-    price: 340000,
-    image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=1974&auto=format&fit=crop",
-    category: "Home Decor",
-  },
-  {
-    id: "7",
-    name: "Signature Gold-Tone Link Watch",
-    price: 180000,
-    image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1999&auto=format&fit=crop",
-    category: "Fashion",
-  },
-  {
-    id: "8",
-    name: "Handcrafted Geometric Rug",
-    price: 155000,
-    image: "https://images.unsplash.com/photo-1534349762230-e0cadf78f5db?q=80&w=2070&auto=format&fit=crop",
-    category: "Home Decor",
-  },
-];
 
 export default async function Home() {
   const user = await getCurrentUser();
@@ -78,6 +17,18 @@ export default async function Home() {
     if (user.role === "VENDOR") redirect("/vendor");
     if (user.role === "CUSTOMER") redirect("/profile");
   }
+
+  const featuredProducts = await prisma.product.findMany({
+    where: { isFeatured: true },
+    take: 4,
+    orderBy: { updatedAt: 'desc' }
+  });
+
+  const trendingProducts = await prisma.product.findMany({
+    where: { isTrending: true },
+    take: 4,
+    orderBy: { updatedAt: 'desc' }
+  });
 
   return (
     <div className="flex flex-col">
