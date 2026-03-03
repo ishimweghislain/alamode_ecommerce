@@ -18,17 +18,29 @@ export default async function Home() {
     if (user.role === "CUSTOMER") redirect("/profile");
   }
 
-  const featuredProducts = await prisma.product.findMany({
+  const featuredProductsRaw = await prisma.product.findMany({
     where: { isFeatured: true },
+    include: { category: true },
     take: 4,
     orderBy: { updatedAt: 'desc' }
   });
 
-  const trendingProducts = await prisma.product.findMany({
+  const trendingProductsRaw = await prisma.product.findMany({
     where: { isTrending: true },
+    include: { category: true },
     take: 4,
     orderBy: { updatedAt: 'desc' }
   });
+
+  const featuredProducts = featuredProductsRaw.map(p => ({
+    ...p,
+    category: p.category.name
+  }));
+
+  const trendingProducts = trendingProductsRaw.map(p => ({
+    ...p,
+    category: p.category.name
+  }));
 
   return (
     <div className="flex flex-col">
