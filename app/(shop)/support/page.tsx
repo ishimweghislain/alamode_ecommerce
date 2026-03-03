@@ -11,6 +11,12 @@ export default async function SupportOverviewPage() {
         redirect("/login");
     }
 
+    // Redirect to dashboard-specific support to ensure sidebar is visible
+    if (user.role === "ADMIN") redirect("/admin/support");
+    if (user.role === "VENDOR") redirect("/vendor/support");
+    if (user.role === "CUSTOMER") redirect("/profile/support");
+
+    // Fallback if role-based redirect fails
     const tickets = await prisma.ticket.findMany({
         where: { userId: user.id },
         orderBy: { updatedAt: 'desc' }
