@@ -12,16 +12,10 @@ export async function GET() {
         }
 
         const [pendingVendors, activePromotions, newUsers, openTickets] = await Promise.all([
-            prisma.vendor.count({ where: { isApproved: false } }),
-            (prisma as any).promotion.count({ where: { isActive: true } }),
-            prisma.user.count({
-                where: {
-                    createdAt: {
-                        gt: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24h
-                    }
-                }
-            }),
-            prisma.ticket.count({ where: { status: "OPEN" } })
+            prisma.vendor.count({ where: { isNew: true } }),
+            (prisma as any).promotion.count({ where: { isNew: true } }),
+            prisma.user.count({ where: { isNew: true } }),
+            prisma.ticket.count({ where: { isNew: true } })
         ]);
 
         return NextResponse.json({

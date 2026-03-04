@@ -21,6 +21,8 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import { clsx } from "clsx";
 import LogoutModal from "@/components/ui/LogoutModal";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 interface SidebarProps {
     role: "ADMIN" | "VENDOR" | "CUSTOMER";
@@ -28,17 +30,57 @@ interface SidebarProps {
 
 const Sidebar = ({ role }: SidebarProps) => {
     const pathname = usePathname();
+    const [counts, setCounts] = useState<any>({});
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        if (role === "ADMIN") {
+            const fetchCounts = async () => {
+                try {
+                    const res = await axios.get("/api/admin/counts");
+                    setCounts(res.data);
+                } catch (e) {
+                    console.error("Failed to fetch counts");
+                }
+            };
+            fetchCounts();
+            const interval = setInterval(fetchCounts, 60000); // 1 min sync
+            return () => clearInterval(interval);
+        }
+    }, [role]);
+
+    // Handle resetting counts when active
+    useEffect(() => {
+        if (role === "ADMIN") {
+            if (pathname === "/admin/vendors" && counts.pendingVendors > 0) {
+                axios.post("/api/admin/counts/reset", { type: "vendors" });
+                setCounts((c: any) => ({ ...c, pendingVendors: 0 }));
+            }
+            if (pathname === "/admin/promotions" && counts.activePromotions > 0) {
+                axios.post("/api/admin/counts/reset", { type: "promotions" });
+                setCounts((c: any) => ({ ...c, activePromotions: 0 }));
+            }
+            if (pathname === "/admin/users" && counts.newUsers > 0) {
+                axios.post("/api/admin/counts/reset", { type: "users" });
+                setCounts((c: any) => ({ ...c, newUsers: 0 }));
+            }
+            if (pathname === "/admin/support" && counts.openTickets > 0) {
+                axios.post("/api/admin/counts/reset", { type: "support" });
+                setCounts((c: any) => ({ ...c, openTickets: 0 }));
+            }
+        }
+    }, [pathname, role, counts]);
 
     const adminLinks = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
-        { label: "Vendors", icon: Store, href: "/admin/vendors" },
+        { label: "Vendors", icon: Store, href: "/admin/vendors", count: counts.pendingVendors },
         { label: "Products", icon: Package, href: "/admin/products" },
-        { label: "Promotions", icon: Tag, href: "/admin/promotions" },
+        { label: "Promotions", icon: Tag, href: "/admin/promotions", count: counts.activePromotions },
         { label: "Categories", icon: ShoppingBag, href: "/admin/categories" },
         { label: "Orders", icon: ShoppingBag, href: "/admin/orders" },
         { label: "Withdrawals", icon: CreditCard, href: "/admin/withdrawals" },
-        { label: "Users", icon: Users, href: "/admin/users" },
-        { label: "Support", icon: HelpCircle, href: "/admin/support" },
+        { label: "Users", icon: Users, href: "/admin/users", count: counts.newUsers },
+        { label: "Support", icon: HelpCircle, href: "/admin/support", count: counts.openTickets },
         { label: "Analytics", icon: BarChart3, href: "/admin/analytics" },
     ];
 
@@ -65,7 +107,6 @@ const Sidebar = ({ role }: SidebarProps) => {
     const links = role === "ADMIN" ? adminLinks : role === "VENDOR" ? vendorLinks : customerLinks;
 
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-    const { data: session } = useSession();
 
     return (
         <>
@@ -126,10 +167,17 @@ const Sidebar = ({ role }: SidebarProps) => {
                                             isActive ? "text-white" : ""
                                         )}>{link.label}</span>
                                     </div>
-                                    <ChevronRight className={clsx(
-                                        "h-4 w-4 transition-all duration-500 relative z-10",
-                                        isActive ? "opacity-100 text-brand-gold" : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
-                                    )} />
+                                    <div className="flex items-center gap-3 relative z-10">
+                                        <ChevronRight className={clsx(
+                                            "h-4 w-4 transition-all duration-500",
+                                            isActive ? "opacity-100 text-brand-gold" : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
+                                        )} />
+                                        {(link as any).count > 0 && (
+                                            <span className="flex h-5 min-w-[20px] px-1.5 items-center justify-center rounded-full bg-brand-accent text-[10px] font-black text-white shadow-[0_0_15px_rgba(255,184,76,0.4)] animate-pulse">
+                                                {(link as any).count}
+                                            </span>
+                                        )}
+                                    </div>
                                 </Link>
                             );
                         })}
