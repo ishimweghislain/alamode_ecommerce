@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { ReactNode } from "react";
 
 interface MotionInViewProps {
@@ -18,7 +18,7 @@ export default function MotionInView({
     direction = "up",
     stagger = false
 }: MotionInViewProps) {
-    const variants = {
+    const variants: Variants = {
         hidden: {
             opacity: 0,
             y: direction === "up" ? 30 : direction === "down" ? -30 : 0
@@ -29,7 +29,7 @@ export default function MotionInView({
             transition: {
                 duration: 0.8,
                 delay,
-                ease: [0.21, 0.47, 0.32, 0.98],
+                ease: "easeOut",
                 staggerChildren: stagger ? 0.1 : 0
             }
         }
