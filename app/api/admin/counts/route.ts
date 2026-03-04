@@ -15,7 +15,7 @@ export async function GET() {
             prisma.vendor.count({ where: { isNew: true } }),
             (prisma as any).promotion.count({ where: { isNew: true } }),
             prisma.user.count({ where: { isNew: true } }),
-            prisma.ticket.count({ where: { isNew: true } }),
+            prisma.ticket.count({ where: { isNewForAdmin: true } }),
             (prisma.withdrawalRequest as any).count({ where: { isNew: true } })
         ]);
 

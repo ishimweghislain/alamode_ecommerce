@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         } else if (type === "users") {
             await (prisma.user as any).updateMany({ where: { isNew: true }, data: { isNew: false } });
         } else if (type === "support") {
-            await (prisma.ticket as any).updateMany({ where: { isNew: true }, data: { isNew: false } });
+            await (prisma.ticket as any).updateMany({ where: { isNewForAdmin: true }, data: { isNewForAdmin: false } });
         } else if (type === "withdrawals") {
             await (prisma.withdrawalRequest as any).updateMany({ where: { isNew: true }, data: { isNew: false } });
         }

@@ -36,10 +36,14 @@ export async function POST(
             }
         });
 
-        // Update ticket's updatedAt timestamp
+        // Update ticket's updatedAt timestamp and notification flags
         await prisma.ticket.update({
             where: { id: ticketId },
-            data: { updatedAt: new Date() }
+            data: {
+                updatedAt: new Date(),
+                isNewForAdmin: user.role !== "ADMIN",
+                isNewForUser: user.role === "ADMIN"
+            }
         });
 
         return NextResponse.json(newMessage);

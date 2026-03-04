@@ -65,7 +65,8 @@ model Ticket {
   subject     String
   status      String   @default("OPEN") // OPEN, RESOLVED, CLOSED
   priority    String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
-  isNew       Boolean  @default(true) // Track for admin dashboard
+  isNewForAdmin Boolean @default(true)
+  isNewForUser  Boolean @default(false)
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages    TicketMessage[]
@@ -196,7 +197,7 @@ model OrderItem {
   quantity  Int
   price     Float
   size      String?
-  isNew     Boolean @default(true) // For vendor fulfillment dashboard
+  isNewForVendor Boolean @default(true) // For vendor fulfillment dashboard
 }
 
 model Review {

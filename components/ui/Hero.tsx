@@ -3,13 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { MoveRight, TrendingUp, Sparkles } from "lucide-react";
+import { MoveRight, TrendingUp, Sparkles, Search } from "lucide-react";
 import PremiumRedirect from "./PremiumRedirect";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Hero = () => {
     const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState("");
     const [redirectConfig, setRedirectConfig] = useState<{
         isOpen: boolean;
         message: string;
@@ -32,6 +33,13 @@ const Hero = () => {
             duration,
             targetUrl: url
         });
+    };
+
+    const handleHeroSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/shop?q=${encodeURIComponent(searchQuery)}`);
+        }
     };
 
     return (
@@ -77,8 +85,29 @@ const Hero = () => {
                             </p>
 
                             <div className="flex flex-col gap-6">
+                                {/* Search Bar Integration */}
+                                <form onSubmit={handleHeroSearch} className="relative w-full max-w-xl group">
+                                    <div className="absolute inset-0 bg-brand-accent/5 blur-2xl group-focus-within:bg-brand-accent/10 transition-all" />
+                                    <div className="relative flex items-center">
+                                        <Search className="absolute left-6 h-5 w-5 text-gray-500 group-focus-within:text-brand-accent transition-colors" />
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder="Hunt for masterpieces, boutiques, or styles..."
+                                            className="w-full bg-white/5 border border-white/10 rounded-luxury py-5 pl-14 pr-6 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-accent/50 focus:bg-white/[0.08] transition-all text-sm md:text-base font-medium"
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="absolute right-3 px-6 py-2.5 bg-brand-accent hover:bg-brand-gold text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-brand-accent/20"
+                                        >
+                                            Search
+                                        </button>
+                                    </div>
+                                </form>
+
                                 {/* Primary Action Row */}
-                                <div className="flex flex-wrap gap-4">
+                                <div className="flex flex-wrap gap-4 pt-2">
                                     <button
                                         onClick={() => triggerRedirect("/shop", "Entering Marketplace", "Curation of exceptional quality awaits...", 3)}
                                         className="group btn-primary flex items-center justify-center min-w-[200px] h-16 text-sm font-black uppercase tracking-widest shadow-2xl shadow-brand-accent/20"
@@ -87,7 +116,7 @@ const Hero = () => {
                                         <MoveRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                     </button>
                                     <button
-                                        onClick={() => triggerRedirect("/register", "Partner with ALAMODE", "To showcase your boutique, presence is required. Creating your vendor sanctuary...", 5)}
+                                        onClick={() => triggerRedirect("/register?role=VENDOR", "Partner with ALAMODE", "To showcase your boutique, presence is required. Creating your vendor sanctuary...", 5)}
                                         className="bg-white/5 hover:bg-white/10 backdrop-blur-xl text-white border border-white/10 rounded-luxury flex items-center justify-center min-w-[200px] h-16 text-sm font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98]"
                                     >
                                         Sell on Alamode

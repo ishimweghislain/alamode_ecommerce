@@ -34,10 +34,13 @@ const Sidebar = ({ role }: SidebarProps) => {
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     useEffect(() => {
-        if (role === "ADMIN" || role === "VENDOR") {
+        if (role === "ADMIN" || role === "VENDOR" || role === "CUSTOMER") {
             const fetchCounts = async () => {
                 try {
-                    const endpoint = role === "ADMIN" ? "/api/admin/counts" : "/api/vendor/counts";
+                    let endpoint = "/api/profile/counts";
+                    if (role === "ADMIN") endpoint = "/api/admin/counts";
+                    if (role === "VENDOR") endpoint = "/api/vendor/counts";
+
                     const res = await axios.get(endpoint);
                     setCounts(res.data);
                 } catch (e) {
@@ -82,6 +85,11 @@ const Sidebar = ({ role }: SidebarProps) => {
                 axios.post("/api/vendor/counts/reset", { type: "support" });
                 setCounts((c: any) => ({ ...c, openTickets: 0 }));
             }
+        } else if (role === "CUSTOMER") {
+            if (pathname === "/profile/support" && counts.openTickets > 0) {
+                axios.post("/api/profile/counts/reset", { type: "support" });
+                setCounts((c: any) => ({ ...c, openTickets: 0 }));
+            }
         }
     }, [pathname, role, counts]);
 
@@ -115,7 +123,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Wishlist", icon: Heart, href: "/profile/wishlist" },
         { label: "Payments", icon: CreditCard, href: "/profile/payments" },
         { label: "Settings", icon: Settings, href: "/profile/settings" },
-        { label: "Help & Support", icon: HelpCircle, href: "/profile/support" },
+        { label: "Help & Support", icon: HelpCircle, href: "/profile/support", count: counts.openTickets },
     ];
 
     const links = role === "ADMIN" ? adminLinks : role === "VENDOR" ? vendorLinks : customerLinks;

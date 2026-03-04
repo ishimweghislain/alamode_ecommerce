@@ -7,27 +7,13 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
     try {
         const user = await getCurrentUser();
-        if (!user || user.role !== "VENDOR") {
+        if (!user) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const vendor = await prisma.vendor.findUnique({
-            where: { userId: user.id }
-        });
-
-        if (!vendor) return new NextResponse("Vendor not found", { status: 404 });
-
         const { type } = await req.json();
 
-        if (type === "orders") {
-            await (prisma.orderItem as any).updateMany({
-                where: {
-                    product: { vendorId: vendor.id },
-                    isNewForVendor: true
-                },
-                data: { isNewForVendor: false }
-            });
-        } else if (type === "support") {
+        if (type === "support") {
             await prisma.ticket.updateMany({
                 where: { userId: user.id, isNewForUser: true },
                 data: { isNewForUser: false }
@@ -36,7 +22,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error("[VENDOR_RESET_ERROR]", error);
+        console.error("[PROFILE_RESET_ERROR]", error);
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
