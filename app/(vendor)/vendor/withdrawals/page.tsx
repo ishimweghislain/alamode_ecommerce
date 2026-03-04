@@ -32,11 +32,11 @@ export default async function VendorWithdrawalsPage() {
     let totalPending = 0;
 
     items.forEach(item => {
-        const amount = item.price * item.quantity;
-        if (new Date(item.order.createdAt) < sevenDaysAgo) {
-            totalCleared += amount;
+        const netAmount = (item.price * item.quantity) * 0.95;
+        if (item.order.status === 'SHIPPED' || item.order.status === 'DELIVERED') {
+            totalCleared += netAmount;
         } else {
-            totalPending += amount;
+            totalPending += netAmount;
         }
     });
 

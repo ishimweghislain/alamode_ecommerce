@@ -159,11 +159,9 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
                             </div>
                         </div>
 
-                        {order.status === "SHIPPED" && (
-                            <div className="pt-6 border-t border-white/5">
-                                <UpdateOrderStatus orderId={order.id} currentStatus={order.status} role="CUSTOMER" />
-                            </div>
-                        )}
+                        <div className="pt-6 border-t border-white/5">
+                            <UpdateOrderStatus orderId={order.id} currentStatus={order.status} role="CUSTOMER" />
+                        </div>
                     </div>
 
                     {/* Delivery */}

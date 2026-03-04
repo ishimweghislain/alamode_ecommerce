@@ -11,10 +11,10 @@ interface WithdrawalsClientProps {
     withdrawals: any[];
 }
 
-export default function WithdrawalsClient({ 
-    availableBalance, 
-    pendingClearance, 
-    withdrawals 
+export default function WithdrawalsClient({
+    availableBalance,
+    pendingClearance,
+    withdrawals
 }: WithdrawalsClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,7 +25,7 @@ export default function WithdrawalsClient({
                     <h1 className="text-3xl font-outfit font-bold text-white mb-2">Financials & Withdrawals</h1>
                     <p className="text-gray-400">Request payout and track your earnings.</p>
                 </div>
-                <button 
+                <button
                     onClick={() => setIsModalOpen(true)}
                     className="btn-gold flex items-center gap-2 px-6 h-12"
                 >
@@ -53,7 +53,7 @@ export default function WithdrawalsClient({
                     </div>
                     <div className="mt-8 pt-8 border-t border-white/5 flex items-center gap-2 text-xs text-gray-500">
                         <Clock className="h-4 w-4 text-brand-gold" />
-                        Awaiting 7-day safety buffer period.
+                        Clears upon shipping initiation.
                     </div>
                 </div>
             </div>
@@ -80,12 +80,11 @@ export default function WithdrawalsClient({
                                         {formatPrice(req.amount)}
                                     </td>
                                     <td className="p-4">
-                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                                            req.status === 'COMPLETED' ? 'bg-green-500/10 text-green-500' :
-                                            req.status === 'APPROVED' ? 'bg-blue-500/10 text-blue-500' :
-                                            req.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
-                                            'bg-red-500/10 text-red-500'
-                                        }`}>
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${req.status === 'COMPLETED' ? 'bg-green-500/10 text-green-500' :
+                                                req.status === 'APPROVED' ? 'bg-blue-500/10 text-blue-500' :
+                                                    req.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
+                                                        'bg-red-500/10 text-red-500'
+                                            }`}>
                                             {req.status}
                                         </span>
                                     </td>
@@ -105,9 +104,9 @@ export default function WithdrawalsClient({
             </div>
 
             {isModalOpen && (
-                <WithdrawalModal 
-                    availableBalance={availableBalance} 
-                    onClose={() => setIsModalOpen(false)} 
+                <WithdrawalModal
+                    availableBalance={availableBalance}
+                    onClose={() => setIsModalOpen(false)}
                 />
             )}
         </div>
