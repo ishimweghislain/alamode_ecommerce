@@ -65,9 +65,6 @@ const Navbar = () => {
                             )}
                         </div>
 
-                        {!isDashboard && (
-                            <GlobalSearch />
-                        )}
 
                         <div className="flex items-center gap-5">
                             {session && !isDashboard && <NotificationsBell />}
