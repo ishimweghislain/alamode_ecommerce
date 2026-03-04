@@ -5,6 +5,7 @@ import { ShoppingBag, MapPin, Smartphone, CreditCard, ChevronLeft, Truck, CheckC
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import UpdateOrderStatus from "@/components/vendor/UpdateOrderStatus";
 
 interface OrderPageProps {
     params: Promise<{
@@ -94,18 +95,15 @@ export default async function VendorOrderDetailsPage({ params }: OrderPageProps)
                         </div>
                     </div>
 
-                    <div className="card-luxury p-8 flex flex-col items-center justify-center space-y-4 border-dashed border-white/10">
-                        <div className="h-12 w-12 rounded-full bg-brand-accent/10 flex items-center justify-center">
-                            <Package className="h-6 w-6 text-brand-accent animate-pulse" />
+                    <div className="card-luxury p-8 flex flex-col items-center justify-center space-y-6 border-dashed border-white/10">
+                        <div className="h-16 w-16 rounded-full bg-brand-accent/5 flex items-center justify-center ring-1 ring-brand-accent/20">
+                            <Package className="h-8 w-8 text-brand-accent animate-pulse" />
                         </div>
                         <div className="text-center">
-                            <h4 className="text-white font-bold">Packaging & Logistics</h4>
-                            <p className="text-gray-500 text-sm mt-1 max-w-xs">Ensure premium protective wrapping for luxury transit.</p>
+                            <h4 className="text-white font-bold text-lg">Logistics Management</h4>
+                            <p className="text-gray-500 text-sm mt-2 max-w-xs mx-auto">Update the fulfillment status to notify the customer of their luxury acquisition's progress.</p>
                         </div>
-                        <button className="btn-primary w-full max-w-xs py-4 flex items-center justify-center gap-3">
-                            <Truck className="h-5 w-5" />
-                            Mark as Shipped
-                        </button>
+                        <UpdateOrderStatus orderId={order.id} currentStatus={order.status} role="VENDOR" />
                     </div>
                 </div>
 

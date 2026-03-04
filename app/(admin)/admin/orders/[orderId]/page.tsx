@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import UpdateOrderStatus from "@/components/vendor/UpdateOrderStatus";
 
 interface AdminOrderPageProps {
     params: Promise<{
@@ -106,14 +107,15 @@ export default async function AdminOrderDetailsPage({ params }: AdminOrderPagePr
                             </div>
                         </div>
 
-                        <div className="card-luxury p-6 flex flex-col justify-center items-center text-center space-y-4 group hover:border-brand-gold/50 transition-all cursor-pointer">
-                            <div className="h-12 w-12 rounded-full bg-brand-gold/10 flex items-center justify-center text-brand-gold transition-transform group-hover:scale-110">
-                                <Package className="h-6 w-6" />
+                        <div className="card-luxury p-8 flex flex-col justify-center items-center text-center space-y-6 group border-dashed border-white/10 ring-1 ring-white/5">
+                            <div className="h-16 w-16 rounded-full bg-brand-gold/5 flex items-center justify-center text-brand-gold transition-all ring-1 ring-brand-gold/10 group-hover:scale-105 group-hover:bg-brand-gold/10">
+                                <Package className="h-8 w-8" />
                             </div>
-                            <div>
+                            <div className="max-w-xs">
                                 <h4 className="text-white font-bold uppercase tracking-widest text-xs">Verify Acquisition</h4>
-                                <p className="text-gray-500 text-xs mt-1">Seal the transaction as fulfilled across the ecosystem.</p>
+                                <p className="text-gray-500 text-[10px] mt-2 leading-relaxed">Seal the transaction as fulfilled across the entire Alamode ecosystem.</p>
                             </div>
+                            <UpdateOrderStatus orderId={order.id} currentStatus={order.status} role="ADMIN" />
                         </div>
                     </div>
                 </div>
