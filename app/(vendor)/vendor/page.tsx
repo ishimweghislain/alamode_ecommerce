@@ -270,9 +270,10 @@ export default async function VendorDashboard() {
                                         </td>
                                         <td className="p-4">
                                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${order.status === 'DELIVERED' ? 'bg-green-500/10 text-green-500' :
-                                                order.status === 'PAID' ? 'bg-blue-500/10 text-blue-500' :
-                                                    order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
-                                                        'bg-white/5 text-gray-400'
+                                                order.status === 'SHIPPED' ? 'bg-orange-500/10 text-orange-500' :
+                                                    order.status === 'PAID' ? 'bg-blue-500/10 text-blue-500' :
+                                                        order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
+                                                            'bg-white/5 text-gray-400'
                                                 }`}>
                                                 {order.status}
                                             </span>

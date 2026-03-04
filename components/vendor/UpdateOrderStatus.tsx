@@ -45,10 +45,10 @@ const UpdateOrderStatus = ({ orderId, currentStatus, role }: UpdateOrderStatusPr
                 <button
                     disabled={isLoading}
                     onClick={() => updateStatus("SHIPPED")}
-                    className="btn-primary w-full py-4 flex items-center justify-center gap-3 group disabled:opacity-50"
+                    className="w-full py-5 rounded-2xl bg-gradient-to-r from-brand-accent to-orange-600 text-white font-bold uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 hover:shadow-2xl hover:shadow-brand-accent/20 transition-all active:scale-[0.98] group disabled:opacity-50"
                 >
-                    <Truck className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                    {isLoading ? "Updating..." : "Mark as Shipped"}
+                    <Truck className="h-5 w-5 group-hover:translate-x-2 transition-transform animate-pulse" />
+                    {isLoading ? "Synchronizing..." : "Initiate Shipping"}
                 </button>
             )}
 
@@ -56,10 +56,10 @@ const UpdateOrderStatus = ({ orderId, currentStatus, role }: UpdateOrderStatusPr
                 <button
                     disabled={isLoading}
                     onClick={() => updateStatus("DELIVERED")}
-                    className="btn-gold w-full py-4 flex items-center justify-center gap-3 group disabled:opacity-50"
+                    className="w-full py-5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-bold uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-4 hover:shadow-2xl hover:shadow-emerald-600/20 transition-all active:scale-[0.98] group disabled:opacity-50"
                 >
-                    <CheckCircle2 className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                    {isLoading ? "Updating..." : "Confirm Delivery"}
+                    <CheckCircle2 className="h-5 w-5 group-hover:scale-125 transition-transform animate-bounce" />
+                    {isLoading ? "Verifying..." : role === "ADMIN" ? "Confirm Final Delivery" : "Confirm My Order Receipt"}
                 </button>
             )}
         </div>

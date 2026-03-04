@@ -31,21 +31,19 @@ export async function PATCH(
             return new NextResponse("Order not found", { status: 404 });
         }
 
-        // Check Permissions: ADMIN or VENDOR (if vendor owns a product in the order)
-        let isOwner = false;
-        if (user.role === "VENDOR") {
-            const vendor = await prisma.vendor.findUnique({
-                where: { userId: user.id }
-            });
-            if (vendor) {
-                isOwner = order.items.some(item => item.product.vendorId === vendor.id);
-            }
-        }
-
+        // Check Permissions
         const isAdmin = user.role === "ADMIN";
+        const isCustomer = user.role === "CUSTOMER" && order.userId === user.id;
 
-        if (!isAdmin && !isOwner) {
-            return new NextResponse("Forbidden", { status: 403 });
+        if (!isAdmin) {
+            // Customers can ONLY mark as DELIVERED if it's currently SHIPPED
+            if (isCustomer) {
+                if (status !== "DELIVERED" || order.status !== "SHIPPED") {
+                    return new NextResponse("Invalid status transition for customer", { status: 400 });
+                }
+            } else {
+                return new NextResponse("Forbidden", { status: 403 });
+            }
         }
 
         const updatedOrder = await prisma.order.update({
