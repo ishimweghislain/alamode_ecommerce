@@ -33,6 +33,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
         { label: "Vendors", icon: Store, href: "/admin/vendors" },
         { label: "Products", icon: Package, href: "/admin/products" },
+        { label: "Promotions", icon: Tag, href: "/admin/promotions" },
         { label: "Categories", icon: ShoppingBag, href: "/admin/categories" },
         { label: "Orders", icon: ShoppingBag, href: "/admin/orders" },
         { label: "Withdrawals", icon: CreditCard, href: "/admin/withdrawals" },

@@ -32,6 +32,7 @@ export default async function ShopPage({
     const activeCategory = categorySlug ? categories.find(c => c.slug === categorySlug) : null;
     const activeVendor = vendorId ? vendors.find(v => v.id === vendorId) : null;
 
+    const now = new Date();
     const products = await prisma.product.findMany({
         where: {
             AND: [
@@ -41,22 +42,18 @@ export default async function ShopPage({
                         { description: { contains: query, mode: 'insensitive' } }
                     ]
                 } : {},
-                categorySlug ? {
-                    category: {
-                        slug: categorySlug
-                    }
-                } : {},
-                subcategorySlug ? {
-                    subcategory: {
-                        slug: subcategorySlug
-                    }
-                } : {},
+                categorySlug ? { category: { slug: categorySlug } } : {},
+                subcategorySlug ? { subcategory: { slug: subcategorySlug } } : {},
                 vendorId ? { vendorId } : {}
             ]
         },
         include: {
             category: true,
-            vendor: true
+            vendor: true,
+            promotions: {
+                where: { isActive: true, expiresAt: { gt: now } },
+                take: 1,
+            },
         },
         orderBy: {
             createdAt: 'desc'
@@ -322,16 +319,23 @@ export default async function ShopPage({
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                                {products.map((product: any) => (
-                                    <ProductCard
-                                        key={product.id}
-                                        id={product.id}
-                                        name={product.name}
-                                        price={product.price}
-                                        image={product.images[0]}
-                                        category={product.category.name}
-                                    />
-                                ))}
+                                {products.map((product: any) => {
+                                    const promo = product.promotions?.[0];
+                                    return (
+                                        <ProductCard
+                                            key={product.id}
+                                            id={product.id}
+                                            name={product.name}
+                                            price={product.price}
+                                            image={product.images[0]}
+                                            category={product.category.name}
+                                            salePrice={promo ? promo.salePrice : undefined}
+                                            discountPct={promo ? promo.discountPct : undefined}
+                                            sizes={(product as any).sizes || []}
+                                            sizeType={(product as any).sizeType || undefined}
+                                        />
+                                    );
+                                })}
                             </div>
 
                             {products.length === 0 && (
