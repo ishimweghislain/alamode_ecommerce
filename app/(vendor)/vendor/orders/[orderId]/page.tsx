@@ -97,13 +97,15 @@ export default async function VendorOrderDetailsPage({ params }: OrderPageProps)
 
                     <div className="card-luxury p-8 flex flex-col items-center justify-center space-y-6 border-dashed border-white/10">
                         <div className="h-16 w-16 rounded-full bg-brand-accent/5 flex items-center justify-center ring-1 ring-brand-accent/20">
-                            <Package className="h-8 w-8 text-brand-accent animate-pulse" />
+                            <Truck className="h-8 w-8 text-brand-accent animate-pulse" />
                         </div>
                         <div className="text-center">
-                            <h4 className="text-white font-bold text-lg">Logistics Management</h4>
-                            <p className="text-gray-500 text-sm mt-2 max-w-xs mx-auto">Update the fulfillment status to notify the customer of their luxury acquisition's progress.</p>
+                            <h4 className="text-white font-bold text-lg">Logistics Tracking</h4>
+                            <p className="text-gray-500 text-sm mt-2 max-w-xs mx-auto">Track your item's journey from your workshop to the customer. Status updates are managed by Alamode Logistics.</p>
                         </div>
-                        <UpdateOrderStatus orderId={order.id} currentStatus={order.status} role="VENDOR" />
+                        <div className="px-6 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-gray-400 uppercase tracking-widest">
+                            Official Status: {order.status}
+                        </div>
                     </div>
                 </div>
 

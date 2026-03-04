@@ -25,29 +25,12 @@ export default async function VendorDashboard() {
     // Fetch Real Analytics
     const vendorId = vendor.id;
 
-    // 1. Total Revenue (PAID, SHIPPED, DELIVERED)
-    const revenueResult = await prisma.orderItem.aggregate({
-        where: {
-            product: { vendorId },
-            order: {
-                status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
-            }
-        },
-        _sum: {
-            price: true,
-            // Assuming price in OrderItem is unit price, otherwise it should be price * quantity.
-            // But usually price is recorded as (unit_price * quantity) at the time of order.
-            // Let's assume standard price * quantity if quantity is available.
-        }
-    });
-
-    // Actually, sum(price * quantity) is better. Since aggregate doesn't support multiplication, 
-    // we'll fetch items and sum them manually.
+    // 1. Total Revenue (ONLY SHIPPED OR DELIVERED as per new rules)
     const revenueItems = await prisma.orderItem.findMany({
         where: {
             product: { vendorId },
             order: {
-                status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
+                status: { in: ['SHIPPED', 'DELIVERED'] }
             }
         }
     });

@@ -39,7 +39,7 @@ export default function VendorProfileModal({ isOpen, onClose, initialData }: Ven
 
         try {
             const res = await axios.post("/api/upload", data);
-            setFormData({ ...formData, logo: res.data.url });
+            setFormData({ ...formData, logo: res.data.secure_url });
             toast.success("Logo uploaded");
         } catch (error) {
             toast.error("Upload failed");
