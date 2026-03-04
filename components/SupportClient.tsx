@@ -78,12 +78,12 @@ export default function SupportClient({ tickets }: SupportClientProps) {
                         </h3>
                         <div className="space-y-4">
                             <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">WhatsApp Elite</p>
-                                <p className="text-sm text-white font-mono">+250 78X XXX XXX</p>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">WhatsApp / Call</p>
+                                <a href="tel:+250789054955" className="text-sm text-white font-mono hover:text-brand-gold transition-colors">+250 789 054 955</a>
                             </div>
                             <div className="p-3 bg-white/5 rounded-xl border border-white/5">
                                 <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Email Concierge</p>
-                                <p className="text-sm text-white font-mono">support@alamode.rw</p>
+                                <a href="mailto:mugisha@programmage.com" className="text-sm text-white font-mono hover:text-brand-gold transition-colors">mugisha@programmage.com</a>
                             </div>
                         </div>
                     </div>

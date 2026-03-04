@@ -20,15 +20,23 @@ interface ProductCardProps {
     images?: string[];
     category: string;
     rating?: number;
+    salePrice?: number;
+    discountPct?: number;
+    sizes?: string[];
+    sizeType?: string;
 }
 
-const ProductCard = ({ id, name, price, image, images, category, rating = 4.5 }: ProductCardProps) => {
+const ProductCard = ({ id, name, price, image, images, category, rating = 4.5, salePrice, discountPct, sizes = [], sizeType }: ProductCardProps) => {
     const { data: session } = useSession();
     const { addItem } = useCart();
     const [isWishlisting, setIsWishlisting] = useState(false);
+    const [showSizePicker, setShowSizePicker] = useState(false);
+    const [selectedSize, setSelectedSize] = useState("");
     const productImages = images && images.length > 0 ? images : image ? [image] : ["/placeholder.png"];
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
+    const displayPrice = salePrice ?? price;
+    const isOnSale = !!salePrice && salePrice < price;
 
     const toggleWishlist = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -113,11 +121,24 @@ const ProductCard = ({ id, name, price, image, images, category, rating = 4.5 }:
                     </div>
                 )}
 
-                <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-brand-dark/80 backdrop-blur-md text-brand-accent text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border border-white/5">
-                        {category}
-                    </span>
-                </div>
+                {/* Discount badge */}
+                {isOnSale && discountPct && (
+                    <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+                        <span className="bg-brand-gold text-background-dark text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
+                            -{discountPct}% OFF
+                        </span>
+                        <span className="bg-brand-dark/80 backdrop-blur-md text-brand-accent text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border border-white/5">
+                            {category}
+                        </span>
+                    </div>
+                )}
+                {!isOnSale && (
+                    <div className="absolute top-3 left-3 z-10">
+                        <span className="bg-brand-dark/80 backdrop-blur-md text-brand-accent text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border border-white/5">
+                            {category}
+                        </span>
+                    </div>
+                )}
 
                 <button
                     onClick={toggleWishlist}
@@ -147,22 +168,29 @@ const ProductCard = ({ id, name, price, image, images, category, rating = 4.5 }:
 
                 <div className="mt-auto pt-4 flex items-center justify-between border-t border-white/5">
                     <div className="flex flex-col">
-                        <span className="text-[10px] text-gray-500 uppercase tracking-tighter">Current Price</span>
-                        <span className="text-brand-gold font-bold text-xl font-outfit">
-                            {formatPrice(price)}
+                        <span className="text-[10px] text-gray-500 uppercase tracking-tighter">
+                            {isOnSale ? 'Sale Price' : 'Current Price'}
                         </span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-brand-gold font-bold text-xl font-outfit">
+                                {formatPrice(displayPrice)}
+                            </span>
+                            {isOnSale && (
+                                <span className="text-gray-500 line-through text-sm">
+                                    {formatPrice(price)}
+                                </span>
+                            )}
+                        </div>
                     </div>
                     <button
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            addItem({
-                                id,
-                                name,
-                                price,
-                                image: productImages[0],
-                                quantity: 1
-                            });
+                            if (sizes.length > 0) {
+                                setShowSizePicker(true);
+                            } else {
+                                addItem({ id, name, price: displayPrice, image: productImages[0], quantity: 1 });
+                            }
                         }}
                         className="p-3 bg-brand-accent hover:bg-brand-gold text-white rounded-2xl shadow-lg shadow-brand-accent/20 transition-all hover:scale-105 active:scale-95 group/btn"
                     >
@@ -170,6 +198,62 @@ const ProductCard = ({ id, name, price, image, images, category, rating = 4.5 }:
                     </button>
                 </div>
             </div>
+
+            {/* Size Picker Modal */}
+            {showSizePicker && (
+                <div
+                    className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+                    onClick={(e) => { e.stopPropagation(); setShowSizePicker(false); }}
+                >
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+                    <div
+                        className="relative bg-[#0f0f0f] border border-white/10 rounded-3xl p-8 max-w-sm w-full shadow-2xl z-10"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-white font-bold text-xl mb-1">Select Your Size</h3>
+                        <p className="text-gray-400 text-xs mb-5">{sizeType === 'shoe' ? 'Shoe size' : 'Clothing size'} for <span className="text-brand-accent">{name}</span></p>
+                        <div className="flex flex-wrap gap-2 mb-6">
+                            {sizes.map((sz) => (
+                                <button
+                                    key={sz}
+                                    onClick={() => setSelectedSize(sz)}
+                                    className={`px-4 py-2 rounded-xl border text-sm font-bold transition-all ${selectedSize === sz
+                                            ? 'border-brand-accent bg-brand-accent/20 text-brand-accent'
+                                            : 'border-white/20 text-gray-300 hover:border-white/40'
+                                        }`}
+                                >
+                                    {sz}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowSizePicker(false)}
+                                className="flex-1 py-3 rounded-xl bg-white/5 text-white text-sm font-bold hover:bg-white/10 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                disabled={!selectedSize}
+                                onClick={() => {
+                                    addItem({
+                                        id: `${id}-${selectedSize}`,
+                                        name: `${name} (${selectedSize})`,
+                                        price: displayPrice,
+                                        image: productImages[0],
+                                        quantity: 1
+                                    });
+                                    setShowSizePicker(false);
+                                    setSelectedSize("");
+                                }}
+                                className="flex-[2] py-3 rounded-xl bg-brand-accent text-white text-sm font-bold hover:bg-brand-gold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
