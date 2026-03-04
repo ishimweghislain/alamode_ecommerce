@@ -32,9 +32,10 @@ export async function POST(req: Request) {
                 status: "PAID", // Simulation: Auto-mark as PAID
                 items: {
                     create: items.map((item: any) => ({
-                        productId: item.productId || item.id,
+                        productId: item.productId || item.id.split("-")[0],
                         quantity: item.quantity,
                         price: item.price,
+                        size: item.size,
                     })),
                 },
             },

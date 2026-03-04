@@ -5,10 +5,12 @@ import { toast } from "react-hot-toast";
 
 interface CartItem {
     id: string;
+    productId: string;
     name: string;
     price: number;
     image: string;
     quantity: number;
+    size?: string;
 }
 
 interface CartContextType {

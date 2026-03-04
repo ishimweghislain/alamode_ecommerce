@@ -5,11 +5,9 @@ import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, Ed
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
-import { AddToCartButton } from "@/components/ui/AddToCartButton";
-import { BuyNowButton } from "@/components/ui/BuyNowButton";
-import ProductGallery from "@/components/ui/ProductGallery";
-
-import WishlistToggle from "@/components/ui/WishlistToggle";
+import ProductGallery from "@/components/product/ProductGallery";
+import WishlistToggle from "@/components/product/WishlistToggle";
+import ProductActions from "@/components/product/ProductActions";
 
 export const dynamic = "force-dynamic";
 
@@ -137,27 +135,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             {product.description}
                         </p>
 
-                        {/* Size Selector */}
-                        {(product as any).sizes?.length > 0 && (
-                            <div className="pt-4 border-t border-white/10">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Ruler className="h-4 w-4 text-brand-accent" />
-                                    <p className="font-bold text-white uppercase tracking-widest text-[10px]">
-                                        {(product as any).sizeType === "shoe" ? "Shoe Sizes" : "Available Sizes"}
-                                    </p>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {(product as any).sizes.map((size: string) => (
-                                        <span
-                                            key={size}
-                                            className="px-4 py-2 border border-white/20 rounded-xl text-sm text-gray-300 hover:border-brand-accent hover:text-brand-accent cursor-pointer transition-all"
-                                        >
-                                            {size}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        <ProductActions
+                            isAdmin={isAdmin}
+                            product={{
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                salePrice: (product as any).promotions?.[0]?.isActive && new Date((product as any).promotions[0].expiresAt) > new Date() ? (product as any).promotions[0].salePrice : undefined,
+                                image: product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop",
+                                sizes: (product as any).sizes || [],
+                                sizeType: (product as any).sizeType
+                            }}
+                        />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/10">
                             <div className="flex items-center gap-3 text-gray-400 text-sm">
@@ -174,27 +163,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             </div>
                         </div>
                     </div>
-
-                    {!isAdmin && (
-                        <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                            <AddToCartButton
-                                product={{
-                                    id: product.id,
-                                    name: product.name,
-                                    price: product.price,
-                                    image: product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"
-                                }}
-                            />
-                            <BuyNowButton
-                                product={{
-                                    id: product.id,
-                                    name: product.name,
-                                    price: product.price,
-                                    image: product.images[0] || "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop"
-                                }}
-                            />
-                        </div>
-                    )}
 
                     {/* Vendor Info */}
                     <div className="card-luxury p-4 flex items-center gap-4">

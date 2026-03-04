@@ -55,6 +55,11 @@ export default function CartPage() {
 
                             <div className="flex-1 min-w-0">
                                 <h3 className="text-white font-medium text-lg truncate mb-1">{item.name}</h3>
+                                {(item as any).size && (
+                                    <p className="text-[10px] text-brand-gold uppercase tracking-[0.2em] font-black mb-1">
+                                        Size: {(item as any).size}
+                                    </p>
+                                )}
                                 <p className="text-brand-gold font-bold mb-4">{formatPrice(item.price)}</p>
 
                                 <div className="flex items-center gap-4">

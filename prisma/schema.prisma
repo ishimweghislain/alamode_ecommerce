@@ -191,6 +191,7 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
   price     Float
+  size      String?
 }
 
 model Review {

@@ -122,6 +122,9 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
                                         <div>
                                             <h4 className="text-white font-bold text-lg mb-1">{item.product.name}</h4>
                                             <p className="text-sm text-gray-400">Sold by: <span className="text-brand-accent">{item.product.vendor.storeName}</span></p>
+                                            {item.size && (
+                                                <p className="text-xs text-brand-gold mt-1 font-bold">Size: {item.size}</p>
+                                            )}
                                             <p className="text-xs text-gray-500 mt-2">Quantity: {item.quantity}</p>
                                         </div>
                                         <div className="text-right">

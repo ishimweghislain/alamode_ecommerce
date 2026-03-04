@@ -189,7 +189,7 @@ const ProductCard = ({ id, name, price, image, images, category, rating = 4.5, s
                             if (sizes.length > 0) {
                                 setShowSizePicker(true);
                             } else {
-                                addItem({ id, name, price: displayPrice, image: productImages[0], quantity: 1 });
+                                addItem({ id, productId: id, name, price: displayPrice, image: productImages[0], quantity: 1 });
                             }
                         }}
                         className="p-3 bg-brand-accent hover:bg-brand-gold text-white rounded-2xl shadow-lg shadow-brand-accent/20 transition-all hover:scale-105 active:scale-95 group/btn"
@@ -218,8 +218,8 @@ const ProductCard = ({ id, name, price, image, images, category, rating = 4.5, s
                                     key={sz}
                                     onClick={() => setSelectedSize(sz)}
                                     className={`px-4 py-2 rounded-xl border text-sm font-bold transition-all ${selectedSize === sz
-                                            ? 'border-brand-accent bg-brand-accent/20 text-brand-accent'
-                                            : 'border-white/20 text-gray-300 hover:border-white/40'
+                                        ? 'border-brand-accent bg-brand-accent/20 text-brand-accent'
+                                        : 'border-white/20 text-gray-300 hover:border-white/40'
                                         }`}
                                 >
                                     {sz}
@@ -238,10 +238,12 @@ const ProductCard = ({ id, name, price, image, images, category, rating = 4.5, s
                                 onClick={() => {
                                     addItem({
                                         id: `${id}-${selectedSize}`,
+                                        productId: id,
                                         name: `${name} (${selectedSize})`,
                                         price: displayPrice,
                                         image: productImages[0],
-                                        quantity: 1
+                                        quantity: 1,
+                                        size: selectedSize
                                     });
                                     setShowSizePicker(false);
                                     setSelectedSize("");

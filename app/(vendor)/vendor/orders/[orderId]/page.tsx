@@ -83,6 +83,12 @@ export default async function VendorOrderDetailsPage({ params }: OrderPageProps)
                                                 <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Quantity</p>
                                                 <p className="text-white font-bold">x{item.quantity}</p>
                                             </div>
+                                            {item.size && (
+                                                <div>
+                                                    <p className="text-[10px] text-brand-gold uppercase font-black tracking-widest mb-1">Selected Size</p>
+                                                    <p className="text-brand-gold font-bold">{item.size}</p>
+                                                </div>
+                                            )}
                                             <div>
                                                 <p className="text-[10px] text-brand-accent uppercase font-black tracking-widest mb-1">Total</p>
                                                 <p className="text-brand-accent font-bold">{formatPrice(item.price * item.quantity)}</p>

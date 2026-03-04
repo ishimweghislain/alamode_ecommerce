@@ -19,28 +19,45 @@ export default async function Home() {
     if (user.role === "CUSTOMER") redirect("/profile");
   }
 
+  const now = new Date();
   const featuredProductsRaw = await (prisma.product as any).findMany({
     where: { isFeatured: true },
-    include: { category: true },
+    include: {
+      category: true,
+      promotions: {
+        where: { isActive: true, expiresAt: { gt: now } },
+        take: 1
+      }
+    },
     take: 4,
     orderBy: { updatedAt: 'desc' }
   });
 
   const trendingProductsRaw = await (prisma.product as any).findMany({
     where: { isTrending: true },
-    include: { category: true },
+    include: {
+      category: true,
+      promotions: {
+        where: { isActive: true, expiresAt: { gt: now } },
+        take: 1
+      }
+    },
     take: 4,
     orderBy: { updatedAt: 'desc' }
   });
 
   const featuredProducts = (featuredProductsRaw as any[]).map(p => ({
     ...p,
-    category: p.category?.name || "Category"
+    category: p.category?.name || "Category",
+    salePrice: p.promotions?.[0]?.salePrice,
+    discountPct: p.promotions?.[0]?.discountPct
   }));
 
   const trendingProducts = (trendingProductsRaw as any[]).map(p => ({
     ...p,
-    category: p.category?.name || "Category"
+    category: p.category?.name || "Category",
+    salePrice: p.promotions?.[0]?.salePrice,
+    discountPct: p.promotions?.[0]?.discountPct
   }));
 
   return (
