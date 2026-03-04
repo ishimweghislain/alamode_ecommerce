@@ -4,6 +4,7 @@ import { formatPrice } from "@/lib/utils";
 import { Heart, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import SignOutButton from "@/components/ui/SignOutButton";
 
 export default async function WishlistPage() {
     const user = await getCurrentUser();
@@ -81,10 +82,14 @@ export default async function WishlistPage() {
                         <Heart className="h-16 w-16 text-gray-700 mx-auto mb-6 opacity-20" />
                         <h3 className="text-2xl font-bold text-white mb-2">Your Private Gallery is Empty</h3>
                         <p className="text-gray-400 max-w-xs mx-auto mb-8">Adventure back to the Elite Mall to discover and curate your favorite masterpieces.</p>
-                        <Link href="/shop" className="btn-gold px-12 py-4 inline-flex items-center gap-2 group">
-                            <span>Return to the Mall</span>
-                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                        </Link>
+                        <div className="flex flex-col items-center gap-4">
+                            <Link href="/shop" className="btn-gold px-12 py-4 inline-flex items-center gap-2 group">
+                                <span>Return to the Mall</span>
+                                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+
+                            <SignOutButton />
+                        </div>
                     </div>
                 )}
             </div>
