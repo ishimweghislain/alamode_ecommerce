@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 
 import NotificationsBell from "@/components/ui/NotificationsBell";
 import LogoutModal from "@/components/ui/LogoutModal";
+import GlobalSearch from "./GlobalSearch";
 
 const Navbar = () => {
     const { data: session } = useSession();
@@ -65,16 +66,7 @@ const Navbar = () => {
                         </div>
 
                         {!isDashboard && (
-                            <div className="hidden md:flex flex-1 max-w-md mx-8">
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        placeholder="Search luxury products..."
-                                        className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-brand-accent transition-all"
-                                    />
-                                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-600" />
-                                </div>
-                            </div>
+                            <GlobalSearch />
                         )}
 
                         <div className="flex items-center gap-5">
