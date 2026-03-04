@@ -58,7 +58,7 @@ const Footer = () => {
                 </div>
 
                 <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                    <p>© {new Date().getFullYear()} ALAMODE - Designed for Excellence.</p>
+                    <p>© {new Date().getFullYear()} ALAMODE - Designed By Fullstack SOftware LTD.</p>
                     <div className="flex gap-6">
                         <Link href="/privacy" className="hover:text-white">Privacy</Link>
                         <Link href="/terms" className="hover:text-white">Terms</Link>

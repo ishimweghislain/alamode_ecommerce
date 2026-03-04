@@ -1,8 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ui/ProductCard";
-import { Search, Filter, SlidersHorizontal, Shirt, Smartphone, Home, LayoutGrid, CheckCircle2 } from "lucide-react";
+import { Search, Filter, SlidersHorizontal, Shirt, Smartphone, Home, LayoutGrid, CheckCircle2, Store, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import { clsx } from "clsx";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -15,12 +16,21 @@ export default async function ShopPage({
     const query = typeof params.q === 'string' ? params.q : undefined;
     const categorySlug = typeof params.category === 'string' ? params.category : undefined;
     const subcategorySlug = typeof params.subcategory === 'string' ? params.subcategory : undefined;
+    const vendorId = typeof params.vendorId === 'string' ? params.vendorId : undefined;
 
     const categories = await prisma.category.findMany({
         include: { subcategories: true }
     });
 
+    const vendors = await prisma.vendor.findMany({
+        where: { isApproved: true },
+        include: {
+            _count: { select: { products: true } }
+        }
+    });
+
     const activeCategory = categorySlug ? categories.find(c => c.slug === categorySlug) : null;
+    const activeVendor = vendorId ? vendors.find(v => v.id === vendorId) : null;
 
     const products = await prisma.product.findMany({
         where: {
@@ -40,16 +50,20 @@ export default async function ShopPage({
                     subcategory: {
                         slug: subcategorySlug
                     }
-                } : {}
+                } : {},
+                vendorId ? { vendorId } : {}
             ]
         },
         include: {
-            category: true
+            category: true,
+            vendor: true
         },
         orderBy: {
             createdAt: 'desc'
         }
     });
+
+    const isShowingProducts = !!(query || categorySlug || subcategorySlug || vendorId);
 
     const shopCategories = [
         { name: "All Items", slug: null, icon: LayoutGrid, color: "from-gray-900 to-gray-800" },
@@ -61,155 +75,222 @@ export default async function ShopPage({
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             {/* Header Area */}
-            <div className="mb-12">
-                <h1 className="text-4xl font-outfit font-bold text-white mb-4">The Collection</h1>
-                <p className="text-gray-400">Curated excellence for Rwanda's most discerning tastes.</p>
+            <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <h1 className="text-4xl font-outfit font-bold text-white mb-4">
+                        {activeVendor ? activeVendor.storeName : "The Alamode Mall"}
+                    </h1>
+                    <p className="text-gray-400 max-w-xl">
+                        {activeVendor
+                            ? activeVendor.description
+                            : "Explore our exclusive boutiques and curated collections from Rwanda's finest artisans."}
+                    </p>
+                </div>
+                {isShowingProducts && (
+                    <Link href="/shop" className="text-brand-accent font-bold uppercase tracking-widest text-[10px] flex items-center gap-2 hover:underline">
+                        <Store className="h-4 w-4" />
+                        Back to Mall Directory
+                    </Link>
+                )}
             </div>
 
-            {/* Category Cards Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-                {shopCategories.map((cat) => {
-                    const isActive = categorySlug === cat.slug || (!categorySlug && cat.slug === null);
-                    return (
-                        <Link
-                            key={cat.name}
-                            href={cat.slug ? `/shop?category=${cat.slug}` : '/shop'}
-                            className={clsx(
-                                "relative overflow-hidden p-6 rounded-3xl border transition-all hover:scale-[1.02] active:scale-[0.98] group",
-                                isActive
-                                    ? "border-brand-accent bg-brand-accent/5 shadow-2xl shadow-brand-accent/10"
-                                    : "border-white/10 bg-white/5 hover:border-white/20"
-                            )}
-                        >
-                            <div className={clsx(
-                                "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity",
-                                cat.color
-                            )} />
-                            <div className="relative z-10">
-                                <cat.icon className={clsx(
-                                    "h-8 w-8 mb-4 transition-transform group-hover:scale-110",
-                                    isActive ? "text-brand-accent" : "text-gray-500"
-                                )} />
-                                <span className={clsx(
-                                    "block font-bold text-sm tracking-widest uppercase",
-                                    isActive ? "text-white" : "text-gray-400 group-hover:text-white"
-                                )}>
-                                    {cat.name}
-                                </span>
-                            </div>
-                            {isActive && (
-                                <div className="absolute top-4 right-4 h-2 w-2 rounded-full bg-brand-accent animate-pulse" />
-                            )}
-                        </Link>
-                    )
-                })}
-            </div>
+            {!isShowingProducts ? (
+                /* Boutique Directory View */
+                <div className="space-y-16">
+                    {/* Featured Stores Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {vendors.map((vendor) => (
+                            <Link
+                                key={vendor.id}
+                                href={`/shop?vendorId=${vendor.id}`}
+                                className="group relative bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden hover:border-brand-accent/50 transition-all duration-500"
+                            >
+                                <div className="p-8 pb-32">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="h-16 w-16 rounded-2xl bg-white/5 border border-white/10 overflow-hidden relative group-hover:scale-105 transition-all duration-500">
+                                            {vendor.logo ? (
+                                                <Image src={vendor.logo} alt={vendor.storeName} fill className="object-cover" />
+                                            ) : (
+                                                <div className="h-full w-full flex items-center justify-center bg-brand-accent/10">
+                                                    <Store className="h-8 w-8 text-brand-accent" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white group-hover:text-brand-accent transition-colors">
+                                                {vendor.storeName}
+                                            </h3>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <Star className="h-3 w-3 text-brand-gold fill-brand-gold" />
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Master Boutique</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-400 text-sm line-clamp-3 leading-relaxed">
+                                        {vendor.description || "A curation of exceptional quality and timeless design, exclusive to Alamode."}
+                                    </p>
+                                </div>
 
-            <div className="flex flex-col lg:flex-row gap-12">
-                {/* Enhanced Sidebar Filters */}
-                <aside className="lg:w-64 space-y-10">
-                    {/* Search Component inside Sidebar */}
-                    <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <form action="/shop" method="GET">
-                            {categorySlug && <input type="hidden" name="category" value={categorySlug} />}
-                            <input
-                                name="q"
-                                placeholder="Search here..."
-                                defaultValue={query}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-11 pr-4 focus:outline-none focus:border-brand-accent transition-all text-xs text-white"
-                            />
-                        </form>
+                                <div className="absolute inset-x-0 bottom-0 p-8 pt-0">
+                                    <div className="flex items-center justify-between p-5 bg-white/5 backdrop-blur-md rounded-3xl border border-white/5 group-hover:bg-brand-accent/10 group-hover:border-brand-accent/20 transition-all">
+                                        <div>
+                                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Inventory</p>
+                                            <p className="text-white font-bold">{vendor._count.products} Creations</p>
+                                        </div>
+                                        <div className="h-10 w-10 rounded-full bg-brand-accent text-white flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                                            <ArrowRight className="h-5 w-5" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
                     </div>
 
-                    {/* Dynamic Subcategories */}
-                    {activeCategory && activeCategory.subcategories.length > 0 && (
+                    {/* Quick Category Browse */}
+                    <div>
+                        <h2 className="text-2xl font-bold text-white mb-8 px-4 flex items-center gap-4">
+                            <LayoutGrid className="text-brand-accent h-6 w-6" />
+                            Browse by Department
+                        </h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {shopCategories.map((cat) => (
+                                <Link
+                                    key={cat.name}
+                                    href={cat.slug ? `/shop?category=${cat.slug}` : '/shop'}
+                                    className="relative overflow-hidden p-6 rounded-3xl border border-white/10 bg-white/5 hover:border-white/20 transition-all group"
+                                >
+                                    <cat.icon className="h-8 w-8 mb-4 text-gray-500 transition-transform group-hover:scale-110 group-hover:text-brand-accent" />
+                                    <span className="block font-bold text-sm tracking-widest uppercase text-gray-400 group-hover:text-white">
+                                        {cat.name}
+                                    </span>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                /* Product View with Sidebar Filters */
+                <div className="flex flex-col lg:flex-row gap-12">
+                    <aside className="lg:w-64 space-y-10">
+                        {/* Search Component inside Sidebar */}
+                        <div className="relative">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                            <form action="/shop" method="GET">
+                                {categorySlug && <input type="hidden" name="category" value={categorySlug} />}
+                                {vendorId && <input type="hidden" name="vendorId" value={vendorId} />}
+                                <input
+                                    name="q"
+                                    placeholder="Hunt for specific items..."
+                                    defaultValue={query}
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-11 pr-4 focus:outline-none focus:border-brand-accent transition-all text-sm text-white"
+                                />
+                            </form>
+                        </div>
+
+                        {/* Dynamic Subcategories */}
+                        {activeCategory && activeCategory.subcategories.length > 0 && (
+                            <div className="animate-in fade-in slide-in-from-left-4 duration-500">
+                                <h3 className="text-white font-bold uppercase tracking-[0.2em] text-[10px] mb-6 px-1 flex items-center gap-2">
+                                    <div className="h-1 w-4 bg-brand-accent" />
+                                    {activeCategory.name} Styles
+                                </h3>
+                                <div className="space-y-1">
+                                    <Link
+                                        href={`/shop?category=${categorySlug}${vendorId ? `&vendorId=${vendorId}` : ''}`}
+                                        className={clsx(
+                                            "block w-full text-left px-4 py-3 rounded-xl text-xs transition-all",
+                                            !subcategorySlug ? "bg-white/10 text-white font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white"
+                                        )}
+                                    >
+                                        All {activeCategory.name}
+                                    </Link>
+                                    {activeCategory.subcategories.map((sub) => (
+                                        <Link
+                                            key={sub.id}
+                                            href={`/shop?category=${categorySlug}&subcategory=${sub.slug}${vendorId ? `&vendorId=${vendorId}` : ''}`}
+                                            className={clsx(
+                                                "block w-full text-left px-4 py-3 rounded-xl text-xs transition-all",
+                                                subcategorySlug === sub.slug ? "bg-brand-accent/20 text-brand-accent font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white"
+                                            )}
+                                        >
+                                            {sub.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Store Switcher if watching products */}
                         <div>
                             <h3 className="text-white font-bold uppercase tracking-[0.2em] text-[10px] mb-6 px-1 flex items-center gap-2">
-                                <div className="h-1 w-4 bg-brand-accent" />
-                                {activeCategory.name} Styles
+                                <div className="h-1 w-4 bg-brand-gold" />
+                                Boutiques
                             </h3>
                             <div className="space-y-1">
                                 <Link
-                                    href={`/shop?category=${categorySlug}`}
+                                    href={`/shop${categorySlug ? `?category=${categorySlug}` : ''}`}
                                     className={clsx(
                                         "block w-full text-left px-4 py-3 rounded-xl text-xs transition-all",
-                                        !subcategorySlug ? "bg-white/10 text-white font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white"
+                                        !vendorId ? "bg-white/10 text-white font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white"
                                     )}
                                 >
-                                    All {activeCategory.name}
+                                    All Boutiques
                                 </Link>
-                                {activeCategory.subcategories.map((sub) => (
+                                {vendors.map((v) => (
                                     <Link
-                                        key={sub.id}
-                                        href={`/shop?category=${categorySlug}&subcategory=${sub.slug}`}
+                                        key={v.id}
+                                        href={`/shop?vendorId=${v.id}${categorySlug ? `&category=${categorySlug}` : ''}`}
                                         className={clsx(
                                             "block w-full text-left px-4 py-3 rounded-xl text-xs transition-all",
-                                            subcategorySlug === sub.slug ? "bg-brand-accent/20 text-brand-accent font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white"
+                                            vendorId === v.id ? "bg-brand-gold/20 text-brand-gold font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white"
                                         )}
                                     >
-                                        {sub.name}
+                                        {v.storeName}
                                     </Link>
                                 ))}
                             </div>
                         </div>
-                    )}
+                    </aside>
 
-                    {/* Price Filter (Static Placeholder) */}
-                    <div>
-                        <h3 className="text-white font-bold uppercase tracking-[0.2em] text-[10px] mb-6 px-1 flex items-center gap-2">
-                            <div className="h-1 w-4 bg-brand-gold" />
-                            Price Window
-                        </h3>
-                        <div className="px-1">
-                            <input type="range" className="w-full accent-brand-accent" />
-                            <div className="flex justify-between mt-3 text-[10px] text-gray-500 font-mono">
-                                <span>$0</span>
-                                <span>$10,000+</span>
+                    <div className="flex-1">
+                        <div className="flex justify-between items-center mb-8 px-2">
+                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                                Discovering <span className="text-white font-mono">{products.length}</span> Masterpieces
+                            </p>
+                            <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest cursor-pointer hover:text-white transition-colors">
+                                <SlidersHorizontal className="h-3 w-3" />
+                                Sort: Luxury First
                             </div>
                         </div>
-                    </div>
-                </aside>
 
-                {/* Products Display Row */}
-                <div className="flex-1">
-                    <div className="flex justify-between items-center mb-8 px-2">
-                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-                            Showing <span className="text-white">{products.length}</span> Masterpieces
-                        </p>
-                        <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest cursor-pointer hover:text-white transition-colors">
-                            <SlidersHorizontal className="h-3 w-3" />
-                            Sort: Newest
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                            {products.map((product: any) => (
+                                <ProductCard
+                                    key={product.id}
+                                    id={product.id}
+                                    name={product.name}
+                                    price={product.price}
+                                    image={product.images[0]}
+                                    category={product.category.name}
+                                />
+                            ))}
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                        {products.map((product: any) => (
-                            <ProductCard
-                                key={product.id}
-                                id={product.id}
-                                name={product.name}
-                                price={product.price}
-                                image={product.images[0]}
-                                category={product.category.name}
-                            />
-                        ))}
-                    </div>
-
-                    {products.length === 0 && (
-                        <div className="py-32 text-center rounded-[40px] border border-dashed border-white/10 bg-white/[0.02]">
-                            <div className="p-8 inline-block rounded-full bg-white/5 mb-8">
-                                <Search className="h-12 w-12 text-gray-700" />
+                        {products.length === 0 && (
+                            <div className="py-32 text-center rounded-[40px] border border-dashed border-white/10 bg-white/[0.02]">
+                                <div className="p-8 inline-block rounded-full bg-white/5 mb-8">
+                                    <Search className="h-12 w-12 text-gray-700" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-white mb-3">No matching treasures found</h3>
+                                <p className="text-gray-400 max-w-xs mx-auto">Try adjusting your filters or browsing a different boutique.</p>
+                                <Link href="/shop" className="mt-8 inline-block text-brand-accent font-bold uppercase tracking-widest text-xs hover:underline">
+                                    Reset Discovery
+                                </Link>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-3">No matching treasures found</h3>
-                            <p className="text-gray-400 max-w-xs mx-auto">Try adjusting your filters or browsing a different category.</p>
-                            <Link href="/shop" className="mt-8 inline-block text-brand-accent font-bold uppercase tracking-widest text-xs hover:underline">
-                                Reset Filters
-                            </Link>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
