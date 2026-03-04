@@ -79,10 +79,11 @@ export default async function WishlistPage() {
                 {wishlist.length === 0 && (
                     <div className="col-span-full py-32 text-center card-luxury border-dashed border-white/10">
                         <Heart className="h-16 w-16 text-gray-700 mx-auto mb-6 opacity-20" />
-                        <h3 className="text-2xl font-bold text-white mb-2">Your Heart is Empty</h3>
-                        <p className="text-gray-500 max-w-xs mx-auto mb-8">Begin your journey through our curated collections and save your favorite masterpieces here.</p>
-                        <Link href="/shop" className="btn-gold px-10 py-3 inline-flex items-center gap-2">
-                            Browse Collection <ArrowRight className="h-4 w-4" />
+                        <h3 className="text-2xl font-bold text-white mb-2">Your Private Gallery is Empty</h3>
+                        <p className="text-gray-400 max-w-xs mx-auto mb-8">Adventure back to the Elite Mall to discover and curate your favorite masterpieces.</p>
+                        <Link href="/shop" className="btn-gold px-12 py-4 inline-flex items-center gap-2 group">
+                            <span>Return to the Mall</span>
+                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
                 )}

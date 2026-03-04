@@ -8,6 +8,10 @@ import { formatPrice } from "@/lib/utils";
 import { useCart } from "@/components/CartProvider";
 import { clsx } from "clsx";
 
+import { useSession } from "next-auth/react";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+
 interface ProductCardProps {
     id: string;
     name: string;
@@ -19,10 +23,43 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ id, name, price, image, images, category, rating = 4.5 }: ProductCardProps) => {
+    const { data: session } = useSession();
     const { addItem } = useCart();
+    const [isWishlisting, setIsWishlisting] = useState(false);
     const productImages = images && images.length > 0 ? images : image ? [image] : ["/placeholder.png"];
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
+
+    const toggleWishlist = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!session) {
+            toast.error("Please login to save your masterpieces.", {
+                icon: "🔒",
+                style: {
+                    borderRadius: '10px',
+                    background: '#333',
+                    color: '#fff',
+                },
+            });
+            return;
+        }
+
+        try {
+            setIsWishlisting(true);
+            const response = await axios.post("/api/wishlist", { productId: id });
+            if (response.data.status === "added") {
+                toast.success("Saved to your collection", { icon: "❤️" });
+            } else {
+                toast.success("Removed from collection", { icon: "💔" });
+            }
+        } catch (error) {
+            toast.error("Fulfillment interrupted. Please try again.");
+        } finally {
+            setIsWishlisting(false);
+        }
+    };
 
     // Auto-scroll when hovered
     useEffect(() => {
@@ -82,8 +119,15 @@ const ProductCard = ({ id, name, price, image, images, category, rating = 4.5 }:
                     </span>
                 </div>
 
-                <button className="absolute top-3 right-3 p-2 bg-brand-dark/60 backdrop-blur-md border border-white/10 rounded-full text-white hover:text-red-400 hover:scale-110 transition-all z-10">
-                    <Heart className="h-4 w-4" />
+                <button
+                    onClick={toggleWishlist}
+                    disabled={isWishlisting}
+                    className={clsx(
+                        "absolute top-3 right-3 p-2 bg-brand-dark/60 backdrop-blur-md border border-white/10 rounded-full text-white hover:text-red-400 hover:scale-110 transition-all z-10",
+                        isWishlisting && "opacity-50"
+                    )}
+                >
+                    <Heart className={clsx("h-4 w-4", isWishlisting && "animate-pulse")} />
                 </button>
             </div>
 

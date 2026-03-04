@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBag, HelpCircle } from "lucide-react";
+import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBag, HelpCircle, Heart } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -78,7 +78,13 @@ const Navbar = () => {
                         )}
 
                         <div className="flex items-center gap-5">
-                            {session && <NotificationsBell />}
+                            {session && !isDashboard && <NotificationsBell />}
+                            {session && !isDashboard && (
+                                <Link href="/profile/wishlist" className="relative p-2 text-gray-300 hover:text-red-400 transition-colors">
+                                    <Heart className="h-6 w-6" />
+                                    {/* Badge could be added here if we had a wishlist context */}
+                                </Link>
+                            )}
 
                             <Link href="/cart" className="relative p-2 text-gray-300 hover:text-brand-gold transition-colors">
                                 <ShoppingCart className="h-6 w-6" />
