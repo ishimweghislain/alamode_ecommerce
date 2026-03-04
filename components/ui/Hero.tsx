@@ -38,7 +38,7 @@ const Hero = () => {
                             Exclusively for Rwanda
                         </span>
 
-                        <h1 className="text-4xl md:text-6xl font-outfit font-black text-white leading-[1.1] mb-8 uppercase tracking-tighter">
+                        <h1 className="text-3xl md:text-5xl font-outfit font-black text-white leading-tight mb-8 uppercase tracking-tighter">
                             Sell Well <br />
                             <span className="text-brand-accent italic font-serif opacity-90">&</span> Buy Better
                         </h1>
