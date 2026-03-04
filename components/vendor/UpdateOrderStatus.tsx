@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 interface UpdateOrderStatusProps {
     orderId: string;
     currentStatus: string;
-    role: "VENDOR" | "ADMIN";
+    role: "CUSTOMER" | "ADMIN";
 }
 
 const UpdateOrderStatus = ({ orderId, currentStatus, role }: UpdateOrderStatusProps) => {
@@ -41,7 +41,7 @@ const UpdateOrderStatus = ({ orderId, currentStatus, role }: UpdateOrderStatusPr
 
     return (
         <div className="w-full space-y-4">
-            {currentStatus === "PAID" && (
+            {currentStatus === "PAID" && role === "ADMIN" && (
                 <button
                     disabled={isLoading}
                     onClick={() => updateStatus("SHIPPED")}
@@ -52,7 +52,7 @@ const UpdateOrderStatus = ({ orderId, currentStatus, role }: UpdateOrderStatusPr
                 </button>
             )}
 
-            {currentStatus === "SHIPPED" && (
+            {currentStatus === "SHIPPED" && (role === "ADMIN" || role === "CUSTOMER") && (
                 <button
                     disabled={isLoading}
                     onClick={() => updateStatus("DELIVERED")}

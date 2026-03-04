@@ -5,7 +5,6 @@ import { ShoppingBag, MapPin, Smartphone, CreditCard, ChevronLeft, Truck, CheckC
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import UpdateOrderStatus from "@/components/vendor/UpdateOrderStatus";
 
 interface OrderPageProps {
     params: Promise<{

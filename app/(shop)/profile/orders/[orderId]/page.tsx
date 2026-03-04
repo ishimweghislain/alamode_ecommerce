@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { clsx } from "clsx";
+import UpdateOrderStatus from "@/components/vendor/UpdateOrderStatus";
 
 interface OrderDetailsPageProps {
     params: Promise<{
@@ -137,7 +138,7 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
                 {/* Right Column - Info */}
                 <div className="space-y-8">
                     {/* Summary */}
-                    <div className="card-luxury p-6">
+                    <div className="card-luxury p-6 space-y-6">
                         <h3 className="text-lg font-bold text-white mb-6">Payment Summary</h3>
                         <div className="space-y-4 text-sm font-medium">
                             <div className="flex justify-between text-gray-400">
@@ -157,6 +158,12 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
                                 <span className="text-brand-gold font-bold text-xl">{formatPrice(order.totalAmount)}</span>
                             </div>
                         </div>
+
+                        {order.status === "SHIPPED" && (
+                            <div className="pt-6 border-t border-white/5">
+                                <UpdateOrderStatus orderId={order.id} currentStatus={order.status} role="CUSTOMER" />
+                            </div>
+                        )}
                     </div>
 
                     {/* Delivery */}
