@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Truck, CheckCircle2 } from "lucide-react";
+import { Truck, CheckCircle2, Clock } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -41,7 +41,8 @@ const UpdateOrderStatus = ({ orderId, currentStatus, role }: UpdateOrderStatusPr
 
     return (
         <div className="w-full space-y-4">
-            {currentStatus === "PAID" && role === "ADMIN" && (
+            {/* Admin Controls for PENDING or PAID */}
+            {(currentStatus === "PENDING" || currentStatus === "PAID") && role === "ADMIN" && (
                 <button
                     disabled={isLoading}
                     onClick={() => updateStatus("SHIPPED")}
@@ -52,6 +53,7 @@ const UpdateOrderStatus = ({ orderId, currentStatus, role }: UpdateOrderStatusPr
                 </button>
             )}
 
+            {/* Customer (or Admin) Confirmation once SHIPPED */}
             {currentStatus === "SHIPPED" && (role === "ADMIN" || role === "CUSTOMER") && (
                 <button
                     disabled={isLoading}
@@ -61,6 +63,14 @@ const UpdateOrderStatus = ({ orderId, currentStatus, role }: UpdateOrderStatusPr
                     <CheckCircle2 className="h-5 w-5 group-hover:scale-125 transition-transform animate-bounce" />
                     {isLoading ? "Verifying..." : role === "ADMIN" ? "Confirm Final Delivery" : "Confirm My Order Receipt"}
                 </button>
+            )}
+
+            {/* If PENDING and user is Customer, show waiting status */}
+            {currentStatus === "PENDING" && role === "CUSTOMER" && (
+                <div className="p-4 bg-brand-gold/5 border border-brand-gold/20 rounded-2xl flex items-center justify-center gap-3 text-brand-gold">
+                    <Clock className="h-4 w-4 animate-spin" />
+                    <span className="font-bold uppercase tracking-widest text-[10px]">Awaiting Payment Verification</span>
+                </div>
             )}
         </div>
     );
