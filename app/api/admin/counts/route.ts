@@ -11,18 +11,20 @@ export async function GET() {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const [pendingVendors, activePromotions, newUsers, openTickets] = await Promise.all([
+        const [pendingVendors, activePromotions, newUsers, openTickets, pendingWithdrawals] = await Promise.all([
             prisma.vendor.count({ where: { isNew: true } }),
             (prisma as any).promotion.count({ where: { isNew: true } }),
             prisma.user.count({ where: { isNew: true } }),
-            prisma.ticket.count({ where: { isNew: true } })
+            prisma.ticket.count({ where: { isNew: true } }),
+            (prisma.withdrawalRequest as any).count({ where: { isNew: true } })
         ]);
 
         return NextResponse.json({
             pendingVendors,
             activePromotions,
             newUsers,
-            openTickets
+            openTickets,
+            pendingWithdrawals
         });
     } catch (error) {
         console.error("[COUNT_ERROR]", error);

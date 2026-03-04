@@ -12,7 +12,7 @@ export async function GET(req: Request) {
             return NextResponse.json({ products: [], vendors: [] });
         }
 
-        const [products, vendors] = await Promise.all([
+        const [products, vendors, categories] = await Promise.all([
             (prisma.product as any).findMany({
                 where: {
                     OR: [
@@ -47,10 +47,20 @@ export async function GET(req: Request) {
                     logo: true,
                     description: true,
                 }
+            }),
+            prisma.category.findMany({
+                where: {
+                    name: { contains: query, mode: "insensitive" }
+                },
+                take: 3,
+                select: {
+                    id: true,
+                    name: true,
+                }
             })
         ]);
 
-        return NextResponse.json({ products, vendors });
+        return NextResponse.json({ products, vendors, categories });
     } catch (error) {
         console.error("[SEARCH_ERROR]", error);
         return new NextResponse("Internal Error", { status: 500 });

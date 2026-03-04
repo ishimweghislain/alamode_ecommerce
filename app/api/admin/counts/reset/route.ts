@@ -14,13 +14,15 @@ export async function POST(req: Request) {
         const { type } = await req.json();
 
         if (type === "vendors") {
-            await prisma.vendor.updateMany({ where: { isNew: true }, data: { isNew: false } });
+            await (prisma.vendor as any).updateMany({ where: { isNew: true }, data: { isNew: false } });
         } else if (type === "promotions") {
             await (prisma as any).promotion.updateMany({ where: { isNew: true }, data: { isNew: false } });
         } else if (type === "users") {
-            await prisma.user.updateMany({ where: { isNew: true }, data: { isNew: false } });
+            await (prisma.user as any).updateMany({ where: { isNew: true }, data: { isNew: false } });
         } else if (type === "support") {
-            await prisma.ticket.updateMany({ where: { isNew: true }, data: { isNew: false } });
+            await (prisma.ticket as any).updateMany({ where: { isNew: true }, data: { isNew: false } });
+        } else if (type === "withdrawals") {
+            await (prisma.withdrawalRequest as any).updateMany({ where: { isNew: true }, data: { isNew: false } });
         }
 
         return NextResponse.json({ success: true });

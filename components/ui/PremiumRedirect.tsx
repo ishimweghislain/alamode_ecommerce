@@ -34,56 +34,51 @@ export default function PremiumRedirect({ message, submessageText, duration, onC
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
-                    {/* Dark Backdrop */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-background-dark/80 backdrop-blur-md pointer-events-auto"
-                    />
-
+                <div className="fixed top-8 right-8 z-[9999] w-full max-w-sm pointer-events-none">
                     {/* Notification Card */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="relative w-full max-w-sm mx-4 bg-[#0f0f0f] border border-brand-gold/20 rounded-[2.5rem] p-8 shadow-[0_0_50px_rgba(255,184,0,0.1)] pointer-events-auto"
+                        initial={{ opacity: 0, x: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 50, scale: 0.9 }}
+                        className="relative bg-[#0f0f0f] border border-brand-gold/30 rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto overflow-hidden group"
                     >
                         {/* Shimmer Effect */}
-                        <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-brand-gold/5 via-transparent to-brand-accent/5 overflow-hidden">
-                            <motion.div
-                                animate={{ x: ['-100%', '200%'] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-0 w-1/3 h-full bg-white/5 skew-x-12"
-                            />
-                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand-gold/5 via-transparent to-brand-accent/5" />
 
-                        <div className="relative flex flex-col items-center text-center space-y-6">
-                            <div className="h-16 w-16 rounded-2xl bg-brand-gold/10 border border-brand-gold/20 flex items-center justify-center relative">
-                                <Sparkles className="h-8 w-8 text-brand-gold animate-pulse" />
-                                <div className="absolute -top-1 -right-1 h-3 w-3 bg-brand-accent rounded-full animate-ping" />
+                        <div className="relative flex items-start gap-4">
+                            <div className="h-12 w-12 shrink-0 rounded-2xl bg-brand-gold/10 border border-brand-gold/20 flex items-center justify-center relative">
+                                <Sparkles className="h-6 w-6 text-brand-gold" />
+                                <div className="absolute -top-1 -right-1 h-2 w-2 bg-brand-accent rounded-full animate-ping" />
                             </div>
 
-                            <div className="space-y-2">
-                                <h3 className="text-xl font-outfit font-black text-white uppercase tracking-wider">
+                            <div className="flex-1 space-y-1">
+                                <h3 className="text-sm font-outfit font-black text-white uppercase tracking-widest">
                                     {message}
                                 </h3>
-                                <p className="text-gray-400 text-sm leading-relaxed font-medium">
-                                    {submessageText || "Preparing your elite experience..."}
+                                <p className="text-[11px] text-gray-400 leading-relaxed font-medium">
+                                    {submessageText || "Elite transition in progress..."}
                                 </p>
-                            </div>
 
-                            <div className="flex items-center gap-3 bg-white/5 px-5 py-2.5 rounded-full border border-white/10">
-                                <Loader2 className="h-4 w-4 text-brand-gold animate-spin" />
-                                <span className="text-[10px] font-black font-mono text-gray-300 tracking-[0.2em] uppercase">
-                                    Redirect in {timeLeft}s
-                                </span>
+                                <div className="pt-3 flex items-center gap-2">
+                                    <div className="flex-1 h-[2px] bg-white/5 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: "100%" }}
+                                            animate={{ width: "0%" }}
+                                            transition={{ duration: duration, ease: "linear" }}
+                                            className="h-full bg-brand-gold"
+                                        />
+                                    </div>
+                                    <span className="text-[9px] font-black font-mono text-brand-gold uppercase">
+                                        {timeLeft}s
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Top Right Decorative Tag */}
-                        <div className="absolute top-6 right-6 h-1 w-8 bg-brand-gold/40 rounded-full" />
+                        {/* Loader icon in corner */}
+                        <div className="absolute bottom-4 right-4 h-6 w-6 flex items-center justify-center opacity-20">
+                            <Loader2 className="h-4 w-4 text-white animate-spin" />
+                        </div>
                     </motion.div>
                 </div>
             )}

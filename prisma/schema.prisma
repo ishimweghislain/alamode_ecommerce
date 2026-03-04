@@ -196,6 +196,7 @@ model OrderItem {
   quantity  Int
   price     Float
   size      String?
+  isNew     Boolean @default(true) // For vendor fulfillment dashboard
 }
 
 model Review {
@@ -215,6 +216,7 @@ model WithdrawalRequest {
   status    WithdrawalStatus @default(PENDING)
   vendorId  String
   vendor    Vendor           @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  isNew     Boolean          @default(true) // For admin dashboard
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 }

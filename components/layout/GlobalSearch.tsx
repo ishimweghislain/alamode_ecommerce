@@ -130,6 +130,27 @@ export default function GlobalSearch() {
                             </div>
                         )}
 
+                        {/* Categories */}
+                        {results.categories?.length > 0 && (
+                            <div className="pt-2 border-t border-white/5">
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] px-3 mb-2 flex items-center gap-2">
+                                    <Tag className="h-3 w-3" />
+                                    Collections
+                                </p>
+                                <div className="flex flex-wrap gap-2 px-3 pb-2">
+                                    {results.categories.map((c: any) => (
+                                        <button
+                                            key={c.id}
+                                            onClick={() => { router.push(`/shop?category=${c.id}`); setIsOpen(false); }}
+                                            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[11px] text-gray-400 hover:text-white hover:border-brand-accent hover:bg-brand-accent/10 transition-all font-bold"
+                                        >
+                                            {c.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {(!results.products?.length && !results.vendors?.length) && (
                             <div className="py-8 text-center">
                                 <Search className="h-8 w-8 text-gray-800 mx-auto mb-2" />

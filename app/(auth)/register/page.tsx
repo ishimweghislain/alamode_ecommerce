@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -16,12 +16,21 @@ function RegisterContent() {
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(false);
     const callbackUrl = searchParams.get("callbackUrl") || "/";
+    const initialRole = (searchParams.get("role")?.toUpperCase() === "VENDOR") ? "VENDOR" : "CUSTOMER";
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
-        role: "CUSTOMER",
+        role: initialRole,
     });
+
+    useEffect(() => {
+        const roleParam = searchParams.get("role")?.toUpperCase();
+        if (roleParam === "VENDOR" || roleParam === "CUSTOMER") {
+            setFormData(prev => ({ ...prev, role: roleParam }));
+        }
+    }, [searchParams]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

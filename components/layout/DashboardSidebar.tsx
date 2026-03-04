@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -21,7 +21,6 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import { clsx } from "clsx";
 import LogoutModal from "@/components/ui/LogoutModal";
-import { useEffect, useState } from "react";
 import axios from "axios";
 
 interface SidebarProps {
@@ -32,12 +31,14 @@ const Sidebar = ({ role }: SidebarProps) => {
     const pathname = usePathname();
     const [counts, setCounts] = useState<any>({});
     const { data: session } = useSession();
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     useEffect(() => {
-        if (role === "ADMIN") {
+        if (role === "ADMIN" || role === "VENDOR") {
             const fetchCounts = async () => {
                 try {
-                    const res = await axios.get("/api/admin/counts");
+                    const endpoint = role === "ADMIN" ? "/api/admin/counts" : "/api/vendor/counts";
+                    const res = await axios.get(endpoint);
                     setCounts(res.data);
                 } catch (e) {
                     console.error("Failed to fetch counts");
@@ -68,6 +69,19 @@ const Sidebar = ({ role }: SidebarProps) => {
                 axios.post("/api/admin/counts/reset", { type: "support" });
                 setCounts((c: any) => ({ ...c, openTickets: 0 }));
             }
+            if (pathname === "/admin/withdrawals" && counts.pendingWithdrawals > 0) {
+                axios.post("/api/admin/counts/reset", { type: "withdrawals" });
+                setCounts((c: any) => ({ ...c, pendingWithdrawals: 0 }));
+            }
+        } else if (role === "VENDOR") {
+            if (pathname === "/vendor/orders" && counts.newOrders > 0) {
+                axios.post("/api/vendor/counts/reset", { type: "orders" });
+                setCounts((c: any) => ({ ...c, newOrders: 0 }));
+            }
+            if (pathname === "/vendor/support" && counts.openTickets > 0) {
+                axios.post("/api/vendor/counts/reset", { type: "support" });
+                setCounts((c: any) => ({ ...c, openTickets: 0 }));
+            }
         }
     }, [pathname, role, counts]);
 
@@ -78,7 +92,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Promotions", icon: Tag, href: "/admin/promotions", count: counts.activePromotions },
         { label: "Categories", icon: ShoppingBag, href: "/admin/categories" },
         { label: "Orders", icon: ShoppingBag, href: "/admin/orders" },
-        { label: "Withdrawals", icon: CreditCard, href: "/admin/withdrawals" },
+        { label: "Withdrawals", icon: CreditCard, href: "/admin/withdrawals", count: counts.pendingWithdrawals },
         { label: "Users", icon: Users, href: "/admin/users", count: counts.newUsers },
         { label: "Support", icon: HelpCircle, href: "/admin/support", count: counts.openTickets },
         { label: "Analytics", icon: BarChart3, href: "/admin/analytics" },
@@ -89,9 +103,9 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "My Store", icon: Store, href: "/vendor/profile" },
         { label: "Products", icon: Package, href: "/vendor/products" },
         { label: "Promotions", icon: Tag, href: "/vendor/promotions" },
-        { label: "Orders", icon: ShoppingBag, href: "/vendor/orders" },
+        { label: "Orders", icon: ShoppingBag, href: "/vendor/orders", count: counts.newOrders },
         { label: "Withdrawals", icon: CreditCard, href: "/vendor/withdrawals" },
-        { label: "Support", icon: HelpCircle, href: "/vendor/support" },
+        { label: "Support", icon: HelpCircle, href: "/vendor/support", count: counts.openTickets },
         { label: "Analytics", icon: BarChart3, href: "/vendor/analytics" },
     ];
 
@@ -105,8 +119,6 @@ const Sidebar = ({ role }: SidebarProps) => {
     ];
 
     const links = role === "ADMIN" ? adminLinks : role === "VENDOR" ? vendorLinks : customerLinks;
-
-    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     return (
         <>
