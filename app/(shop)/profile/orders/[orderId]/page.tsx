@@ -108,7 +108,7 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
                             Acquired Items
                         </h3>
                         <div className="divide-y divide-white/5">
-                            {order.items.map((item) => (
+                            {(order.items as any[]).map((item) => (
                                 <div key={item.id} className="py-6 first:pt-0 last:pb-0 flex gap-6">
                                     <div className="h-24 w-24 relative rounded-xl overflow-hidden bg-white/5 border border-white/5">
                                         <Image

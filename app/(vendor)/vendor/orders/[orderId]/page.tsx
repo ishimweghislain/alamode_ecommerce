@@ -61,7 +61,7 @@ export default async function VendorOrderDetailsPage({ params }: OrderPageProps)
                             <h3 className="font-bold text-white uppercase tracking-widest text-xs">Fulfillment List</h3>
                         </div>
                         <div className="divide-y divide-white/5">
-                            {order.items.map((item) => (
+                            {(order.items as any[]).map((item: any) => (
                                 <div key={item.id} className="p-6 flex items-center gap-6 group hover:bg-white/[0.02] transition-colors">
                                     <div className="h-24 w-24 relative rounded-2xl overflow-hidden bg-brand-dark border border-white/5 ring-1 ring-white/10 group-hover:ring-brand-accent/30 transition-all">
                                         <Image

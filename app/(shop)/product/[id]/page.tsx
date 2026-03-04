@@ -5,8 +5,8 @@ import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, Ed
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
-import ProductGallery from "@/components/product/ProductGallery";
-import WishlistToggle from "@/components/product/WishlistToggle";
+import ProductGallery from "@/components/ui/ProductGallery";
+import WishlistToggle from "@/components/ui/WishlistToggle";
 import ProductActions from "@/components/product/ProductActions";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     const user = await getCurrentUser();
     const isAdmin = user?.role === "ADMIN";
 
-    const product = await prisma.product.findUnique({
+    const product = await (prisma.product as any).findUnique({
         where: { id },
         include: {
             category: true,

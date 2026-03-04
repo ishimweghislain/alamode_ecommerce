@@ -58,7 +58,7 @@ export default async function ShopPage({
         orderBy: {
             createdAt: 'desc'
         }
-    });
+    }) as any[];
 
     const isShowingProducts = !!(query || categorySlug || subcategorySlug || vendorId);
 
