@@ -19,6 +19,9 @@ export async function POST(req: Request) {
             return new NextResponse("Invalid order items", { status: 400 });
         }
 
+        // Simulation: Add a 2s delay to mimic payment processing
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
         const order = await prisma.order.create({
             data: {
                 userId: user.id,
@@ -26,19 +29,16 @@ export async function POST(req: Request) {
                 phone,
                 paymentMethod,
                 totalAmount,
-                status: "PENDING",
+                status: "PAID", // Simulation: Auto-mark as PAID
                 items: {
                     create: items.map((item: any) => ({
-                        productId: item.id,
+                        productId: item.productId || item.id,
                         quantity: item.quantity,
                         price: item.price,
                     })),
                 },
             },
         });
-
-        // Here you would integrate with MTN/Airtel/Visa API
-        // For now, we return the order ID and simulate success
 
         return NextResponse.json(order);
     } catch (error) {

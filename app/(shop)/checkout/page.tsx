@@ -71,9 +71,9 @@ export default function CheckoutPage() {
             });
 
             if (response.status === 200) {
-                toast.success("Order placed successfully!");
+                toast.success("Payment successful! Order processed.");
                 clearCart();
-                router.push("/orders/success");
+                router.push("/profile/payments");
             }
         } catch (error: any) {
             console.error(error);

@@ -3,6 +3,7 @@ import ProductCard from "@/components/ui/ProductCard";
 import CategoryHighlights from "@/components/ui/CategoryHighlights";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -51,7 +52,13 @@ export default async function Home() {
       {/* Featured Products */}
       <section id="featured-products" className="py-20 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="flex justify-between items-end mb-12"
+          >
             <div>
               <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2">Featured Products</h2>
               <p className="text-gray-400">Exclusive items selected for their exceptional quality.</p>
@@ -59,19 +66,31 @@ export default async function Home() {
             <Link href="/shop" className="text-brand-accent hover:text-brand-gold font-medium transition-colors">
               Explore All →
             </Link>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
             {featuredProducts.map((product: any) => (
               <ProductCard key={product.id} {...product} />
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Banner / Promotion */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto rounded-luxury overflow-hidden relative h-[400px] flex items-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+          className="max-w-7xl mx-auto rounded-luxury overflow-hidden relative h-[400px] flex items-center"
+        >
           <Image
             src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop"
             alt="Promotion"
@@ -88,24 +107,36 @@ export default async function Home() {
               Learn More
             </Link>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Trending Products */}
       <section id="trending-products" className="py-20 mb-20 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="flex justify-between items-end mb-12"
+          >
             <div>
               <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2">Trending Now</h2>
               <p className="text-gray-400">What&apos;s currently captivating our elite community.</p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
             {trendingProducts.map((product: any) => (
               <ProductCard key={product.id} {...product} />
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
