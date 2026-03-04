@@ -6,14 +6,21 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import axios from "axios";
+import { clsx } from "clsx";
 
-export default function GlobalSearch() {
+interface GlobalSearchProps {
+    variant?: "navbar" | "hero";
+}
+
+export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const searchRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
+
+    const isHero = variant === "hero";
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -56,23 +63,48 @@ export default function GlobalSearch() {
     };
 
     return (
-        <div ref={searchRef} className="relative w-full max-w-md hidden md:block group">
+        <div ref={searchRef} className={clsx(
+            "relative group",
+            isHero ? "w-full" : "w-full max-w-md hidden md:block"
+        )}>
             <form onSubmit={handleSearch} className="relative">
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search for anything..."
-                    className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-accent focus:bg-white/[0.08] transition-all group-hover:border-white/20"
+                    placeholder={isHero ? "Hunt for masterpieces, boutiques, or styles..." : "Search for anything..."}
+                    className={clsx(
+                        "w-full bg-white/5 border border-white/10 rounded-luxury text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-accent focus:bg-white/[0.08] transition-all group-hover:border-white/20",
+                        isHero ? "py-5 pl-14 pr-24 text-base" : "py-2.5 pl-11 pr-4 text-sm rounded-full"
+                    )}
                 />
-                <Search className="absolute left-4 top-3 h-4 w-4 text-gray-500 group-focus-within:text-brand-accent transition-colors" />
+                <Search className={clsx(
+                    "absolute top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors",
+                    isHero ? "left-6 h-5 w-5" : "left-4 h-4 w-4"
+                )} />
+
+                {isHero && (
+                    <button
+                        type="submit"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 px-6 py-2.5 bg-brand-accent hover:bg-brand-gold text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-brand-accent/20"
+                    >
+                        Search
+                    </button>
+                )}
+
                 {isLoading && (
-                    <Loader2 className="absolute right-4 top-3 h-4 w-4 text-brand-accent animate-spin" />
+                    <Loader2 className={clsx(
+                        "absolute top-1/2 -translate-y-1/2 text-brand-accent animate-spin",
+                        isHero ? "right-24" : "right-4 h-4 w-4"
+                    )} />
                 )}
             </form>
 
             {isOpen && results && (
-                <div className="absolute top-14 left-0 w-full bg-[#0f0f0f] border border-white/10 rounded-2xl shadow-2xl z-[100] overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className={clsx(
+                    "absolute top-full left-0 w-full bg-[#0f0f0f] border border-white/10 rounded-2xl shadow-2xl z-[100] overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200",
+                    isHero ? "mt-4" : "mt-2"
+                )}>
                     <div className="max-h-[70vh] overflow-y-auto custom-scrollbar p-2 space-y-4">
                         {/* Products */}
                         {results.products?.length > 0 && (
@@ -92,7 +124,12 @@ export default function GlobalSearch() {
                                                 <Image src={p.images[0] || "/placeholder.png"} alt={p.name} fill className="object-cover" />
                                             </div>
                                             <div className="text-left flex-1 min-w-0">
-                                                <p className="text-white text-sm font-bold truncate group-hover/item:text-brand-gold transition-colors">{p.name}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-white text-sm font-bold truncate group-hover/item:text-brand-gold transition-colors">{p.name}</p>
+                                                    <span className="shrink-0 bg-white/5 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/5">
+                                                        {p.vendor?.storeName}
+                                                    </span>
+                                                </div>
                                                 <p className="text-[10px] text-brand-gold font-mono">{formatPrice(p.price)}</p>
                                             </div>
                                             <ArrowRight className="h-3 w-3 text-gray-600 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
@@ -141,7 +178,7 @@ export default function GlobalSearch() {
                                     {results.categories.map((c: any) => (
                                         <button
                                             key={c.id}
-                                            onClick={() => { router.push(`/shop?category=${c.id}`); setIsOpen(false); }}
+                                            onClick={() => { router.push(`/shop?category=${c.slug}`); setIsOpen(false); }}
                                             className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[11px] text-gray-400 hover:text-white hover:border-brand-accent hover:bg-brand-accent/10 transition-all font-bold"
                                         >
                                             {c.name}
@@ -151,7 +188,7 @@ export default function GlobalSearch() {
                             </div>
                         )}
 
-                        {(!results.products?.length && !results.vendors?.length) && (
+                        {(!results.products?.length && !results.vendors?.length && !results.categories?.length) && (
                             <div className="py-8 text-center">
                                 <Search className="h-8 w-8 text-gray-800 mx-auto mb-2" />
                                 <p className="text-gray-500 text-sm">No matches in our collection</p>

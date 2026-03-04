@@ -26,6 +26,9 @@ export async function GET(req: Request) {
                     name: true,
                     price: true,
                     images: true,
+                    vendor: {
+                        select: { storeName: true }
+                    }
                 }
             }),
             prisma.vendor.findMany({
@@ -56,6 +59,7 @@ export async function GET(req: Request) {
                 select: {
                     id: true,
                     name: true,
+                    slug: true,
                 }
             })
         ]);
