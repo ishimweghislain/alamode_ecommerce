@@ -35,6 +35,7 @@ model User {
   role          Role      @default(CUSTOMER)
   image         String?
   isActive      Boolean   @default(true)
+  isNew         Boolean   @default(true) // Track for admin dashboard
   phoneNumber   String?
   address       String?
   createdAt     DateTime  @default(now())
@@ -64,6 +65,7 @@ model Ticket {
   subject     String
   status      String   @default("OPEN") // OPEN, RESOLVED, CLOSED
   priority    String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  isNew       Boolean  @default(true) // Track for admin dashboard
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages    TicketMessage[]
@@ -87,6 +89,7 @@ model Vendor {
   logo        String?
   description String?
   isApproved  Boolean  @default(false)
+  isNew       Boolean  @default(true) // Track for admin dashboard
   userId      String   @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   products    Product[]
@@ -162,6 +165,7 @@ model Promotion {
   startsAt      DateTime @default(now())
   expiresAt     DateTime
   isActive      Boolean  @default(true)
+  isNew         Boolean  @default(true) // Track for admin dashboard
   label         String?  // optional label e.g. "Summer Sale"
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
