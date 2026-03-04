@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { MoveRight, TrendingUp, Sparkles, Search } from "lucide-react";
+import { MoveRight, TrendingUp, Sparkles, Search, HelpCircle } from "lucide-react";
 import PremiumRedirect from "./PremiumRedirect";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -69,43 +69,45 @@ const Hero = () => {
                             </span>
 
                             <h1 className="text-3xl md:text-5xl font-outfit font-black text-white leading-tight mb-8 uppercase tracking-tighter">
-                                Sell Well <br />
-                                <span className="text-brand-accent italic font-serif opacity-90">&</span> Buy Better
+                                Buy & Sell <br />
+                                <span className="text-brand-accent italic font-serif opacity-90">at</span> ALAMODE.RW
                             </h1>
 
                             <p className="text-gray-400 text-lg md:text-xl mb-12 leading-relaxed max-w-xl font-medium">
-                                The best place in Rwanda to buy and sell quality fashion, phones, and home items.
+                                The best place in Rwanda to buy and sell quality fashion, phones, and home goods. Easy and fast.
                             </p>
 
                             <div className="flex flex-col gap-8">
-                                {/* Search Bar & Quick Links Row */}
-                                <div className="flex flex-col lg:flex-row lg:items-center gap-4 max-w-5xl">
+                                {/* Search Bar & Quick Links - One-line Row on Desktop */}
+                                <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 w-full bg-white/[0.03] backdrop-blur-md p-2 lg:p-1.5 rounded-3xl border border-white/5">
                                     <div className="flex-1 min-w-[300px]">
                                         <GlobalSearch variant="hero" />
                                     </div>
 
-                                    <div className="flex flex-wrap items-center gap-3">
+                                    <div className="flex items-center gap-2 px-2 overflow-x-auto no-scrollbar py-2 lg:py-0">
                                         <a
                                             href="#featured-products"
-                                            className="bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-brand-accent/30 px-5 py-3 rounded-2xl flex items-center gap-2 group transition-all hover:scale-105 active:scale-95"
+                                            className="whitespace-nowrap bg-white/5 hover:bg-brand-accent/20 border border-white/10 px-4 py-2.5 rounded-2xl flex items-center gap-2 group transition-all"
                                         >
                                             <div className="h-2 w-2 rounded-full bg-brand-accent animate-pulse" />
-                                            <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">Featured</span>
+                                            <span className="text-[10px] font-bold text-gray-300 group-hover:text-white uppercase tracking-widest">Featured</span>
                                         </a>
 
                                         <a
                                             href="#trending-products"
-                                            className="bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-brand-gold/30 px-5 py-3 rounded-2xl flex items-center gap-2 group transition-all hover:scale-105 active:scale-95"
+                                            className="whitespace-nowrap bg-white/5 hover:bg-brand-gold/20 border border-white/10 px-4 py-2.5 rounded-2xl flex items-center gap-2 group transition-all"
                                         >
-                                            <TrendingUp className="h-4 w-4 text-brand-gold group-hover:translate-y-[-1px] transition-transform" />
-                                            <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">Trending</span>
+                                            <TrendingUp className="h-4 w-4 text-brand-gold" />
+                                            <span className="text-[10px] font-bold text-gray-300 group-hover:text-white uppercase tracking-widest">Trending</span>
                                         </a>
-                                        <a
-                                            href="#how-it-works"
-                                            className="bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-brand-gold/30 px-5 py-3 rounded-2xl flex items-center gap-2 group transition-all hover:scale-105 active:scale-95"
+
+                                        <Link
+                                            href="/how-it-works"
+                                            className="whitespace-nowrap bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-2xl flex items-center gap-2 group transition-all"
                                         >
-                                            <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">How It Works</span>
-                                        </a>
+                                            <HelpCircle className="h-4 w-4 text-gray-400" />
+                                            <span className="text-[10px] font-bold text-gray-300 group-hover:text-white uppercase tracking-widest">Help</span>
+                                        </Link>
                                     </div>
                                 </div>
 
@@ -149,7 +151,11 @@ const Hero = () => {
                 message={redirectConfig.message}
                 submessageText={redirectConfig.submessageText}
                 duration={redirectConfig.duration}
-                onComplete={() => router.push(redirectConfig.targetUrl)}
+                onComplete={() => {
+                    // Reset and redirect
+                    setRedirectConfig(prev => ({ ...prev, isOpen: false }));
+                    router.push(redirectConfig.targetUrl);
+                }}
             />
         </>
     );

@@ -124,13 +124,13 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
                                                 <Image src={p.images[0] || "/placeholder.png"} alt={p.name} fill className="object-cover" />
                                             </div>
                                             <div className="text-left flex-1 min-w-0">
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-2 mb-0.5">
                                                     <p className="text-white text-sm font-bold truncate group-hover/item:text-brand-gold transition-colors">{p.name}</p>
-                                                    <span className="shrink-0 bg-white/5 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/5">
+                                                    <span className="shrink-0 bg-brand-gold/10 text-brand-gold text-[8px] font-black px-1.5 py-0.5 rounded-full border border-brand-gold/20 uppercase tracking-tighter">
                                                         {p.vendor?.storeName}
                                                     </span>
                                                 </div>
-                                                <p className="text-[10px] text-brand-gold font-mono">{formatPrice(p.price)}</p>
+                                                <p className="text-[10px] text-gray-400 font-mono">{formatPrice(p.price)}</p>
                                             </div>
                                             <ArrowRight className="h-3 w-3 text-gray-600 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
                                         </button>

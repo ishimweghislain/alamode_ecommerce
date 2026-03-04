@@ -56,7 +56,7 @@ export default function PremiumRedirect({ message, submessageText, duration, onC
                                     {message}
                                 </h3>
                                 <p className="text-[11px] text-gray-400 leading-relaxed font-medium">
-                                    {submessageText || "Elite transition in progress..."}
+                                    {submessageText || "Redirecting you now..."}
                                 </p>
 
                                 <div className="pt-3 flex items-center gap-2">
