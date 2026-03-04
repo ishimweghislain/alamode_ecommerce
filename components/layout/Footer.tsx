@@ -18,7 +18,7 @@ const Footer = () => {
                             ALAMODE
                         </Link>
                         <p className="mt-4 text-gray-400 text-sm leading-relaxed">
-                            Experience the pinnacle of luxury shopping in Rwanda. A curated marketplace for those who appreciate the finer things.
+                            Rwanda's leading luxury mall. Find the best boutiques and collections at <span className="text-brand-gold italic">alamode.rw</span>.
                         </p>
                     </div>
 

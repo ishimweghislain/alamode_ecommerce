@@ -74,7 +74,7 @@ const Hero = () => {
                             </h1>
 
                             <p className="text-gray-400 text-lg md:text-xl mb-12 leading-relaxed max-w-xl font-medium">
-                                Rwanda's most sophisticated sanctuary for high-end fashion, technology, and home masterpieces. Curated for the few.
+                                The best place in Rwanda to buy and sell quality fashion, phones, and home items.
                             </p>
 
                             <div className="flex flex-col gap-8">
@@ -100,21 +100,26 @@ const Hero = () => {
                                             <TrendingUp className="h-4 w-4 text-brand-gold group-hover:translate-y-[-1px] transition-transform" />
                                             <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">Trending</span>
                                         </a>
+                                        <a
+                                            href="#how-it-works"
+                                            className="bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-brand-gold/30 px-5 py-3 rounded-2xl flex items-center gap-2 group transition-all hover:scale-105 active:scale-95"
+                                        >
+                                            <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-[0.2em] transition-colors">How It Works</span>
+                                        </a>
                                     </div>
                                 </div>
 
-                                {/* Primary Action Row */}
                                 <div className="flex flex-wrap gap-4 pt-4">
                                     <button
-                                        onClick={() => triggerRedirect("/shop", "Going to Shop", "Taking you to our exclusive collection...", 3)}
-                                        className="group btn-primary flex items-center justify-center min-w-[200px] h-14 text-xs font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20"
+                                        onClick={() => triggerRedirect("/shop", "Redirecting...", "Please wait...", 2)}
+                                        className="group btn-primary flex items-center justify-center min-w-[180px] h-14 text-xs font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20"
                                     >
-                                        Start Shopping
+                                        Shop Now
                                         <MoveRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                     </button>
                                     <button
-                                        onClick={() => triggerRedirect("/register?role=VENDOR", "Joining Alamode", "Create a vendor account to start selling your products...", 5)}
-                                        className="bg-white/5 hover:bg-white/10 backdrop-blur-xl text-white border border-white/10 rounded-luxury flex items-center justify-center min-w-[200px] h-14 text-xs font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                        onClick={() => triggerRedirect("/register?role=VENDOR", "Joining Alamode", "Create a store to start selling...", 3)}
+                                        className="bg-white/5 hover:bg-white/10 backdrop-blur-xl text-white border border-white/10 rounded-luxury flex items-center justify-center min-w-[180px] h-14 text-xs font-black uppercase tracking-widest transition-all"
                                     >
                                         Sell With Us
                                     </button>

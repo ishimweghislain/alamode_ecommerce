@@ -42,28 +42,28 @@ const Navbar = () => {
                                     ALAMODE
                                 </span>
                             </Link>
-
-                            {!isDashboard && (
-                                <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-300">
-                                    <Link href="/categories" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                        <LayoutGrid className="h-4 w-4" />
-                                        Categories
-                                    </Link>
-                                    <Link href="/shop" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                        <ShoppingBag className="h-4 w-4" />
-                                        Shop
-                                    </Link>
-                                    <Link href="/premium" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                        <Tag className="h-4 w-4" />
-                                        Promotions
-                                    </Link>
-                                    <Link href="/how-it-works" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                        <HelpCircle className="h-4 w-4" />
-                                        How It Works
-                                    </Link>
-                                </div>
-                            )}
                         </div>
+
+                        {!isDashboard && (
+                            <div className="hidden lg:flex flex-1 justify-center items-center gap-10 text-sm font-medium text-gray-300">
+                                <Link href="/categories" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
+                                    <LayoutGrid className="h-4 w-4" />
+                                    Categories
+                                </Link>
+                                <Link href="/shop" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
+                                    <ShoppingBag className="h-4 w-4" />
+                                    Shop
+                                </Link>
+                                <Link href="/premium" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
+                                    <Tag className="h-4 w-4" />
+                                    Promotions
+                                </Link>
+                                <Link href="/how-it-works" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
+                                    <HelpCircle className="h-4 w-4" />
+                                    How It Works
+                                </Link>
+                            </div>
+                        )}
 
 
                         <div className="flex items-center gap-5">
