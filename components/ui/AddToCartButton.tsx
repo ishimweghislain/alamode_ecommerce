@@ -18,6 +18,7 @@ export const AddToCartButton = ({ product }: AddToCartButtonProps) => {
     const handleAdd = () => {
         addItem({
             ...product,
+            productId: product.id,
             quantity: 1
         });
     };

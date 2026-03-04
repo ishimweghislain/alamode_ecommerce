@@ -19,6 +19,7 @@ export const BuyNowButton = ({ product }: BuyNowButtonProps) => {
     const handleBuyNow = () => {
         addItem({
             ...product,
+            productId: product.id,
             quantity: 1
         });
         router.push("/checkout");
