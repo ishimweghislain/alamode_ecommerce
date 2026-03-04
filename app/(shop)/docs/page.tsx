@@ -30,7 +30,7 @@ export default function DocumentationPage() {
         {
             title: "Need More Help?",
             icon: HelpCircle,
-            content: "If you have specific questions or encounter any issues, please reach out to our support team at support@alamode.rw or use the contact form on our website."
+            content: "If you have questions or encounter any issues, please reach out to our support team via email at mugisha@programmage.com, call us on 0789054955, or use the Support ticket system in your dashboard.",
         }
     ];
 

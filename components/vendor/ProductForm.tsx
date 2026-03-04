@@ -3,14 +3,18 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { ImagePlus, Trash2, X, ChevronRight, UploadCloud, Info } from "lucide-react";
+import { ImagePlus, Trash2, X, ChevronRight, UploadCloud, Info, Ruler, Plus } from "lucide-react";
 import Image from "next/image";
 import axios from "axios";
+import { clsx } from "clsx";
 
 interface ProductFormProps {
     initialData?: any;
     categories: any[];
 }
+
+const CLOTHING_PRESETS = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+const SHOE_PRESETS = ["34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47"];
 
 export default function ProductForm({ initialData, categories }: ProductFormProps) {
     const router = useRouter();
@@ -23,8 +27,11 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
         stock: initialData?.stock || "",
         categoryId: initialData?.categoryId || "",
         subcategoryId: initialData?.subcategoryId || "",
+        sizeType: initialData?.sizeType || "",
     });
 
+    const [sizes, setSizes] = useState<string[]>(initialData?.sizes || []);
+    const [customSizeInput, setCustomSizeInput] = useState("");
     const [subcategories, setSubcategories] = useState<any[]>([]);
 
     useEffect(() => {
@@ -36,13 +43,32 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
         }
     }, [formData.categoryId, categories]);
 
+    const togglePresetSize = (size: string) => {
+        setSizes(prev =>
+            prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
+        );
+    };
+
+    const addCustomSize = () => {
+        const s = customSizeInput.trim().toUpperCase();
+        if (!s) return;
+        if (sizes.includes(s)) {
+            toast.error("Size already added");
+            return;
+        }
+        setSizes(prev => [...prev, s]);
+        setCustomSizeInput("");
+    };
+
+    const removeSize = (size: string) => {
+        setSizes(prev => prev.filter(s => s !== size));
+    };
+
     const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files) return;
-
         setLoading(true);
         const toastId = toast.loading("Uploading images...");
-
         try {
             const uploadedUrls: string[] = [];
             for (let i = 0; i < files.length; i++) {
@@ -53,7 +79,7 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
             }
             setImages([...images, ...uploadedUrls]);
             toast.success("Images uploaded successfully", { id: toastId });
-        } catch (error) {
+        } catch {
             toast.error("Upload failed", { id: toastId });
         } finally {
             setLoading(false);
@@ -67,36 +93,38 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (images.length === 0) return toast.error("Please upload at least one image");
-
         setLoading(true);
         try {
+            const payload = { ...formData, images, sizes };
             if (initialData) {
-                await axios.patch(`/api/products/${initialData.id}`, { ...formData, images });
+                await axios.patch(`/api/products/${initialData.id}`, payload);
                 toast.success("Product updated");
             } else {
-                await axios.post("/api/products", { ...formData, images });
+                await axios.post("/api/products", payload);
                 toast.success("Product created");
             }
             router.push("/vendor/products");
             router.refresh();
-        } catch (error) {
+        } catch {
             toast.error("Something went wrong");
         } finally {
             setLoading(false);
         }
     };
 
+    const currentPresets = formData.sizeType === "shoe" ? SHOE_PRESETS : CLOTHING_PRESETS;
+
     return (
         <form onSubmit={onSubmit} className="space-y-8 max-w-5xl">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Left Side - Details */}
                 <div className="space-y-6">
+                    {/* General Info */}
                     <div className="card-luxury p-6 space-y-4">
                         <h2 className="text-xl font-bold text-white flex items-center gap-2">
                             <Info className="h-5 w-5 text-brand-accent" />
                             General Information
                         </h2>
-
                         <div className="space-y-2">
                             <label className="text-sm text-gray-400">Product Name</label>
                             <input
@@ -107,7 +135,6 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
                                 className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-brand-accent transition-colors outline-none"
                             />
                         </div>
-
                         <div className="space-y-2">
                             <label className="text-sm text-gray-400">Description</label>
                             <textarea
@@ -121,12 +148,12 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
                         </div>
                     </div>
 
+                    {/* Pricing */}
                     <div className="card-luxury p-6 space-y-4">
                         <h2 className="text-xl font-bold text-white flex items-center gap-2">
                             <ChevronRight className="h-5 w-5 text-brand-accent" />
-                            Pricing & Inventory
+                            Pricing &amp; Inventory
                         </h2>
-
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm text-gray-400">Price (RWF)</label>
@@ -153,6 +180,7 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
                         </div>
                     </div>
 
+                    {/* Categories */}
                     <div className="card-luxury p-6 space-y-4">
                         <h2 className="text-xl font-bold text-white">Categories</h2>
                         <div className="grid grid-cols-2 gap-4">
@@ -186,6 +214,120 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
                             </div>
                         </div>
                     </div>
+
+                    {/* Sizes */}
+                    <div className="card-luxury p-6 space-y-4">
+                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                            <Ruler className="h-5 w-5 text-brand-accent" />
+                            Sizes Available
+                        </h2>
+                        <p className="text-xs text-gray-400">
+                            Select the size type, then toggle which sizes you carry. You can also add custom sizes.
+                        </p>
+
+                        {/* Size Type Toggle */}
+                        <div className="flex gap-3">
+                            {[
+                                { value: "", label: "No Sizes" },
+                                { value: "clothing", label: "Clothing" },
+                                { value: "shoe", label: "Shoes" },
+                            ].map((opt) => (
+                                <button
+                                    key={opt.value}
+                                    type="button"
+                                    onClick={() => {
+                                        setFormData({ ...formData, sizeType: opt.value });
+                                        setSizes([]);
+                                    }}
+                                    className={clsx(
+                                        "flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all",
+                                        formData.sizeType === opt.value
+                                            ? "bg-brand-accent border-brand-accent text-white"
+                                            : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
+                                    )}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {formData.sizeType && (
+                            <>
+                                {/* Preset Size Chips */}
+                                <div>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">
+                                        {formData.sizeType === "shoe" ? "Shoe Sizes" : "Standard Sizes"}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {currentPresets.map((size) => (
+                                            <button
+                                                key={size}
+                                                type="button"
+                                                onClick={() => togglePresetSize(size)}
+                                                className={clsx(
+                                                    "px-3 py-1.5 rounded-lg text-xs font-bold border transition-all",
+                                                    sizes.includes(size)
+                                                        ? "bg-brand-accent/20 border-brand-accent text-brand-accent"
+                                                        : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
+                                                )}
+                                            >
+                                                {size}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Custom Size Input */}
+                                <div>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">
+                                        Add Custom Size
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <input
+                                            value={customSizeInput}
+                                            onChange={(e) => setCustomSizeInput(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSize(); } }}
+                                            placeholder="e.g. 48, 2XL, PETITE..."
+                                            className="flex-1 bg-white/5 border border-white/10 rounded-lg p-2 text-white text-sm focus:border-brand-accent outline-none"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={addCustomSize}
+                                            className="px-3 py-2 bg-brand-accent rounded-lg text-white hover:opacity-90 transition-opacity"
+                                        >
+                                            <Plus className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Selected Sizes Summary */}
+                                {sizes.length > 0 && (
+                                    <div>
+                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">
+                                            Selected ({sizes.length})
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {sizes.map((size) => (
+                                                <span
+                                                    key={size}
+                                                    className="flex items-center gap-1.5 px-3 py-1 bg-brand-accent/10 border border-brand-accent/30 rounded-full text-xs text-brand-accent font-bold"
+                                                >
+                                                    {size}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeSize(size)}
+                                                        className="hover:text-white transition-colors"
+                                                    >
+                                                        <X className="h-3 w-3" />
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
 
                 {/* Right Side - Images */}
@@ -196,16 +338,10 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
                             Product Images
                         </h2>
                         <p className="text-xs text-gray-400">The first image will be the main display image. You can upload multiple views.</p>
-
                         <div className="grid grid-cols-2 gap-4">
                             {images.map((url) => (
                                 <div key={url} className="relative group aspect-square rounded-xl overflow-hidden border border-white/10">
-                                    <Image
-                                        fill
-                                        src={url}
-                                        alt="Product"
-                                        className="object-cover"
-                                    />
+                                    <Image fill src={url} alt="Product" className="object-cover" />
                                     <button
                                         type="button"
                                         onClick={() => removeImage(url)}

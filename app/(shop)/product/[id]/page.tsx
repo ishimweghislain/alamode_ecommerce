@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, MoreVertical, Edit, Trash, BarChart3 } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, Edit, Trash, Clock, Ruler } from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
@@ -30,11 +30,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             category: true,
             vendor: true,
             wishlistedBy: user?.id ? { where: { id: user.id } } : false,
-            reviews: {
-                include: {
-                    user: true
-                }
-            }
+            reviews: { include: { user: true } },
+            promotions: {
+                where: { isActive: true, expiresAt: { gt: new Date() } },
+                take: 1,
+            },
         }
     });
 
@@ -96,9 +96,40 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             <span className="h-4 w-[1px] bg-white/10"></span>
                             <span className="text-brand-accent text-sm font-bold">In Stock ({product.stock})</span>
                         </div>
-                        <div className="text-3xl font-bold text-brand-gold mb-8 font-outfit">
-                            {formatPrice(product.price)}
-                        </div>
+                        {/* Price — show promotion if active */}
+                        {(() => {
+                            const promo = (product as any).promotions?.[0];
+                            if (promo) {
+                                const daysLeft = Math.max(0, Math.ceil(
+                                    (new Date(promo.expiresAt).getTime() - Date.now()) / 86400000
+                                ));
+                                return (
+                                    <div className="mb-8">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <span className="text-3xl font-bold text-brand-gold font-outfit">
+                                                {formatPrice(promo.salePrice)}
+                                            </span>
+                                            <span className="text-xl text-gray-500 line-through">
+                                                {formatPrice(promo.originalPrice)}
+                                            </span>
+                                            <span className="bg-brand-gold text-background-dark text-xs font-black px-2.5 py-1 rounded-full">
+                                                -{promo.discountPct}% OFF
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                                            <Clock className="h-3 w-3 text-brand-gold" />
+                                            <span>Sale ends in <strong className="text-brand-gold">{daysLeft}d</strong></span>
+                                            {promo.label && <span className="text-brand-accent">· {promo.label}</span>}
+                                        </div>
+                                    </div>
+                                );
+                            }
+                            return (
+                                <div className="text-3xl font-bold text-brand-gold mb-8 font-outfit">
+                                    {formatPrice(product.price)}
+                                </div>
+                            );
+                        })()}
                     </div>
 
                     <div className="space-y-6 mb-10">
@@ -106,7 +137,29 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             {product.description}
                         </p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-white/10">
+                        {/* Size Selector */}
+                        {(product as any).sizes?.length > 0 && (
+                            <div className="pt-4 border-t border-white/10">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Ruler className="h-4 w-4 text-brand-accent" />
+                                    <p className="font-bold text-white uppercase tracking-widest text-[10px]">
+                                        {(product as any).sizeType === "shoe" ? "Shoe Sizes" : "Available Sizes"}
+                                    </p>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {(product as any).sizes.map((size: string) => (
+                                        <span
+                                            key={size}
+                                            className="px-4 py-2 border border-white/20 rounded-xl text-sm text-gray-300 hover:border-brand-accent hover:text-brand-accent cursor-pointer transition-all"
+                                        >
+                                            {size}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/10">
                             <div className="flex items-center gap-3 text-gray-400 text-sm">
                                 <Truck className="h-5 w-5 text-brand-accent" />
                                 <span>Express Delivery in Rwanda</span>
@@ -169,3 +222,4 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
     );
 }
+

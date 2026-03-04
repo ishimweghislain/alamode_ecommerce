@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBag, HelpCircle, Heart } from "lucide-react";
+import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBag, HelpCircle, Heart, Tag } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -53,8 +53,8 @@ const Navbar = () => {
                                         Shop
                                     </Link>
                                     <Link href="/premium" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
-                                        <User className="h-4 w-4" />
-                                        Premium
+                                        <Tag className="h-4 w-4" />
+                                        Promotions
                                     </Link>
                                     <Link href="/how-it-works" className="flex items-center gap-2 hover:text-brand-gold transition-colors">
                                         <HelpCircle className="h-4 w-4" />

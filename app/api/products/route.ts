@@ -22,22 +22,24 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { name, description, price, stock, categoryId, subcategoryId, images, vendorId: bodyVendorId } = body;
+        const { name, description, price, stock, categoryId, subcategoryId, images, sizes, sizeType, vendorId: bodyVendorId } = body;
 
         if (!name || !description || !price || !categoryId || !images || images.length === 0) {
             return new NextResponse("Missing required fields", { status: 400 });
         }
 
-        const product = await (prisma as any).product.create({
+        const product = await (prisma.product as any).create({
             data: {
                 name,
                 description,
                 price: parseFloat(price),
                 stock: parseInt(stock) || 0,
                 categoryId,
-                subcategoryId,
+                subcategoryId: subcategoryId || null,
                 vendorId: user.role === "ADMIN" ? bodyVendorId : vendorId,
                 images,
+                sizes: sizes || [],
+                sizeType: sizeType || null,
             },
         });
 

@@ -15,7 +15,8 @@ import {
     LogOut,
     ChevronRight,
     Store,
-    Heart
+    Heart,
+    Tag
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { clsx } from "clsx";
@@ -44,6 +45,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Dashboard", icon: LayoutDashboard, href: "/vendor" },
         { label: "My Store", icon: Store, href: "/vendor/profile" },
         { label: "Products", icon: Package, href: "/vendor/products" },
+        { label: "Promotions", icon: Tag, href: "/vendor/promotions" },
         { label: "Orders", icon: ShoppingBag, href: "/vendor/orders" },
         { label: "Withdrawals", icon: CreditCard, href: "/vendor/withdrawals" },
         { label: "Support", icon: HelpCircle, href: "/vendor/support" },

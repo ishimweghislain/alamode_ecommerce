@@ -12,7 +12,7 @@ const Footer = () => {
     return (
         <footer className="bg-background-dark border-t border-white/10 pt-16 pb-24 md:pb-12 mt-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
                     <div className="col-span-1 md:col-span-1">
                         <Link href="/" className="text-2xl font-bold text-brand-gold tracking-tighter">
                             ALAMODE
@@ -38,6 +38,21 @@ const Footer = () => {
                             <li><Link href="/contact" className="hover:text-brand-gold transition-colors">Contact</Link></li>
                             <li><Link href="/terms" className="hover:text-brand-gold transition-colors">Terms of Service</Link></li>
                             <li><Link href="/privacy" className="hover:text-brand-gold transition-colors">Privacy Policy</Link></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="text-white font-semibold mb-6">Need Help?</h4>
+                        <ul className="space-y-4 text-sm text-gray-400">
+                            <li className="flex items-center gap-2">
+                                <span className="text-brand-gold">📞</span>
+                                <a href="tel:0789054955" className="hover:text-brand-gold transition-colors">0789054955</a>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <span className="text-brand-gold">📧</span>
+                                <a href="mailto:mugisha@programmage.com" className="hover:text-brand-gold transition-colors">mugisha@programmage.com</a>
+                            </li>
+                            <li><Link href="/profile/support" className="hover:text-brand-gold transition-colors">Open a Ticket</Link></li>
                         </ul>
                     </div>
 

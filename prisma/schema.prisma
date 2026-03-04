@@ -91,6 +91,7 @@ model Vendor {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   products    Product[]
   withdrawals WithdrawalRequest[]
+  promotions  Promotion[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -126,6 +127,8 @@ model Product {
   stock       Int      @default(0)
   isFeatured  Boolean  @default(false)
   isTrending  Boolean  @default(false)
+  sizes       String[] @default([])
+  sizeType    String?  // "shoe" | "clothing" | null
   
   vendorId    String
   vendor      Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
@@ -138,11 +141,30 @@ model Product {
   
   orderItems  OrderItem[]
   reviews     Review[]
+  promotions  Promotion[]
   
   wishlistedBy User[] @relation("UserWishlist")
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Promotion {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  vendorId      String
+  vendor        Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  discountPct   Float    // e.g. 20 means 20% off
+  originalPrice Float
+  salePrice     Float
+  durationDays  Int      // e.g. 7
+  startsAt      DateTime @default(now())
+  expiresAt     DateTime
+  isActive      Boolean  @default(true)
+  label         String?  // optional label e.g. "Summer Sale"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Order {
