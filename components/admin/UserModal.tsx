@@ -11,11 +11,14 @@ import Portal from "../ui/Portal";
 interface UserModalProps {
     isOpen: boolean;
     onClose: () => void;
+    userToEdit?: any; // Add this
 }
 
-export default function UserModal({ isOpen, onClose }: UserModalProps) {
+export default function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+
+    // Initialize form data based on edit mode
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -24,17 +27,31 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
         role: "CUSTOMER",
     });
 
+    // Populate form when userToEdit changes
+    useState(() => {
+        if (userToEdit) {
+            const [first, ...last] = (userToEdit.name || "").split(" ");
+            setFormData({
+                firstName: first || "",
+                lastName: last.join(" ") || "",
+                email: userToEdit.email || "",
+                password: "", // Don't show password for existing user
+                role: userToEdit.role || "CUSTOMER",
+            });
+        }
+    });
+
     const generateVendorDetails = (lastName: string) => {
         if (!lastName) return { email: "", password: "" };
         const cleanLastName = lastName.toLowerCase().replace(/\s+/g, "");
-        const generatedEmail = `${cleanLastName}+alamode.com`;
-        // Generate a 10-character alphanumeric password
+        // Request: "doe+alamode.com remoe the plus"
+        const generatedEmail = `${cleanLastName}@alamode.com`;
         const generatedPassword = Math.random().toString(36).slice(-8) + "Aa1!";
         return { email: generatedEmail, password: generatedPassword };
     };
 
     const handleRoleChange = (newRole: string) => {
-        if (newRole === "VENDOR") {
+        if (newRole === "VENDOR" && !userToEdit) {
             const { email, password } = generateVendorDetails(formData.lastName);
             setFormData({ ...formData, role: newRole, email, password });
         } else {
@@ -43,7 +60,7 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     };
 
     const handleLastNameChange = (val: string) => {
-        if (formData.role === "VENDOR") {
+        if (formData.role === "VENDOR" && !userToEdit) {
             const { email, password } = generateVendorDetails(val);
             setFormData({ ...formData, lastName: val, email, password });
         } else {
@@ -56,19 +73,29 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        const submissionData = {
-            ...formData,
-            name: `${formData.firstName} ${formData.lastName}`.trim(),
-            // Ensure isApproved is true for admin-created vendors
-            isApproved: formData.role === "VENDOR"
-        };
+        const name = `${formData.firstName} ${formData.lastName}`.trim();
+
         try {
-            await axios.post("/api/users", submissionData);
-            toast.success(formData.role === "VENDOR"
-                ? `Vendor Created! Email: ${formData.email} | Pwd: ${formData.password}`
-                : "User created successfully",
-                { duration: 10000 }
-            );
+            if (userToEdit) {
+                // Determine if we need to update password
+                const updateData: any = { name, email: formData.email, role: formData.role };
+                if (formData.password) updateData.password = formData.password;
+
+                await axios.patch(`/api/users/${userToEdit.id}`, updateData);
+                toast.success("User updated successfully");
+            } else {
+                const submissionData = {
+                    ...formData,
+                    name,
+                    isApproved: formData.role === "VENDOR"
+                };
+                await axios.post("/api/users", submissionData);
+                toast.success(formData.role === "VENDOR"
+                    ? `Vendor Created! Email: ${formData.email} | Pwd: ${formData.password}`
+                    : "User created successfully",
+                    { duration: 10000 }
+                );
+            }
             router.refresh();
             onClose();
             setFormData({ firstName: "", lastName: "", email: "", password: "", role: "CUSTOMER" });
@@ -93,7 +120,7 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
                             <div className="h-10 w-10 bg-brand-accent/10 rounded-xl flex items-center justify-center">
                                 <UserPlus className="h-5 w-5 text-brand-accent" />
                             </div>
-                            <h2 className="text-xl font-bold text-white">Add New User</h2>
+                            <h2 className="text-xl font-bold text-white">{userToEdit ? "Edit User Account" : "Add New User"}</h2>
                         </div>
                         <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
                             <X className="h-6 w-6" />
@@ -109,7 +136,7 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
                                     value={formData.firstName}
                                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                                     placeholder="John"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors placeholder:text-gray-600"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -119,25 +146,30 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
                                     value={formData.lastName}
                                     onChange={(e) => handleLastNameChange(e.target.value)}
                                     placeholder="Doe"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors placeholder:text-gray-600"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2 text-xs">
                             <label className="text-sm text-gray-400 px-1">Access Role</label>
-                            <select
-                                value={formData.role}
-                                onChange={(e) => handleRoleChange(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors appearance-none"
-                            >
-                                <option value="CUSTOMER">CUSTOMER (Standard User)</option>
-                                <option value="VENDOR">VENDOR (Store Owner)</option>
-                                <option value="ADMIN">ADMIN (Full Access)</option>
-                            </select>
+                            <div className="relative">
+                                <select
+                                    value={formData.role}
+                                    onChange={(e) => handleRoleChange(e.target.value)}
+                                    className="w-full bg-background-dark border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors appearance-none cursor-pointer"
+                                >
+                                    <option value="CUSTOMER" className="bg-background-dark text-white">CUSTOMER (Standard User)</option>
+                                    <option value="VENDOR" className="bg-background-dark text-white">VENDOR (Store Owner)</option>
+                                    {/* ADMIN role removed for safety as per request */}
+                                </select>
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
+                                    <ChevronRight className="h-4 w-4 rotate-90" />
+                                </div>
+                            </div>
                         </div>
 
-                        {formData.role === "VENDOR" ? (
+                        {formData.role === "VENDOR" && !userToEdit ? (
                             <div className="bg-brand-accent/5 border border-brand-accent/20 rounded-2xl p-4 space-y-3">
                                 <p className="text-[10px] font-bold text-brand-accent uppercase tracking-widest text-center">Auto-Generated Credentials</p>
                                 <div className="space-y-1">
@@ -160,19 +192,21 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         placeholder="john@example.com"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors placeholder:text-gray-600"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm text-gray-400 px-1">Initial Password</label>
+                                    <label className="text-sm text-gray-400 px-1">
+                                        {userToEdit ? "New Password (Optional)" : "Initial Password"}
+                                    </label>
                                     <input
-                                        required
+                                        required={!userToEdit}
                                         type="password"
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                         placeholder="••••••••"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors placeholder:text-gray-600"
                                     />
                                 </div>
                             </>
@@ -184,15 +218,34 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
                                 disabled={loading}
                                 className="w-full py-4 rounded-xl bg-brand-accent text-white font-bold hover:bg-brand-gold transition-all disabled:opacity-50 active:scale-[0.98]"
                             >
-                                {loading ? "Creating Account..." : "Confirm Creation"}
+                                {loading ? (userToEdit ? "Updating..." : "Creating...") : (userToEdit ? "Save Changes" : "Confirm Creation")}
                             </button>
                             <p className="text-[10px] text-gray-500 text-center">
-                                The user will be created with an "Active" status by default.
+                                {userToEdit ? "Account modifications will take effect immediately." : "The account will be initialized with an active status."}
                             </p>
                         </div>
                     </form>
                 </div>
             </div>
         </Portal>
+    );
+}
+
+<div className="pt-4 space-y-3">
+    <button
+        type="submit"
+        disabled={loading}
+        className="w-full py-4 rounded-xl bg-brand-accent text-white font-bold hover:bg-brand-gold transition-all disabled:opacity-50 active:scale-[0.98]"
+    >
+        {loading ? "Creating Account..." : "Confirm Creation"}
+    </button>
+    <p className="text-[10px] text-gray-500 text-center">
+        The user will be created with an "Active" status by default.
+    </p>
+</div>
+                    </form >
+                </div >
+            </div >
+        </Portal >
     );
 }
