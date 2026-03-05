@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
             });
 
             if (!dbUser || !dbUser.isActive) {
-                return null; // Force sign out if deleted or deactivated
+                return null as any; // Force sign out if deleted or deactivated
             }
 
             token.address = dbUser.address || undefined;
