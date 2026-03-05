@@ -55,8 +55,8 @@ export default async function UserOrdersPage() {
                                     <div key={item.id} className="flex gap-6">
                                         <div className="h-20 w-20 relative rounded overflow-hidden flex-shrink-0 bg-white/5">
                                             <Image
-                                                src={item.product.images[0]}
-                                                alt={item.product.name}
+                                                src={item.product?.images?.[0] || "/placeholder.png"}
+                                                alt={item.product?.name || "Product"}
                                                 fill
                                                 className="object-cover"
                                             />
