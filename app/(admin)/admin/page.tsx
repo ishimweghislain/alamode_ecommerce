@@ -51,7 +51,7 @@ export default async function AdminDashboard() {
         prisma.order.findMany({
             take: 5,
             orderBy: { createdAt: 'desc' },
-            include: { user: { select: { name: true } } }
+            include: { user: { select: { name: true, email: true } } }
         }),
         prisma.product.findMany({
             take: 5,
@@ -160,8 +160,8 @@ export default async function AdminDashboard() {
                     <div className="flex flex-wrap gap-4">
                         {orderStatuses.map((status: any) => (
                             <div key={status.status} className="flex-1 min-w-[120px] p-3 rounded-xl bg-white/5 border border-white/5 text-center">
-                                <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{status.status}</p>
-                                <p className="text-xl font-bold text-white">{status._count.id}</p>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{status.status || "Unknown"}</p>
+                                <p className="text-xl font-bold text-white">{status._count?.id || 0}</p>
                             </div>
                         ))}
                     </div>
@@ -178,8 +178,8 @@ export default async function AdminDashboard() {
                         {recentOrders.length > 0 ? recentOrders.map((order) => (
                             <div key={order.id} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
                                 <div>
-                                    <p className="text-sm font-bold text-white">{order.user.name || 'Anonymous'}</p>
-                                    <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                    <p className="text-sm font-bold text-white">{order.user?.name || order.user?.email || 'Anonymous'}</p>
+                                    <p className="text-xs text-gray-500">{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "Pending"}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm font-bold text-brand-gold">{formatPrice(order.totalAmount)}</p>
@@ -202,12 +202,12 @@ export default async function AdminDashboard() {
                             <div key={product.name} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
                                 <div className="flex items-center gap-3">
                                     <div className="h-8 w-8 rounded-lg bg-brand-accent/20 flex items-center justify-center font-bold text-brand-accent text-xs">
-                                        {product.name.charAt(0)}
+                                        {product.name?.charAt(0) || "P"}
                                     </div>
-                                    <p className="text-sm font-medium text-white truncate max-w-[150px]">{product.name}</p>
+                                    <p className="text-sm font-medium text-white truncate max-w-[150px]">{product.name || "Product"}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm font-bold text-white">{product._count.orderItems} Sales</p>
+                                    <p className="text-sm font-bold text-white">{product._count?.orderItems || 0} Sales</p>
                                     <p className="text-xs text-gray-500">{formatPrice(product.price)} avg</p>
                                 </div>
                             </div>
