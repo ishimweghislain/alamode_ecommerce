@@ -1,16 +1,23 @@
 import { prisma } from "@/lib/prisma";
 import AdminProductsClient from "@/components/admin/AdminProductsClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminProductsPage() {
-    const products = await prisma.product.findMany({
-        include: {
-            vendor: true,
-            category: true,
-        },
-        orderBy: {
-            createdAt: 'desc'
-        }
-    });
+    let products = [];
+    try {
+        products = await prisma.product.findMany({
+            include: {
+                vendor: true,
+                category: true,
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+    } catch (error) {
+        products = [];
+    }
 
     return (
         <div className="space-y-8">

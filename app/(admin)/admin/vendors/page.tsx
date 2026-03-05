@@ -2,20 +2,27 @@ import { prisma } from "@/lib/prisma";
 import { Check, X, ShieldAlert, Store } from "lucide-react";
 import { revalidatePath } from "next/cache";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminVendorsPage() {
-    const vendors = await prisma.vendor.findMany({
-        include: {
-            user: {
-                select: {
-                    name: true,
-                    email: true,
+    let vendors = [];
+    try {
+        vendors = await prisma.vendor.findMany({
+            include: {
+                user: {
+                    select: {
+                        name: true,
+                        email: true,
+                    }
                 }
+            },
+            orderBy: {
+                createdAt: 'desc'
             }
-        },
-        orderBy: {
-            createdAt: 'desc'
-        }
-    });
+        });
+    } catch (error) {
+        vendors = [];
+    }
 
     async function approveVendor(id: string) {
         'use server';
