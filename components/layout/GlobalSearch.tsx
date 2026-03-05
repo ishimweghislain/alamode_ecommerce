@@ -95,16 +95,16 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
                 {isLoading && (
                     <Loader2 className={clsx(
                         "absolute top-1/2 -translate-y-1/2 text-brand-accent animate-spin",
-                        isHero ? "right-24" : "right-4 h-4 w-4"
+                        isHero ? "right-32" : "right-4 h-4 w-4"
                     )} />
                 )}
             </form>
 
             {isOpen && results && (
                 <div className={clsx(
-                    "absolute top-[calc(100%+12px)] left-0 min-w-full w-max max-w-[95vw] bg-[#0c0c0c] border border-white/10 rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] z-[200] overflow-hidden backdrop-blur-2xl animate-in fade-in slide-in-from-top-4 duration-300",
+                    "absolute top-[calc(100%+12px)] left-0 w-full bg-[#0c0c0c] border border-white/10 rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] z-[200] overflow-hidden backdrop-blur-2xl animate-in fade-in slide-in-from-top-4 duration-300",
                 )}>
-                    <div className="max-h-[80vh] overflow-y-auto custom-scrollbar p-4 space-y-6">
+                    <div className="max-h-[70vh] overflow-y-auto custom-scrollbar p-4 space-y-6">
                         {/* Products */}
                         {results.products?.length > 0 && (
                             <div>
