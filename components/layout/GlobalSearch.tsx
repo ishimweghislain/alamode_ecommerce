@@ -65,7 +65,7 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
     return (
         <div ref={searchRef} className={clsx(
             "relative group",
-            isHero ? "w-full lg:max-w-2xl" : "w-full max-w-md hidden md:block"
+            isHero ? "w-full lg:max-w-4xl" : "w-full max-w-md hidden md:block"
         )}>
             <form onSubmit={handleSearch} className="relative">
                 <input
