@@ -65,15 +65,15 @@ export default async function VendorOrderDetailsPage({ params }: OrderPageProps)
                                 <div key={item.id} className="p-6 flex items-center gap-6 group hover:bg-white/[0.02] transition-colors">
                                     <div className="h-24 w-24 relative rounded-2xl overflow-hidden bg-brand-dark border border-white/5 ring-1 ring-white/10 group-hover:ring-brand-accent/30 transition-all">
                                         <Image
-                                            src={item.product.images[0]}
-                                            alt={item.product.name}
+                                            src={item.product?.images?.[0] || "/placeholder.png"}
+                                            alt={item.product?.name || "Product"}
                                             fill
                                             className="object-cover"
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <h4 className="text-white font-bold text-lg mb-1">{item.product.name}</h4>
-                                        <p className="text-sm text-gray-500 font-mono mb-4 uppercase tracking-tighter">SKU: {item.product.id.slice(0, 8)}</p>
+                                        <h4 className="text-white font-bold text-lg mb-1">{item.product?.name || "Archived Item"}</h4>
+                                        <p className="text-sm text-gray-500 font-mono mb-4 uppercase tracking-tighter">SKU: {item.product?.id?.slice(0, 8) || "INTERNAL"}</p>
                                         <div className="flex items-center gap-6">
                                             <div>
                                                 <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Unit Price</p>
@@ -148,11 +148,11 @@ export default async function VendorOrderDetailsPage({ params }: OrderPageProps)
                         <div className="space-y-4">
                             <div className="flex items-center gap-4">
                                 <div className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-brand-gold font-bold">
-                                    {order.user.name?.charAt(0)}
+                                    {order.user?.name?.charAt(0) || order.user?.email?.charAt(0) || "?"}
                                 </div>
                                 <div className="min-w-0">
-                                    <p className="text-white font-bold truncate">{order.user.name}</p>
-                                    <p className="text-[10px] text-gray-500 font-mono truncate">{order.user.email}</p>
+                                    <p className="text-white font-bold truncate">{order.user?.name || "Customer"}</p>
+                                    <p className="text-[10px] text-gray-500 font-mono truncate">{order.user?.email || "No email"}</p>
                                 </div>
                             </div>
                             <div className="space-y-3 pt-4 border-t border-white/5">
