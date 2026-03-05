@@ -1,0 +1,2 @@
+prisma:error SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+Error during check: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string

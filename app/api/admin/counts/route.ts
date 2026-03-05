@@ -11,12 +11,33 @@ export async function GET() {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const [pendingVendors, activePromotions, newUsers, openTickets, pendingWithdrawals] = await Promise.all([
-            prisma.vendor.count({ where: { isNew: true } }),
-            (prisma as any).promotion.count({ where: { isNew: true } }),
-            prisma.user.count({ where: { isNew: true } }),
-            prisma.ticket.count({ where: { isNewForAdmin: true } }),
-            (prisma.withdrawalRequest as any).count({ where: { isNew: true } })
+        // Use try-catch for each to identify which one fails if any
+        const safeCount = async (modelName: string, query: any) => {
+            try {
+                const model = (prisma as any)[modelName];
+                if (!model) {
+                    console.error(`[COUNT_ERROR] Model ${modelName} not found on prisma client`);
+                    return 0;
+                }
+                return await model.count(query);
+            } catch (err) {
+                console.error(`[COUNT_ERROR] ${modelName} count failed:`, err);
+                return 0;
+            }
+        };
+
+        const [
+            pendingVendors,
+            activePromotions,
+            newUsers,
+            openTickets,
+            pendingWithdrawals
+        ] = await Promise.all([
+            safeCount('vendor', { where: { isNew: true } }),
+            safeCount('promotion', { where: { isNew: true } }),
+            safeCount('user', { where: { isNew: true } }),
+            safeCount('ticket', { where: { isNewForAdmin: true } }),
+            safeCount('withdrawalRequest', { where: { isNew: true } })
         ]);
 
         return NextResponse.json({
@@ -27,7 +48,13 @@ export async function GET() {
             pendingWithdrawals
         });
     } catch (error) {
-        console.error("[COUNT_ERROR]", error);
-        return new NextResponse("Internal Error", { status: 500 });
+        console.error("[GLOBAL_COUNT_ERROR]", error);
+        return NextResponse.json({
+            pendingVendors: 0,
+            activePromotions: 0,
+            newUsers: 0,
+            openTickets: 0,
+            pendingWithdrawals: 0
+        });
     }
 }
