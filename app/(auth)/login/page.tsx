@@ -237,11 +237,6 @@ function AuthComponent() {
                                 <div className="space-y-2">
                                     <div className="flex justify-between items-center px-1">
                                         <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Password</label>
-                                        {isLogin && (
-                                            <button type="button" className="text-[10px] text-brand-gold hover:text-white transition-colors font-bold uppercase tracking-tighter">
-                                                Forgot?
-                                            </button>
-                                        )}
                                     </div>
                                     <div className="relative group">
                                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 group-focus-within:text-brand-accent transition-colors" />
@@ -286,12 +281,6 @@ function AuthComponent() {
                         </motion.div>
                     </AnimatePresence>
 
-                    {/* Footer Policy Link */}
-                    <div className="absolute bottom-8 left-0 right-0 text-center">
-                        <p className="text-[10px] text-gray-600 uppercase tracking-widest font-bold">
-                            ALAMODE &copy; 2026 &bull; Secure Authentication
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
