@@ -136,10 +136,10 @@ const Sidebar = ({ role }: SidebarProps) => {
                     <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/10 to-transparent opacity-60" />
                     <div className="flex items-center gap-4 relative z-10">
                         <div className="h-12 w-12 rounded-2xl bg-brand-accent/20 border border-brand-accent/30 flex items-center justify-center font-bold text-brand-accent text-xl uppercase shadow-[0_0_20px_rgba(255,184,76,0.1)] group-hover:scale-110 transition-transform duration-500">
-                            {session?.user.name?.charAt(0) || "U"}
+                            {session?.user?.name?.charAt(0) || "U"}
                         </div>
                         <div className="min-w-0">
-                            <p className="text-white font-bold tracking-tight truncate">{session?.user.name || "System User"}</p>
+                            <p className="text-white font-bold tracking-tight truncate">{session?.user?.name || "System User"}</p>
                             <p className="text-[10px] text-brand-gold font-bold uppercase tracking-[0.2em] opacity-80">
                                 {role} Portal
                             </p>

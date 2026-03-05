@@ -97,7 +97,7 @@ export default function SupportAdminClient({ tickets }: SupportAdminClientProps)
                                         </div>
                                         <div>
                                             <p className="text-white font-bold group-hover:text-brand-accent transition-colors">{ticket.subject}</p>
-                                            <p className="text-[10px] text-gray-500">{ticket.user?.email || "No Email"} • #{ticket.id?.slice(-8).toUpperCase()}</p>
+                                            <p className="text-[10px] text-gray-500">{ticket.user?.email || "No Email"} • #{ticket.id?.slice(-8).toUpperCase() || "REF"}</p>
                                         </div>
                                     </div>
                                 </td>
@@ -120,7 +120,7 @@ export default function SupportAdminClient({ tickets }: SupportAdminClientProps)
                                     </span>
                                 </td>
                                 <td className="p-4 text-xs text-gray-400 font-mono">
-                                    {new Date(ticket.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    {ticket.updatedAt ? new Date(ticket.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Pending"}
                                 </td>
                                 <td className="p-4 text-right">
                                     <Link

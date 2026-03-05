@@ -90,9 +90,9 @@ const Navbar = () => {
                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                         className="flex items-center gap-2 p-1 pl-3 bg-white/5 rounded-full border border-white/10 hover:border-brand-accent transition-all"
                                     >
-                                        <span className="text-sm font-medium text-white">{session.user.name?.split(' ')[0]}</span>
+                                        <span className="text-sm font-medium text-white">{session?.user?.name?.split(' ')[0] || "User"}</span>
                                         <div className="h-8 w-8 rounded-full bg-brand-accent flex items-center justify-center text-white font-bold text-xs uppercase">
-                                            {session.user.name?.charAt(0)}
+                                            {session?.user?.name?.charAt(0) || "U"}
                                         </div>
                                         <ChevronDown className="h-4 w-4 text-gray-400 mr-1" />
                                     </button>
@@ -125,10 +125,10 @@ const Navbar = () => {
                             {session && isDashboard && (
                                 <div className="flex items-center gap-4">
                                     <div className="h-8 w-8 rounded-full bg-brand-accent flex items-center justify-center text-white font-bold text-xs uppercase">
-                                        {session.user.name?.charAt(0)}
+                                        {session?.user?.name?.charAt(0) || "U"}
                                     </div>
                                     <span className="text-sm font-medium text-white hidden sm:inline-block">
-                                        {session.user.name}
+                                        {session?.user?.name || "System User"}
                                     </span>
                                     <button
                                         onClick={() => setShowLogoutConfirm(true)}
