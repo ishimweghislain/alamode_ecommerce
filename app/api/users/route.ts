@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { name, email, password, role } = body;
+        const { name, email, password, role, isApproved } = body;
 
         if (!email || !password || !role) {
             return new NextResponse("Missing required fields", { status: 400 });
@@ -34,7 +34,21 @@ export async function POST(req: Request) {
                 email,
                 password: hashedPassword,
                 role,
+                isActive: true,
+                // Create vendor profile if role is VENDOR
+                ...(role === "VENDOR" ? {
+                    vendor: {
+                        create: {
+                            storeName: name || email.split('@')[0],
+                            isApproved: isApproved || false,
+                            isNew: false // Admin created vendors aren't "new" in the badge sense
+                        }
+                    }
+                } : {})
             },
+            include: {
+                vendor: true
+            }
         });
 
         // Remove password from response
