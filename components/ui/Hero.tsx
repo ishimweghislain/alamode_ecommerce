@@ -72,7 +72,7 @@ const Hero = () => {
                                 </span>
 
                                 <h1 className="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-8 uppercase tracking-tighter">
-                                    Buy & Sell at ALAMODE.RW
+                                    buy and sell on alamode only
                                 </h1>
 
                                 <p className="text-gray-400 text-lg md:text-xl mb-12 leading-relaxed max-w-xl font-medium">
