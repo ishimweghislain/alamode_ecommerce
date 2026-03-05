@@ -28,16 +28,16 @@ export async function POST(req: Request) {
             where: {
                 product: { vendorId: vendor.id },
                 order: {
-                    status: { in: ['PAID', 'SHIPPED', 'DELIVERED', 'COMPLETED'] }
+                    status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
                 }
             },
             include: { order: true }
-        });
+        }) as any[];
 
         let totalCleared = 0;
         items.forEach(item => {
             // Funds clear when Shipped or Delivered
-            if (['SHIPPED', 'DELIVERED', 'COMPLETED'].includes(item.order.status)) {
+            if (['SHIPPED', 'DELIVERED'].includes(item.order.status)) {
                 totalCleared += (item.price * item.quantity) * 0.95;
             }
         });
