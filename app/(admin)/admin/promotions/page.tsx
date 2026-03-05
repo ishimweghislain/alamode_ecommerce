@@ -8,14 +8,18 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminPromotionsPage() {
     const now = new Date();
-
-    const allPromotions = await (prisma as any).promotion.findMany({
-        include: {
-            product: { include: { category: true } },
-            vendor: true,
-        },
-        orderBy: { createdAt: "desc" },
-    }) as any[];
+    let allPromotions: any[] = [];
+    try {
+        allPromotions = await (prisma as any).promotion.findMany({
+            include: {
+                product: { include: { category: true } },
+                vendor: true,
+            },
+            orderBy: { createdAt: "desc" },
+        }).catch(() => []);
+    } catch (error) {
+        allPromotions = [];
+    }
 
     const active = allPromotions.filter((p: any) => p.isActive && new Date(p.expiresAt) > now);
     const expired = allPromotions.filter((p: any) => !p.isActive || new Date(p.expiresAt) <= now);
