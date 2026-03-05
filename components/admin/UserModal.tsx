@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { X, UserPlus, Shield } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, UserPlus, Shield, ChevronRight } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -11,14 +11,13 @@ import Portal from "../ui/Portal";
 interface UserModalProps {
     isOpen: boolean;
     onClose: () => void;
-    userToEdit?: any; // Add this
+    userToEdit?: any;
 }
 
 export default function UserModal({ isOpen, onClose, userToEdit }: UserModalProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
-    // Initialize form data based on edit mode
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -27,24 +26,30 @@ export default function UserModal({ isOpen, onClose, userToEdit }: UserModalProp
         role: "CUSTOMER",
     });
 
-    // Populate form when userToEdit changes
-    useState(() => {
-        if (userToEdit) {
+    useEffect(() => {
+        if (userToEdit && isOpen) {
             const [first, ...last] = (userToEdit.name || "").split(" ");
             setFormData({
                 firstName: first || "",
                 lastName: last.join(" ") || "",
                 email: userToEdit.email || "",
-                password: "", // Don't show password for existing user
+                password: "",
                 role: userToEdit.role || "CUSTOMER",
             });
+        } else if (!userToEdit && isOpen) {
+            setFormData({
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: "",
+                role: "CUSTOMER",
+            });
         }
-    });
+    }, [userToEdit, isOpen]);
 
     const generateVendorDetails = (lastName: string) => {
         if (!lastName) return { email: "", password: "" };
         const cleanLastName = lastName.toLowerCase().replace(/\s+/g, "");
-        // Request: "doe+alamode.com remoe the plus"
         const generatedEmail = `${cleanLastName}@alamode.com`;
         const generatedPassword = Math.random().toString(36).slice(-8) + "Aa1!";
         return { email: generatedEmail, password: generatedPassword };
@@ -77,7 +82,6 @@ export default function UserModal({ isOpen, onClose, userToEdit }: UserModalProp
 
         try {
             if (userToEdit) {
-                // Determine if we need to update password
                 const updateData: any = { name, email: formData.email, role: formData.role };
                 if (formData.password) updateData.password = formData.password;
 
@@ -98,7 +102,6 @@ export default function UserModal({ isOpen, onClose, userToEdit }: UserModalProp
             }
             router.refresh();
             onClose();
-            setFormData({ firstName: "", lastName: "", email: "", password: "", role: "CUSTOMER" });
         } catch (error: any) {
             toast.error(error.response?.data || "Something went wrong");
         } finally {
@@ -153,17 +156,16 @@ export default function UserModal({ isOpen, onClose, userToEdit }: UserModalProp
 
                         <div className="space-y-2 text-xs">
                             <label className="text-sm text-gray-400 px-1">Access Role</label>
-                            <div className="relative">
+                            <div className="relative group">
                                 <select
                                     value={formData.role}
                                     onChange={(e) => handleRoleChange(e.target.value)}
-                                    className="w-full bg-background-dark border border-white/10 rounded-xl p-3 text-white focus:border-brand-accent outline-none transition-colors appearance-none cursor-pointer"
+                                    className="w-full bg-background-dark/80 border border-white/10 rounded-xl p-4 text-white focus:border-brand-accent outline-none transition-all appearance-none cursor-pointer hover:bg-white/[0.03] ring-1 ring-white/5"
                                 >
-                                    <option value="CUSTOMER" className="bg-background-dark text-white">CUSTOMER (Standard User)</option>
-                                    <option value="VENDOR" className="bg-background-dark text-white">VENDOR (Store Owner)</option>
-                                    {/* ADMIN role removed for safety as per request */}
+                                    <option value="CUSTOMER" className="bg-background-dark text-white p-4">CUSTOMER (Standard User)</option>
+                                    <option value="VENDOR" className="bg-background-dark text-white p-4">VENDOR (Store Owner)</option>
                                 </select>
-                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity">
                                     <ChevronRight className="h-4 w-4 rotate-90" />
                                 </div>
                             </div>
@@ -173,11 +175,11 @@ export default function UserModal({ isOpen, onClose, userToEdit }: UserModalProp
                             <div className="bg-brand-accent/5 border border-brand-accent/20 rounded-2xl p-4 space-y-3">
                                 <p className="text-[10px] font-bold text-brand-accent uppercase tracking-widest text-center">Auto-Generated Credentials</p>
                                 <div className="space-y-1">
-                                    <p className="text-[10px] text-gray-500 uppercase">System Email</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">System Email</p>
                                     <p className="text-white font-mono text-xs truncate bg-white/5 p-2 rounded-lg border border-white/5">{formData.email || 'pending...'}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[10px] text-gray-500 uppercase">Temporary Password</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Temporary Password</p>
                                     <p className="text-brand-gold font-mono text-xs bg-white/5 p-2 rounded-lg border border-white/5">{formData.password || 'pending...'}</p>
                                 </div>
                                 <p className="text-[10px] text-gray-500 italic text-center">Vendor will be approved automatically.</p>
@@ -220,32 +222,13 @@ export default function UserModal({ isOpen, onClose, userToEdit }: UserModalProp
                             >
                                 {loading ? (userToEdit ? "Updating..." : "Creating...") : (userToEdit ? "Save Changes" : "Confirm Creation")}
                             </button>
-                            <p className="text-[10px] text-gray-500 text-center">
-                                {userToEdit ? "Account modifications will take effect immediately." : "The account will be initialized with an active status."}
+                            <p className="text-[10px] text-gray-500 text-center uppercase tracking-widest font-bold">
+                                {userToEdit ? "Modifications take effect immediately" : "Account active from creation"}
                             </p>
                         </div>
                     </form>
                 </div>
             </div>
         </Portal>
-    );
-}
-
-<div className="pt-4 space-y-3">
-    <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-4 rounded-xl bg-brand-accent text-white font-bold hover:bg-brand-gold transition-all disabled:opacity-50 active:scale-[0.98]"
-    >
-        {loading ? "Creating Account..." : "Confirm Creation"}
-    </button>
-    <p className="text-[10px] text-gray-500 text-center">
-        The user will be created with an "Active" status by default.
-    </p>
-</div>
-                    </form >
-                </div >
-            </div >
-        </Portal >
     );
 }

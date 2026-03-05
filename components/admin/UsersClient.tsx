@@ -28,11 +28,22 @@ export default function UsersClient({ users }: UsersClientProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<any>(null);
 
     const filteredUsers = users.filter((user) =>
         user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const onEdit = (user: any) => {
+        setSelectedUser(user);
+        setIsModalOpen(true);
+    };
+
+    const onCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedUser(null);
+    };
 
     const onToggleStatus = async (userId: string, currentStatus: boolean) => {
         setLoading(userId);
@@ -80,7 +91,10 @@ export default function UsersClient({ users }: UsersClientProps) {
                         />
                     </div>
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => {
+                            setSelectedUser(null);
+                            setIsModalOpen(true);
+                        }}
                         className="bg-brand-accent hover:bg-brand-gold text-white font-bold py-2 px-4 rounded-luxury transition-all flex items-center gap-2"
                     >
                         <UserPlus className="h-4 w-4" /> Add User
@@ -120,7 +134,7 @@ export default function UsersClient({ users }: UsersClientProps) {
                                         {user.role}
                                     </span>
                                 </td>
-                                <td className="p-4 text-xs">
+                                <td className="p-4 text-xs text-gray-400">
                                     {user.isActive ? (
                                         <span className="text-green-400 font-bold uppercase">Active</span>
                                     ) : (
@@ -131,9 +145,16 @@ export default function UsersClient({ users }: UsersClientProps) {
                                     {new Date(user.createdAt).toLocaleDateString()}
                                 </td>
                                 <td className="p-4 text-right">
-                                    <div className="flex justify-end gap-2">
+                                    <div className="flex justify-end gap-1">
                                         {session?.user.id !== user.id ? (
                                             <>
+                                                <button
+                                                    onClick={() => onEdit(user)}
+                                                    className="p-2 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-colors"
+                                                    title="Edit User"
+                                                >
+                                                    <Edit className="h-4 w-4" />
+                                                </button>
                                                 <button
                                                     onClick={() => onToggleStatus(user.id, user.isActive)}
                                                     disabled={loading === user.id}
@@ -169,7 +190,11 @@ export default function UsersClient({ users }: UsersClientProps) {
                 )}
             </div>
 
-            <UserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            <UserModal
+                isOpen={isModalOpen}
+                onClose={onCloseModal}
+                userToEdit={selectedUser}
+            />
         </div>
     );
 }
