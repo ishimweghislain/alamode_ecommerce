@@ -14,7 +14,18 @@ export default async function VendorOrdersPage() {
         where: { userId: user.id }
     });
 
-    if (!vendor) return <div>Store not found.</div>;
+    if (!vendor) {
+        return (
+            <div className="card-luxury p-12 text-center space-y-6">
+                <div className="h-20 w-20 bg-brand-gold/10 rounded-full flex items-center justify-center mx-auto">
+                    <ShoppingBag className="h-10 w-10 text-brand-gold" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Boutique Not Found</h3>
+                <p className="text-gray-400 max-w-sm mx-auto">Your vendor profile could not be located. If your application was recently approved, please try logging out and back in.</p>
+                <Link href="/" className="btn-primary px-8 py-3 inline-block">Return Home</Link>
+            </div>
+        );
+    }
 
     // In a real app, you would filter orders by products belonging to the vendor
     // For this implementation, we show relevant marketplace orders or mock for UI
@@ -75,8 +86,8 @@ export default async function VendorOrdersPage() {
                                     <td className="p-4">
                                         <div className="flex -space-x-2">
                                             {order.items.map((item: any, idx: number) => (
-                                                <div key={idx} className="h-8 w-8 rounded bg-white/10 border border-background-dark flex items-center justify-center overflow-hidden" title={item.product.name}>
-                                                    <img src={item.product.images[0]} alt={item.product.name} className="object-cover h-full w-full" />
+                                                <div key={idx} className="h-8 w-8 rounded bg-white/10 border border-background-dark flex items-center justify-center overflow-hidden" title={item.product?.name || "Product"}>
+                                                    <img src={item.product?.images?.[0] || "/placeholder.png"} alt={item.product?.name || "Product"} className="object-cover h-full w-full" />
                                                 </div>
                                             ))}
                                         </div>
