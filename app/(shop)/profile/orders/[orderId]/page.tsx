@@ -112,16 +112,16 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
                                 <div key={item.id} className="py-6 first:pt-0 last:pb-0 flex gap-6">
                                     <div className="h-24 w-24 relative rounded-xl overflow-hidden bg-white/5 border border-white/5">
                                         <Image
-                                            src={item.product.images[0] || "/placeholder.png"}
-                                            alt={item.product.name}
+                                            src={item.product?.images?.[0] || "/placeholder.png"}
+                                            alt={item.product?.name || "Product"}
                                             fill
                                             className="object-cover"
                                         />
                                     </div>
                                     <div className="flex-1 flex justify-between">
                                         <div>
-                                            <h4 className="text-white font-bold text-lg mb-1">{item.product.name}</h4>
-                                            <p className="text-sm text-gray-400">Sold by: <span className="text-brand-accent">{item.product.vendor.storeName}</span></p>
+                                            <h4 className="text-white font-bold text-lg mb-1">{item.product?.name || "Archived Item"}</h4>
+                                            <p className="text-sm text-gray-400">Sold by: <span className="text-brand-accent">{item.product?.vendor?.storeName || "Boutique Portfolio"}</span></p>
                                             {item.size && (
                                                 <p className="text-xs text-brand-gold mt-1 font-bold">Size: {item.size}</p>
                                             )}
@@ -129,7 +129,9 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
                                         </div>
                                         <div className="text-right">
                                             <p className="text-white font-bold text-lg">{formatPrice(item.price)}</p>
-                                            <Link href={`/product/${item.product.id}`} className="text-xs text-brand-gold hover:underline mt-2 inline-block">View Item →</Link>
+                                            {item.product?.id && (
+                                                <Link href={`/product/${item.product.id}`} className="text-xs text-brand-gold hover:underline mt-2 inline-block">View Item →</Link>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

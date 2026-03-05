@@ -58,16 +58,18 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
             }
 
-            // Refresh address/phone from DB on every token refresh
+            // Refresh address/phone/active state from DB on every token refresh
             const dbUser = await prisma.user.findUnique({
                 where: { id: token.id as string },
-                select: { address: true, phoneNumber: true }
+                select: { address: true, phoneNumber: true, isActive: true }
             });
 
-            if (dbUser) {
-                token.address = dbUser.address || undefined;
-                token.phoneNumber = dbUser.phoneNumber || undefined;
+            if (!dbUser || !dbUser.isActive) {
+                return null; // Force sign out if deleted or deactivated
             }
+
+            token.address = dbUser.address || undefined;
+            token.phoneNumber = dbUser.phoneNumber || undefined;
 
             return token;
         },

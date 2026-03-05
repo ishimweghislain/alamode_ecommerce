@@ -268,7 +268,7 @@ export default async function VendorDashboard() {
                                             <div className="flex -space-x-2">
                                                 {order.items.slice(0, 3).map((item, i) => (
                                                     <div key={i} className="h-8 w-8 rounded-full border-2 border-background-dark overflow-hidden bg-white/5 relative">
-                                                        <Image src={item.product.images[0] || "/placeholder.png"} alt={item.product.name} fill className="object-cover" />
+                                                        <Image src={item.product?.images?.[0] || "/placeholder.png"} alt={item.product?.name || "Product"} fill className="object-cover" />
                                                     </div>
                                                 ))}
                                                 {order.items.length > 3 && (

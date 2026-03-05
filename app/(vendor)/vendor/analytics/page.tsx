@@ -57,7 +57,7 @@ export default async function VendorAnalyticsPage() {
         where: { vendorId },
         include: {
             _count: {
-                select: { orderItems: { where: { order: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] } } } } }
+                select: { orderItems: true }
             }
         },
         orderBy: {
