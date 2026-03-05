@@ -68,9 +68,8 @@ const Hero = () => {
                                 Exclusively for Rwanda
                             </span>
 
-                            <h1 className="text-4xl md:text-6xl font-outfit font-black text-white leading-none mb-8 uppercase tracking-tighter">
-                                Buy & Sell <br />
-                                at ALAMODE.RW
+                            <h1 className="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-8 uppercase tracking-tighter">
+                                Buy & Sell at ALAMODE.RW
                             </h1>
 
                             <p className="text-gray-400 text-lg md:text-xl mb-12 leading-relaxed max-w-xl font-medium">

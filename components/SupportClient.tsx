@@ -124,12 +124,12 @@ export default function SupportClient({ tickets }: SupportClientProps) {
                                             <MessageSquare className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <h4 className="text-lg font-bold text-white mb-1 group-hover:text-brand-accent transition-colors">{ticket.subject}</h4>
+                                            <h4 className="text-lg font-bold text-white mb-1 group-hover:text-brand-accent transition-colors">{ticket.subject || "No Subject"}</h4>
                                             <div className="flex items-center gap-4">
-                                                <p className="text-[10px] text-gray-500 font-mono">ID: #{ticket.id.slice(-8).toUpperCase()}</p>
+                                                <p className="text-[10px] text-gray-500 font-mono">ID: #{ticket.id?.slice(-8).toUpperCase() || "INTERNAL"}</p>
                                                 <span className="h-3 w-[1px] bg-white/10" />
                                                 <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-                                                    Last activity: {new Date(ticket.updatedAt).toLocaleDateString()}
+                                                    Last activity: {ticket.updatedAt ? new Date(ticket.updatedAt).toLocaleDateString() : "Pending"}
                                                 </p>
                                             </div>
                                         </div>

@@ -261,8 +261,8 @@ export default async function VendorDashboard() {
                                             <span className="text-white font-mono text-xs">{order.id}</span>
                                         </td>
                                         <td className="p-4">
-                                            <div className="text-white text-sm font-medium">{order.user.name}</div>
-                                            <div className="text-[10px] text-gray-500">{order.user.email}</div>
+                                            <div className="text-white text-sm font-medium">{order.user?.name || "Customer"}</div>
+                                            <div className="text-[10px] text-gray-500">{order.user?.email || "No email recorded"}</div>
                                         </td>
                                         <td className="p-4">
                                             <div className="flex -space-x-2">
