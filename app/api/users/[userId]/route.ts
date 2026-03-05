@@ -54,12 +54,22 @@ export async function PATCH(
         }
 
         const body = await req.json();
-        const { isActive } = body;
+        const { isActive, name, email, role, password } = body;
+
+        let hashedPassword;
+        if (password) {
+            const bcrypt = require("bcrypt");
+            hashedPassword = await bcrypt.hash(password, 12);
+        }
 
         const updatedUser = await prisma.user.update({
             where: { id: userId },
             data: {
                 ...(typeof isActive === "boolean" && { isActive }),
+                ...(name && { name }),
+                ...(email && { email }),
+                ...(role && { role }),
+                ...(hashedPassword && { password: hashedPassword }),
             },
         });
 
