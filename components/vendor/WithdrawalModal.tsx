@@ -37,11 +37,12 @@ export default function WithdrawalModal({ availableBalance, onClose }: Withdrawa
         setLoading(true);
         try {
             await axios.post("/api/withdrawals", { amount: numAmount });
-            toast.success("Withdrawal request submitted for approval");
+            toast.success("Your withdrawal is pending and successful");
             router.refresh();
             onClose();
-        } catch (error) {
-            toast.error("Failed to submit request");
+        } catch (error: any) {
+            const message = error.response?.data || "Failed to submit request";
+            toast.error(message);
         } finally {
             setLoading(false);
         }

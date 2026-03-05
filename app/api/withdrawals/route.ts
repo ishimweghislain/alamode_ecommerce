@@ -23,15 +23,12 @@ export async function POST(req: Request) {
             return new NextResponse("Invalid amount", { status: 400 });
         }
 
-        // Calculate available balance
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
+        // Calculate available balance (95% after platform fee)
         const items = await prisma.orderItem.findMany({
             where: {
                 product: { vendorId: vendor.id },
                 order: {
-                    status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
+                    status: { in: ['PAID', 'SHIPPED', 'DELIVERED', 'COMPLETED'] }
                 }
             },
             include: { order: true }
@@ -39,8 +36,9 @@ export async function POST(req: Request) {
 
         let totalCleared = 0;
         items.forEach(item => {
-            if (new Date(item.order.createdAt) < sevenDaysAgo) {
-                totalCleared += item.price * item.quantity;
+            // Funds clear when Shipped or Delivered
+            if (['SHIPPED', 'DELIVERED', 'COMPLETED'].includes(item.order.status)) {
+                totalCleared += (item.price * item.quantity) * 0.95;
             }
         });
 
@@ -54,8 +52,8 @@ export async function POST(req: Request) {
 
         const availableBalance = Math.max(0, totalCleared - (withdrawalSum._sum.amount || 0));
 
-        if (amount > availableBalance) {
-            return new NextResponse("Insufficient balance", { status: 400 });
+        if (parseFloat(amount) > availableBalance) {
+            return new NextResponse("Insufficient cleared balance", { status: 400 });
         }
 
         const withdrawal = await prisma.withdrawalRequest.create({
