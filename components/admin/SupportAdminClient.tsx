@@ -29,10 +29,10 @@ export default function SupportAdminClient({ tickets }: SupportAdminClientProps)
     const [search, setSearch] = useState("");
 
     const filteredTickets = tickets.filter(t =>
-        t.subject.toLowerCase().includes(search.toLowerCase()) ||
-        t.user.name?.toLowerCase().includes(search.toLowerCase()) ||
-        t.user.email.toLowerCase().includes(search.toLowerCase()) ||
-        t.id.toLowerCase().includes(search.toLowerCase())
+        t.subject?.toLowerCase().includes(search.toLowerCase()) ||
+        t.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
+        t.user?.email?.toLowerCase().includes(search.toLowerCase()) ||
+        t.id?.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
@@ -93,11 +93,11 @@ export default function SupportAdminClient({ tickets }: SupportAdminClientProps)
                                 <td className="p-4">
                                     <div className="flex items-center gap-4">
                                         <div className="h-10 w-10 rounded-full bg-brand-accent flex items-center justify-center text-background-dark font-bold text-xs">
-                                            {ticket.user.name?.[0] || ticket.user.email?.[0]}
+                                            {ticket.user?.name?.[0] || ticket.user?.email?.[0] || "?"}
                                         </div>
                                         <div>
                                             <p className="text-white font-bold group-hover:text-brand-accent transition-colors">{ticket.subject}</p>
-                                            <p className="text-[10px] text-gray-500">{ticket.user.email} • #{ticket.id.slice(-8).toUpperCase()}</p>
+                                            <p className="text-[10px] text-gray-500">{ticket.user?.email || "No Email"} • #{ticket.id?.slice(-8).toUpperCase()}</p>
                                         </div>
                                     </div>
                                 </td>
