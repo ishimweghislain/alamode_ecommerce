@@ -65,7 +65,7 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
     return (
         <div ref={searchRef} className={clsx(
             "relative group",
-            isHero ? "w-full lg:max-w-4xl" : "w-full max-w-md hidden md:block"
+            isHero ? "w-full lg:max-w-5xl" : "w-full max-w-md hidden md:block"
         )}>
             <form onSubmit={handleSearch} className="relative">
                 <input
@@ -102,9 +102,9 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
 
             {isOpen && results && (
                 <div className={clsx(
-                    "absolute top-[calc(100%+12px)] left-0 min-w-full w-max max-w-[90vw] bg-[#0c0c0c] border border-white/10 rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] z-[200] overflow-hidden backdrop-blur-2xl animate-in fade-in slide-in-from-top-4 duration-300",
+                    "absolute top-[calc(100%+12px)] left-0 min-w-full w-max max-w-[95vw] bg-[#0c0c0c] border border-white/10 rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] z-[200] overflow-hidden backdrop-blur-2xl animate-in fade-in slide-in-from-top-4 duration-300",
                 )}>
-                    <div className="max-h-[60vh] overflow-y-auto custom-scrollbar p-2 space-y-4">
+                    <div className="max-h-[80vh] overflow-y-auto custom-scrollbar p-4 space-y-6">
                         {/* Products */}
                         {results.products?.length > 0 && (
                             <div>

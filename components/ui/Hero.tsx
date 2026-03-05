@@ -77,7 +77,7 @@ const Hero = () => {
                             </p>
 
                             <div className="flex flex-col gap-8">
-                                <div className="flex flex-col lg:flex-row lg:items-center gap-3 w-full bg-white/[0.03] backdrop-blur-xl p-2 lg:p-2 rounded-[2rem] border border-white/10 shadow-2xl">
+                                <div className="flex flex-col lg:flex-row lg:items-center gap-3 w-full bg-white/[0.03] backdrop-blur-xl p-2 lg:p-2 rounded-[2rem] border border-white/10 shadow-2xl relative z-50">
                                     <div className="flex-1">
                                         <GlobalSearch variant="hero" />
                                     </div>
