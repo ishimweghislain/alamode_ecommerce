@@ -46,13 +46,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             {/* Navigation Bar */}
             <div className="flex items-center justify-between mb-12">
-                <Link
-                    href={isAdmin ? "/admin/products" : "/shop"}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
-                >
-                    <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-sm font-medium">Back to {isAdmin ? "Inventory" : "Shop"}</span>
-                </Link>
+                <div className="flex items-center gap-6">
+                    <Link
+                        href={isAdmin ? "/admin/products" : (product.vendor?.id ? `/shop?vendorId=${product.vendor.id}` : "/shop")}
+                        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
+                    >
+                        <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-sm font-medium">Back to {isAdmin ? "Inventory" : "Shop"}</span>
+                    </Link>
+
+                    {!isAdmin && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-accent/10 border border-brand-accent/30 rounded-full animate-in zoom-in slide-in-from-left duration-500 shadow-[0_0_20px_rgba(255,184,76,0.1)]">
+                            <Store className="h-3.5 w-3.5 text-brand-accent" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                                Currently in <span className="text-brand-gold">{product.vendor.storeName}</span>
+                            </span>
+                        </div>
+                    )}
+                </div>
 
                 {isAdmin && (
                     <div className="flex gap-3">

@@ -65,17 +65,17 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
     return (
         <div ref={searchRef} className={clsx(
             "relative group",
-            isHero ? "w-full" : "w-full max-w-md hidden md:block"
+            isHero ? "w-full lg:max-w-2xl" : "w-full max-w-md hidden md:block"
         )}>
             <form onSubmit={handleSearch} className="relative">
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder={isHero ? "Hunt for masterpieces, boutiques, or styles..." : "Search for anything..."}
+                    placeholder={isHero ? "What are you looking for today? (e.g. Jordan, iPhone...)" : "Search collection..."}
                     className={clsx(
                         "w-full bg-white/5 border border-white/10 rounded-luxury text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-accent focus:bg-white/[0.08] transition-all group-hover:border-white/20",
-                        isHero ? "py-5 pl-14 pr-24 text-base" : "py-2.5 pl-11 pr-4 text-sm rounded-full"
+                        isHero ? "py-6 pl-14 pr-24 text-base" : "py-2.5 pl-11 pr-4 text-sm rounded-full"
                     )}
                 />
                 <Search className={clsx(
@@ -102,10 +102,9 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
 
             {isOpen && results && (
                 <div className={clsx(
-                    "absolute top-full left-0 w-full bg-[#0f0f0f] border border-white/10 rounded-2xl shadow-2xl z-[100] overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200",
-                    isHero ? "mt-4" : "mt-2"
+                    "absolute top-[calc(100%+12px)] left-0 min-w-full w-max max-w-[90vw] bg-[#0c0c0c] border border-white/10 rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] z-[200] overflow-hidden backdrop-blur-2xl animate-in fade-in slide-in-from-top-4 duration-300",
                 )}>
-                    <div className="max-h-[70vh] overflow-y-auto custom-scrollbar p-2 space-y-4">
+                    <div className="max-h-[60vh] overflow-y-auto custom-scrollbar p-2 space-y-4">
                         {/* Products */}
                         {results.products?.length > 0 && (
                             <div>

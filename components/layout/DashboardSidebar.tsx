@@ -165,7 +165,7 @@ const Sidebar = ({ role }: SidebarProps) => {
                                     key={link.href}
                                     href={link.href}
                                     className={clsx(
-                                        "flex items-center justify-between p-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden",
+                                        "flex items-center justify-between p-2 rounded-xl transition-all duration-300 group relative overflow-hidden",
                                         isActive
                                             ? "text-white shadow-[0_4px_25px_rgba(255,184,76,0.15)] bg-white/[0.05]"
                                             : "text-gray-400 hover:text-white hover:bg-white/[0.03]"
@@ -179,7 +179,7 @@ const Sidebar = ({ role }: SidebarProps) => {
                                     )}
                                     <div className="flex items-center gap-4 relative z-10">
                                         <link.icon className={clsx(
-                                            "h-5 w-5 transition-all duration-500",
+                                            "h-4 w-4 transition-all duration-500",
                                             isActive ? "text-brand-gold scale-110" : "group-hover:text-white group-hover:scale-110"
                                         )} />
                                         <span className={clsx(
@@ -193,7 +193,7 @@ const Sidebar = ({ role }: SidebarProps) => {
                                             isActive ? "opacity-100 text-brand-gold" : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
                                         )} />
                                         {(link as any).count > 0 && (
-                                            <span className="flex h-5 min-w-[20px] px-1.5 items-center justify-center rounded-full bg-brand-accent text-[10px] font-black text-white shadow-[0_0_15px_rgba(255,184,76,0.4)] animate-pulse">
+                                            <span className="flex h-5 min-w-[20px] px-1.5 items-center justify-center rounded-full bg-red-600 text-[10px] font-black text-white shadow-[0_0_15px_rgba(220,38,38,0.4)] animate-pulse">
                                                 {(link as any).count}
                                             </span>
                                         )}

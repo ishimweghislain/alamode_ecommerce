@@ -68,9 +68,9 @@ const Hero = () => {
                                 Exclusively for Rwanda
                             </span>
 
-                            <h1 className="text-3xl md:text-5xl font-outfit font-black text-white leading-tight mb-8 uppercase tracking-tighter">
+                            <h1 className="text-4xl md:text-6xl font-outfit font-black text-white leading-none mb-8 uppercase tracking-tighter">
                                 Buy & Sell <br />
-                                <span className="text-brand-accent italic font-serif opacity-90">at</span> ALAMODE.RW
+                                <span className="text-brand-accent italic font-serif">at</span> ALAMODE.RW
                             </h1>
 
                             <p className="text-gray-400 text-lg md:text-xl mb-12 leading-relaxed max-w-xl font-medium">
@@ -78,9 +78,8 @@ const Hero = () => {
                             </p>
 
                             <div className="flex flex-col gap-8">
-                                {/* Search Bar & Quick Links - One-line Row on Desktop */}
-                                <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 w-full bg-white/[0.03] backdrop-blur-md p-2 lg:p-1.5 rounded-3xl border border-white/5">
-                                    <div className="flex-1 min-w-[300px]">
+                                <div className="flex flex-col lg:flex-row lg:items-center gap-3 w-full bg-white/[0.03] backdrop-blur-xl p-2 lg:p-2 rounded-[2rem] border border-white/10 shadow-2xl">
+                                    <div className="flex-1">
                                         <GlobalSearch variant="hero" />
                                     </div>
 
