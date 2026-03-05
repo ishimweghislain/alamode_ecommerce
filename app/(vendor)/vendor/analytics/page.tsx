@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { formatPrice } from "@/lib/utils";
-import { BarChart3, TrendingUp, Package, CreditCard, ArrowUpRight, Search } from "lucide-react";
+import { BarChart3, TrendingUp, Package, CreditCard, ArrowUpRight, Search, ShieldAlert } from "lucide-react";
+import Link from "next/link";
 
 export default async function VendorAnalyticsPage() {
     try {

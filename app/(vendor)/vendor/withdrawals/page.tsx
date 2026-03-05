@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import WithdrawalsClient from "@/components/vendor/WithdrawalsClient";
-import { CreditCard } from "lucide-react";
+import { CreditCard, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
