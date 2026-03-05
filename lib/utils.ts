@@ -5,9 +5,11 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function formatPrice(price: number) {
+export function formatPrice(price: number | null | undefined) {
+    const validPrice = typeof price === 'number' ? price : 0;
     return new Intl.NumberFormat("en-RW", {
         style: "currency",
         currency: "RWF",
-    }).format(price);
+        maximumFractionDigits: 0,
+    }).format(validPrice).replace('RWF', 'RF');
 }

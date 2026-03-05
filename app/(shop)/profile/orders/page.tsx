@@ -63,7 +63,7 @@ export default async function UserOrdersPage() {
                                         </div>
                                         <div className="flex-1 flex justify-between items-start">
                                             <div>
-                                                <h4 className="text-white font-medium mb-1">{item.product.name}</h4>
+                                                <h4 className="text-white font-medium mb-1">{item.product?.name || "Archived Product"}</h4>
                                                 <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
                                                 <p className="text-xs text-brand-accent mt-2 font-bold uppercase tracking-widest">Delivered via Elite Courier</p>
                                             </div>

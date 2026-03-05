@@ -50,7 +50,11 @@ function LoginContent() {
             });
 
             if (result?.error) {
-                toast.error("Invalid email or password");
+                // Show specific error from authorize() if it's not the generic CredentialsSignin
+                const errorMessage = result.error === "CredentialsSignin"
+                    ? "Invalid email or password"
+                    : result.error;
+                toast.error(errorMessage, { duration: 6000 });
                 setIsLoading(false);
             } else {
                 toast.success("Welcome back to ALAMODE");
