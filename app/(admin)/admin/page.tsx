@@ -199,7 +199,7 @@ export default async function AdminDashboard() {
                         <Link href="/admin/orders" className="text-xs text-brand-accent font-bold hover:underline">VIEW ALL</Link>
                     </div>
                     <div className="space-y-4">
-                        {recentOrders.length > 0 ? recentOrders.map((order) => (
+                        {recentOrders.length > 0 ? recentOrders.map((order: any) => (
                             <div key={order.id} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
                                 <div>
                                     <p className="text-sm font-bold text-white">{order.user?.name || order.user?.email || 'Anonymous'}</p>
@@ -222,7 +222,7 @@ export default async function AdminDashboard() {
                         <Link href="/admin/products" className="text-xs text-brand-accent font-bold hover:underline">VIEW CATALOG</Link>
                     </div>
                     <div className="space-y-4">
-                        {topProducts.length > 0 ? topProducts.map((product) => (
+                        {topProducts.length > 0 ? topProducts.map((product: any) => (
                             <div key={product.name} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
                                 <div className="flex items-center gap-3">
                                     <div className="h-8 w-8 rounded-lg bg-brand-accent/20 flex items-center justify-center font-bold text-brand-accent text-xs">
