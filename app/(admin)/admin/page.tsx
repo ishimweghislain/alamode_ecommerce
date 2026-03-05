@@ -108,7 +108,7 @@ export default async function AdminDashboard() {
     return (
         <div className="space-y-8 pb-10">
             <div>
-                <h1 className="text-3xl font-outfit font-bold text-white mb-2">Admin Command Center</h1>
+                <h1 className="text-3xl font-outfit font-bold text-white mb-2">Admin Portal Center</h1>
                 <p className="text-gray-400">Manage and monitor the ALAMODE ecosystem with real-time analytics.</p>
             </div>
 
