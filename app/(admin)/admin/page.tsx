@@ -25,7 +25,8 @@ export default async function AdminDashboard() {
             topProducts,
             newUserCount,
             newVendorCount,
-            orderStatuses
+            orderStatuses,
+            pendingWithdrawals
         ] = await Promise.all([
             prisma.user.count().catch(() => 0),
             prisma.vendor.count().catch(() => 0),
@@ -65,13 +66,14 @@ export default async function AdminDashboard() {
             prisma.order.groupBy({
                 by: ['status'],
                 _count: { id: true }
-            }).catch(() => [])
+            }).catch(() => []),
+            prisma.withdrawalRequest.count({ where: { status: 'PENDING' } }).catch(() => 0)
         ]);
 
         data = {
             userCount, vendorCount, productCount, orderCount, pendingVendors,
             totalRevenue, dailySales, monthlySales, recentOrders, topProducts,
-            newUserCount, newVendorCount, orderStatuses
+            newUserCount, newVendorCount, orderStatuses, pendingWithdrawals
         };
     } catch (error) {
         console.error("[ADMIN_DASHBOARD_ERROR]", error);
@@ -87,7 +89,7 @@ export default async function AdminDashboard() {
     const {
         userCount, vendorCount, productCount, orderCount, pendingVendors,
         totalRevenue, dailySales, monthlySales, recentOrders, topProducts,
-        newUserCount, newVendorCount, orderStatuses
+        newUserCount, newVendorCount, orderStatuses, pendingWithdrawals
     } = data;
 
     const stats = [
@@ -126,6 +128,27 @@ export default async function AdminDashboard() {
                         </div>
                         <div className="flex items-center gap-2 text-brand-gold font-bold text-sm">
                             REVIEW NOW <ArrowUpRight className="h-4 w-4" />
+                        </div>
+                    </div>
+                </Link>
+            )}
+
+            {pendingWithdrawals > 0 && (
+                <Link href="/admin/withdrawals" className="block transform hover:scale-[1.01] transition-all">
+                    <div className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-3xl flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="h-10 w-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                                <DollarSign className="text-blue-400 h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="text-blue-400 font-bold">Pending Withdrawals</p>
+                                <p className="text-sm text-blue-400/70">
+                                    You have {pendingWithdrawals} payout request{pendingWithdrawals > 1 ? 's' : ''} waiting for approval.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
+                            PROCESS NOW <ArrowUpRight className="h-4 w-4" />
                         </div>
                     </div>
                 </Link>

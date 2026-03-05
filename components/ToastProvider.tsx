@@ -8,24 +8,36 @@ export const ToastProvider = () => {
             position="top-right"
             containerStyle={{ zIndex: 99999 }}
             toastOptions={{
+                duration: 4000,
                 style: {
-                    background: "#1E293B",
+                    background: "rgba(12, 12, 12, 0.8)",
+                    backdropFilter: "blur(12px)",
                     color: "#fff",
                     border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: "0.75rem",
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+                    borderRadius: "1rem",
+                    padding: "16px 20px",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
+                    maxWidth: "400px",
                 },
                 success: {
                     iconTheme: {
-                        primary: "#10B981",
-                        secondary: "#fff",
+                        primary: "#D4AF37",
+                        secondary: "#000",
                     },
+                    style: {
+                        borderLeft: "4px solid #D4AF37",
+                    }
                 },
                 error: {
                     iconTheme: {
                         primary: "#EF4444",
                         secondary: "#fff",
                     },
+                    style: {
+                        borderLeft: "4px solid #EF4444",
+                    }
                 },
             }}
         />
