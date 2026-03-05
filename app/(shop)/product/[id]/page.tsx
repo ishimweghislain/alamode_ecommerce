@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, Edit, Trash, Clock, Ruler } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, Edit, Trash, Clock, Ruler, Store } from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
