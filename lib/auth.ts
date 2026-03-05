@@ -32,6 +32,10 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
 
+                if (!user.isActive) {
+                    throw new Error("Your account has been deactivated. Please contact the administrator at +250 780 000 000 (ALAMODE.RW) for assistance.");
+                }
+
                 return {
                     id: user.id,
                     email: user.email,

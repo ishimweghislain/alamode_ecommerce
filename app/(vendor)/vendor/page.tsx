@@ -20,7 +20,20 @@ export default async function VendorDashboard() {
         }
     });
 
-    if (!vendor) return null;
+    if (!vendor) {
+        return (
+            <div className="card-luxury p-12 text-center space-y-6">
+                <div className="h-20 w-20 bg-brand-gold/10 rounded-full flex items-center justify-center mx-auto">
+                    <Store className="h-10 w-10 text-brand-gold" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Boutique Not Found</h3>
+                <p className="text-gray-400 max-w-sm mx-auto">Your vendor profile could not be located. If your application was recently approved, please try logging out and back in.</p>
+                <div className="flex justify-center gap-4">
+                    <Link href="/" className="btn-primary px-8 py-3">Return Home</Link>
+                </div>
+            </div>
+        );
+    }
 
     // Fetch Real Analytics
     const vendorId = vendor.id;
