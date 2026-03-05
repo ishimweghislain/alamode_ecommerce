@@ -4,7 +4,7 @@ import AdminProductsClient from "@/components/admin/AdminProductsClient";
 export const dynamic = "force-dynamic";
 
 export default async function AdminProductsPage() {
-    let products = [];
+    let products: any[] = [];
     try {
         products = await prisma.product.findMany({
             include: {

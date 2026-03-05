@@ -3,20 +3,27 @@ import { formatPrice } from "@/lib/utils";
 import { ShoppingBag, Search, Filter, Eye, Truck, CheckCircle2, Clock, XCircle } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminOrdersPage() {
-    const orders = await prisma.order.findMany({
-        include: {
-            user: {
-                select: { name: true, email: true }
+    let orders: any[] = [];
+    try {
+        orders = await prisma.order.findMany({
+            include: {
+                user: {
+                    select: { name: true, email: true }
+                },
+                _count: {
+                    select: { items: true }
+                }
             },
-            _count: {
-                select: { items: true }
+            orderBy: {
+                createdAt: 'desc'
             }
-        },
-        orderBy: {
-            createdAt: 'desc'
-        }
-    });
+        });
+    } catch (error) {
+        orders = [];
+    }
 
     return (
         <div className="space-y-8">
