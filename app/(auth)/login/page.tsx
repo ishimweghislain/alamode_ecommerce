@@ -15,6 +15,7 @@ import {
     ArrowLeft,
     ShieldCheck
 } from "lucide-react";
+import Image from "next/image";
 import axios from "axios";
 
 function AuthComponent() {
