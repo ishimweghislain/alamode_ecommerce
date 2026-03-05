@@ -7,123 +7,138 @@ import { ShoppingBag, Eye, Truck, CheckCircle2, Clock, MapPin } from "lucide-rea
 export const dynamic = "force-dynamic";
 
 export default async function VendorOrdersPage() {
-    const user = await getCurrentUser();
-    if (!user) return null;
+    try {
+        const user = await getCurrentUser();
+        if (!user) return null;
 
-    const vendor = await prisma.vendor.findUnique({
-        where: { userId: user.id }
-    });
+        const vendor = await prisma.vendor.findUnique({
+            where: { userId: user.id }
+        });
 
-    if (!vendor) {
+        if (!vendor) {
+            return (
+                <div className="card-luxury p-12 text-center space-y-6">
+                    <div className="h-20 w-20 bg-brand-gold/10 rounded-full flex items-center justify-center mx-auto">
+                        <ShoppingBag className="h-10 w-10 text-brand-gold" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Boutique Not Found</h3>
+                    <p className="text-gray-400 max-w-sm mx-auto">Your vendor profile could not be located. If your application was recently approved, please try logging out and back in.</p>
+                    <Link href="/" className="btn-primary px-8 py-3 inline-block">Return Home</Link>
+                </div>
+            );
+        }
+
+        // In a real app, you would filter orders by products belonging to the vendor
+        // For this implementation, we show relevant marketplace orders or mock for UI
+        const orders = await prisma.order.findMany({
+            where: {
+                items: {
+                    some: {
+                        product: {
+                            vendorId: vendor.id
+                        }
+                    }
+                }
+            },
+            include: {
+                user: { select: { name: true } },
+                items: {
+                    where: {
+                        product: {
+                            vendorId: vendor.id
+                        }
+                    },
+                    include: { product: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        }).catch((err) => {
+            console.error("[VENDOR_ORDERS_FETCH_ERROR]", err);
+            return [];
+        });
+
+        return (
+            <div className="space-y-8">
+                <div>
+                    <h1 className="text-3xl font-outfit font-bold text-white mb-2">Customer Orders</h1>
+                    <p className="text-gray-400">Track and fulfill purchases for your products.</p>
+                </div>
+
+                <div className="card-luxury overflow-hidden">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="border-b border-white/10 bg-white/5">
+                                <th className="p-4 font-bold text-gray-300">Order ID</th>
+                                <th className="p-4 font-bold text-gray-300">Customer</th>
+                                <th className="p-4 font-bold text-gray-300">My Items</th>
+                                <th className="p-4 font-bold text-gray-300">Subtotal</th>
+                                <th className="p-4 font-bold text-gray-300">Status</th>
+                                <th className="p-4 font-bold text-gray-300 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {orders.map((order: any) => {
+                                const vendorSubtotal = order.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+                                return (
+                                    <tr key={order.id} className="hover:bg-white/5 transition-colors">
+                                        <td className="p-4 font-mono text-xs text-brand-accent">
+                                            #{order.id.slice(-8).toUpperCase()}
+                                        </td>
+                                        <td className="p-4 text-sm text-white">
+                                            {order.user?.name || "Customer"}
+                                        </td>
+                                        <td className="p-4">
+                                            <div className="flex -space-x-2">
+                                                {order.items.map((item: any, idx: number) => (
+                                                    <div key={idx} className="h-8 w-8 rounded bg-white/10 border border-background-dark flex items-center justify-center overflow-hidden" title={item.product?.name || "Product"}>
+                                                        <img src={item.product?.images?.[0] || "/placeholder.png"} alt={item.product?.name || "Product"} className="object-cover h-full w-full" />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </td>
+                                        <td className="p-4 font-bold text-white">
+                                            {formatPrice(vendorSubtotal)}
+                                        </td>
+                                        <td className="p-4">
+                                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${order.status === 'PAID' ? 'bg-brand-accent/10 text-brand-accent' :
+                                                order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
+                                                    'bg-gray-500/10 text-gray-400'
+                                                }`}>
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                        <td className="p-4 text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <Link href={`/vendor/orders/${order.id}`} className="p-2 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-colors" title="View Order Details">
+                                                    <Eye className="h-4 w-4" />
+                                                </Link>
+                                                <Link href={`/vendor/orders/${order.id}`} className="p-2 hover:bg-white/10 text-gray-400 hover:text-brand-accent rounded transition-colors" title="Update Shipping">
+                                                    <Truck className="h-4 w-4" />
+                                                </Link>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                    {orders.length === 0 && (
+                        <div className="p-12 text-center text-gray-500">
+                            No orders recorded for your store yet.
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    } catch (error) {
+        console.error("[VENDOR_ORDERS_PAGE_ERROR]", error);
         return (
             <div className="card-luxury p-12 text-center space-y-6">
-                <div className="h-20 w-20 bg-brand-gold/10 rounded-full flex items-center justify-center mx-auto">
-                    <ShoppingBag className="h-10 w-10 text-brand-gold" />
-                </div>
-                <h3 className="text-xl font-bold text-white">Boutique Not Found</h3>
-                <p className="text-gray-400 max-w-sm mx-auto">Your vendor profile could not be located. If your application was recently approved, please try logging out and back in.</p>
-                <Link href="/" className="btn-primary px-8 py-3 inline-block">Return Home</Link>
+                <ShoppingBag className="h-12 w-12 text-gray-500 mx-auto" />
+                <h3 className="text-xl font-bold text-white">Order Synchronization Issue</h3>
+                <p className="text-gray-400 max-w-sm mx-auto">We encountered an issue connecting to the order registry. Please refresh the page.</p>
+                <Link href="/vendor/orders" className="btn-primary px-8 py-3 inline-block">Retry Registry Sync</Link>
             </div>
         );
     }
-
-    // In a real app, you would filter orders by products belonging to the vendor
-    // For this implementation, we show relevant marketplace orders or mock for UI
-    const orders = await prisma.order.findMany({
-        where: {
-            items: {
-                some: {
-                    product: {
-                        vendorId: vendor.id
-                    }
-                }
-            }
-        },
-        include: {
-            user: { select: { name: true } },
-            items: {
-                where: {
-                    product: {
-                        vendorId: vendor.id
-                    }
-                },
-                include: { product: true }
-            }
-        },
-        orderBy: { createdAt: 'desc' }
-    });
-
-    return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-outfit font-bold text-white mb-2">Customer Orders</h1>
-                <p className="text-gray-400">Track and fulfill purchases for your products.</p>
-            </div>
-
-            <div className="card-luxury overflow-hidden">
-                <table className="w-full text-left">
-                    <thead>
-                        <tr className="border-b border-white/10 bg-white/5">
-                            <th className="p-4 font-bold text-gray-300">Order ID</th>
-                            <th className="p-4 font-bold text-gray-300">Customer</th>
-                            <th className="p-4 font-bold text-gray-300">My Items</th>
-                            <th className="p-4 font-bold text-gray-300">Subtotal</th>
-                            <th className="p-4 font-bold text-gray-300">Status</th>
-                            <th className="p-4 font-bold text-gray-300 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                        {orders.map((order: any) => {
-                            const vendorSubtotal = order.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
-                            return (
-                                <tr key={order.id} className="hover:bg-white/5 transition-colors">
-                                    <td className="p-4 font-mono text-xs text-brand-accent">
-                                        #{order.id.slice(-8).toUpperCase()}
-                                    </td>
-                                    <td className="p-4 text-sm text-white">
-                                        {order.user.name}
-                                    </td>
-                                    <td className="p-4">
-                                        <div className="flex -space-x-2">
-                                            {order.items.map((item: any, idx: number) => (
-                                                <div key={idx} className="h-8 w-8 rounded bg-white/10 border border-background-dark flex items-center justify-center overflow-hidden" title={item.product?.name || "Product"}>
-                                                    <img src={item.product?.images?.[0] || "/placeholder.png"} alt={item.product?.name || "Product"} className="object-cover h-full w-full" />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </td>
-                                    <td className="p-4 font-bold text-white">
-                                        {formatPrice(vendorSubtotal)}
-                                    </td>
-                                    <td className="p-4">
-                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${order.status === 'PAID' ? 'bg-brand-accent/10 text-brand-accent' :
-                                            order.status === 'PENDING' ? 'bg-brand-gold/10 text-brand-gold' :
-                                                'bg-gray-500/10 text-gray-400'
-                                            }`}>
-                                            {order.status}
-                                        </span>
-                                    </td>
-                                    <td className="p-4 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Link href={`/vendor/orders/${order.id}`} className="p-2 hover:bg-white/10 text-gray-400 hover:text-white rounded transition-colors" title="View Order Details">
-                                                <Eye className="h-4 w-4" />
-                                            </Link>
-                                            <Link href={`/vendor/orders/${order.id}`} className="p-2 hover:bg-white/10 text-gray-400 hover:text-brand-accent rounded transition-colors" title="Update Shipping">
-                                                <Truck className="h-4 w-4" />
-                                            </Link>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
-                {orders.length === 0 && (
-                    <div className="p-12 text-center text-gray-500">
-                        No orders containing your products yet.
-                    </div>
-                )}
-            </div>
-        </div>
-    );
 }

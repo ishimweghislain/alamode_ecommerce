@@ -17,7 +17,7 @@ export async function GET() {
                     userId: user.id,
                     isNewForUser: true
                 }
-            })
+            }).catch(() => 0)
         ]);
 
         return NextResponse.json({

@@ -10,61 +10,85 @@ export default async function AdminDashboard() {
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const [
-        userCount,
-        vendorCount,
-        productCount,
-        orderCount,
-        pendingVendors,
-        totalRevenue,
-        dailySales,
-        monthlySales,
-        recentOrders,
-        topProducts,
-        newUserCount,
-        newVendorCount,
-        orderStatuses
-    ] = await Promise.all([
-        prisma.user.count(),
-        prisma.vendor.count(),
-        prisma.product.count(),
-        prisma.order.count(),
-        prisma.vendor.count({ where: { isApproved: false } }),
-        prisma.order.aggregate({
-            _sum: { totalAmount: true },
-            where: { status: { not: "CANCELLED" } }
-        }),
-        prisma.order.aggregate({
-            _sum: { totalAmount: true },
-            where: {
-                createdAt: { gte: startOfDay },
-                status: { not: "CANCELLED" }
-            }
-        }),
-        prisma.order.aggregate({
-            _sum: { totalAmount: true },
-            where: {
-                createdAt: { gte: startOfMonth },
-                status: { not: "CANCELLED" }
-            }
-        }),
-        prisma.order.findMany({
-            take: 5,
-            orderBy: { createdAt: 'desc' },
-            include: { user: { select: { name: true, email: true } } }
-        }),
-        prisma.product.findMany({
-            take: 5,
-            orderBy: { orderItems: { _count: 'desc' } },
-            select: { name: true, price: true, _count: { select: { orderItems: true } } }
-        }),
-        prisma.user.count({ where: { createdAt: { gte: startOfMonth } } }),
-        prisma.vendor.count({ where: { createdAt: { gte: startOfMonth } } }),
-        prisma.order.groupBy({
-            by: ['status'],
-            _count: { id: true }
-        })
-    ]);
+    let data: any = {};
+    try {
+        const [
+            userCount,
+            vendorCount,
+            productCount,
+            orderCount,
+            pendingVendors,
+            totalRevenue,
+            dailySales,
+            monthlySales,
+            recentOrders,
+            topProducts,
+            newUserCount,
+            newVendorCount,
+            orderStatuses
+        ] = await Promise.all([
+            prisma.user.count().catch(() => 0),
+            prisma.vendor.count().catch(() => 0),
+            prisma.product.count().catch(() => 0),
+            prisma.order.count().catch(() => 0),
+            prisma.vendor.count({ where: { isApproved: false } }).catch(() => 0),
+            prisma.order.aggregate({
+                _sum: { totalAmount: true },
+                where: { status: { not: "CANCELLED" } }
+            }).catch(() => ({ _sum: { totalAmount: 0 } })),
+            prisma.order.aggregate({
+                _sum: { totalAmount: true },
+                where: {
+                    createdAt: { gte: startOfDay },
+                    status: { not: "CANCELLED" }
+                }
+            }).catch(() => ({ _sum: { totalAmount: 0 } })),
+            prisma.order.aggregate({
+                _sum: { totalAmount: true },
+                where: {
+                    createdAt: { gte: startOfMonth },
+                    status: { not: "CANCELLED" }
+                }
+            }).catch(() => ({ _sum: { totalAmount: 0 } })),
+            prisma.order.findMany({
+                take: 5,
+                orderBy: { createdAt: 'desc' },
+                include: { user: { select: { name: true, email: true } } }
+            }).catch(() => []),
+            prisma.product.findMany({
+                take: 5,
+                orderBy: { orderItems: { _count: 'desc' } },
+                select: { name: true, price: true, _count: { select: { orderItems: true } } }
+            }).catch(() => []),
+            prisma.user.count({ where: { createdAt: { gte: startOfMonth } } }).catch(() => 0),
+            prisma.vendor.count({ where: { createdAt: { gte: startOfMonth } } }).catch(() => 0),
+            prisma.order.groupBy({
+                by: ['status'],
+                _count: { id: true }
+            }).catch(() => [])
+        ]);
+
+        data = {
+            userCount, vendorCount, productCount, orderCount, pendingVendors,
+            totalRevenue, dailySales, monthlySales, recentOrders, topProducts,
+            newUserCount, newVendorCount, orderStatuses
+        };
+    } catch (error) {
+        console.error("[ADMIN_DASHBOARD_ERROR]", error);
+        // Fallback data if everything fails
+        data = {
+            userCount: 0, vendorCount: 0, productCount: 0, orderCount: 0, pendingVendors: 0,
+            totalRevenue: { _sum: { totalAmount: 0 } }, dailySales: { _sum: { totalAmount: 0 } },
+            monthlySales: { _sum: { totalAmount: 0 } }, recentOrders: [], topProducts: [],
+            newUserCount: 0, newVendorCount: 0, orderStatuses: []
+        };
+    }
+
+    const {
+        userCount, vendorCount, productCount, orderCount, pendingVendors,
+        totalRevenue, dailySales, monthlySales, recentOrders, topProducts,
+        newUserCount, newVendorCount, orderStatuses
+    } = data;
 
     const stats = [
         { label: "Total Users", value: userCount, icon: Users, color: "text-blue-400", href: "/admin/users" },

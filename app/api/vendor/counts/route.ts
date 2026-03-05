@@ -25,12 +25,18 @@ export async function GET() {
                     product: { vendorId: vendor.id },
                     isNewForVendor: true
                 }
+            }).catch((err: any) => {
+                console.error("[VENDOR_COUNT_ERROR] orderItem count failed:", err);
+                return 0;
             }),
             prisma.ticket.count({
                 where: {
                     userId: user.id,
                     isNewForUser: true
                 }
+            }).catch((err: any) => {
+                console.error("[VENDOR_COUNT_ERROR] ticket count failed:", err);
+                return 0;
             })
         ]);
 
