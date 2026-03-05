@@ -110,12 +110,20 @@ function AuthComponent() {
     }
 
     return (
-        <div className="min-h-screen pt-24 pb-12 flex items-center justify-center px-4 bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.05),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(255,51,102,0.05),transparent_40%)]">
-            <div className="w-full max-w-5xl grid lg:grid-cols-2 rounded-[2.5rem] overflow-hidden border border-white/10 bg-background-dark/40 backdrop-blur-3xl shadow-[0_0_100px_rgba(0,0,0,0.5)]">
+        <div className="min-h-screen pt-16 pb-12 flex items-center justify-center px-4 bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.05),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(255,51,102,0.05),transparent_40%)]">
+            <div className="w-full max-w-4xl grid lg:grid-cols-2 rounded-[2.5rem] overflow-hidden border border-white/10 bg-background-dark/40 backdrop-blur-3xl shadow-[0_0_100px_rgba(0,0,0,0.5)]">
 
                 {/* Visual Side (Hidden on Mobile) */}
                 <div className="relative hidden lg:block overflow-hidden bg-background-dark">
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 mix-blend-overlay" />
+                    <Image
+                        src="/luxury-auth.png"
+                        alt="Luxury Lifestyle"
+                        fill
+                        className="object-cover opacity-60"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/40 to-brand-gold/40 mix-blend-overlay" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent" />
                     <div className="absolute inset-0 flex flex-col justify-end p-12 space-y-4">
                         <div className="h-1 bg-brand-accent w-20 rounded-full" />
                         <h2 className="text-5xl font-outfit font-bold text-white tracking-tight leading-tight">
@@ -159,8 +167,8 @@ function AuthComponent() {
                                                 type="button"
                                                 onClick={() => setFormData({ ...formData, role: "CUSTOMER" })}
                                                 className={`py-3 rounded-2xl border flex items-center justify-center gap-2 transition-all font-bold text-xs uppercase tracking-widest ${formData.role === "CUSTOMER"
-                                                        ? "bg-brand-accent text-white border-brand-accent shadow-lg shadow-brand-accent/20"
-                                                        : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
+                                                    ? "bg-brand-accent text-white border-brand-accent shadow-lg shadow-brand-accent/20"
+                                                    : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
                                                     }`}
                                             >
                                                 <ShoppingBag className="h-4 w-4" /> Customer
@@ -169,8 +177,8 @@ function AuthComponent() {
                                                 type="button"
                                                 onClick={() => setFormData({ ...formData, role: "VENDOR" })}
                                                 className={`py-3 rounded-2xl border flex items-center justify-center gap-2 transition-all font-bold text-xs uppercase tracking-widest ${formData.role === "VENDOR"
-                                                        ? "bg-brand-gold text-white border-brand-gold shadow-lg shadow-brand-gold/20"
-                                                        : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
+                                                    ? "bg-brand-gold text-white border-brand-gold shadow-lg shadow-brand-gold/20"
+                                                    : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20"
                                                     }`}
                                             >
                                                 <Store className="h-4 w-4" /> Vendor
