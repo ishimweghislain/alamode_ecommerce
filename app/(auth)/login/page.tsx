@@ -128,8 +128,8 @@ function AuthComponent() {
                     <div className="absolute inset-0 flex flex-col justify-end p-12 space-y-4">
                         <div className="h-1 bg-brand-accent w-20 rounded-full" />
                         <h2 className="text-5xl font-outfit font-bold text-white tracking-tight leading-tight">
-                            The Standard for <br />
-                            <span className="text-brand-accent">Modern Luxury</span>
+                            Shop or sell at <br />
+                            <span className="text-brand-accent">trusted sellers and low cost</span>
                         </h2>
                         <p className="text-gray-400 text-lg max-w-md">
                             Join our exclusive community of high-end vendors and discerning customers.
