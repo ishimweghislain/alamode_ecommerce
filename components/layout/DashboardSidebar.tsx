@@ -148,8 +148,8 @@ const Sidebar = ({ role }: SidebarProps) => {
                 </div>
 
                 {/* Navigation (Scrollable Area) */}
-                <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
-                    <nav className="space-y-1.5 pb-10">
+                <div className="flex-1 overflow-y-auto px-4 py-4 custom-scrollbar">
+                    <nav className="space-y-1 pb-10">
                         <div className="px-3 mb-6">
                             <h2 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.4em] opacity-50">
                                 Dashboard Engine
@@ -183,7 +183,7 @@ const Sidebar = ({ role }: SidebarProps) => {
                                             isActive ? "text-brand-gold scale-110" : "group-hover:text-white group-hover:scale-110"
                                         )} />
                                         <span className={clsx(
-                                            "font-semibold tracking-tight text-sm",
+                                            "font-semibold tracking-tight text-xs",
                                             isActive ? "text-white" : ""
                                         )}>{link.label}</span>
                                     </div>
