@@ -35,6 +35,8 @@ export default async function VendorDashboard() {
         );
     }
 
+    const vendorId = vendor.id;
+
     try {
         // 1. Total Revenue (ONLY SHIPPED OR DELIVERED as per new rules)
         const revenueItems = await prisma.orderItem.findMany({
