@@ -8,6 +8,7 @@ import PremiumRedirect from "./PremiumRedirect";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import GlobalSearch from "../layout/GlobalSearch";
+import TextReveal from "./TextReveal";
 
 const Hero = () => {
     const router = useRouter();
@@ -71,13 +72,13 @@ const Hero = () => {
                                     Exclusively for Rwanda
                                 </span>
 
-                                <h1 className="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-8 uppercase tracking-tighter">
+                                <TextReveal className="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-8 uppercase tracking-tighter">
                                     buy and sell on alamode only
-                                </h1>
+                                </TextReveal>
 
-                                <p className="text-gray-400 text-lg md:text-xl mb-12 leading-relaxed max-w-xl font-medium">
+                                <TextReveal delay={0.5} className="text-gray-400 text-lg md:text-xl mb-12 leading-relaxed max-w-xl font-medium">
                                     The best place in Rwanda to buy and sell quality fashion, phones, and home goods. Easy and fast.
-                                </p>
+                                </TextReveal>
 
                                 <div className="flex flex-col gap-8">
                                     <div className="flex flex-col lg:flex-row lg:items-center gap-3 w-full bg-white/[0.03] backdrop-blur-xl p-2 lg:p-2 rounded-[2rem] border border-white/10 shadow-2xl relative z-50">

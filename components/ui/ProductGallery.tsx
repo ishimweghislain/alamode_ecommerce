@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -14,6 +14,16 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
     const [activeIndex, setActiveIndex] = useState(0);
 
     const productImages = images.length > 0 ? images : ["/placeholder.png"];
+
+    useEffect(() => {
+        if (productImages.length <= 1) return;
+
+        const interval = setInterval(() => {
+            setActiveIndex((prev) => (prev + 1) % productImages.length);
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [productImages.length]);
 
     const next = () => setActiveIndex((prev) => (prev + 1) % productImages.length);
     const prev = () => setActiveIndex((prev) => (prev - 1 + productImages.length) % productImages.length);

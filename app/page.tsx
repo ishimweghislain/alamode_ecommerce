@@ -7,6 +7,8 @@ import MotionInView from "@/components/ui/MotionInView";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import ProductCarousel from "@/components/ui/ProductCarousel";
+import TextReveal from "@/components/ui/TextReveal";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +31,7 @@ export default async function Home() {
         take: 1
       }
     },
-    take: 4,
+    take: 20,
     orderBy: { updatedAt: 'desc' }
   });
 
@@ -42,7 +44,7 @@ export default async function Home() {
         take: 1
       }
     },
-    take: 4,
+    take: 20,
     orderBy: { updatedAt: 'desc' }
   });
 
@@ -67,29 +69,25 @@ export default async function Home() {
       <CategoryHighlights />
 
       {/* Featured Products */}
-      <section id="featured-products" className="py-20 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <MotionInView className="flex justify-between items-end mb-12">
+      <section id="featured-products" className="py-20 scroll-mt-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <MotionInView className="flex justify-between items-end">
             <div>
-              <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2">Featured Products</h2>
+              <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">Featured Collection</h2>
               <p className="text-gray-400">Exclusive items selected for their exceptional quality.</p>
             </div>
-            <Link href="/shop" className="text-brand-accent hover:text-brand-gold font-medium transition-colors">
+            <Link href="/products" className="text-brand-accent hover:text-brand-gold font-medium transition-colors">
               Explore All →
             </Link>
           </MotionInView>
-
-          <MotionInView stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product: any) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </MotionInView>
         </div>
+
+        <ProductCarousel products={featuredProducts} />
       </section>
 
       {/* Banner / Promotion */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <MotionInView direction="none" className="max-w-7xl mx-auto rounded-luxury overflow-hidden relative h-[400px] flex items-center">
+        <MotionInView direction="none" className="max-w-7xl mx-auto rounded-luxury overflow-hidden relative h-[400px] flex items-center shadow-2xl">
           <Image
             src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop"
             alt="Promotion"
@@ -110,23 +108,18 @@ export default async function Home() {
       </section>
 
       {/* Trending Products */}
-      <section id="trending-products" className="py-20 mb-20 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <MotionInView className="flex justify-between items-end mb-12">
+      <section id="trending-products" className="py-20 mb-20 scroll-mt-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <MotionInView className="flex justify-between items-end">
             <div>
-              <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2">Trending Now</h2>
+              <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">Trending Now</h2>
               <p className="text-gray-400">What&apos;s currently captivating our elite community.</p>
             </div>
           </MotionInView>
-
-          <MotionInView stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {trendingProducts.map((product: any) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </MotionInView>
         </div>
-      </section>
 
+        <ProductCarousel products={trendingProducts} reverse />
+      </section>
     </div>
   );
 }

@@ -29,19 +29,28 @@ const Navbar = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-20">
                         <div className="flex items-center gap-8">
-                            <Link href="/" className="flex items-center gap-3 group">
-                                <div className="h-10 w-10 relative overflow-hidden rounded-lg border border-brand-gold/20">
+                            <button
+                                onClick={() => {
+                                    if (pathname === "/") {
+                                        window.scrollTo({ top: 0, behavior: "smooth" });
+                                    } else {
+                                        window.location.href = "/";
+                                    }
+                                }}
+                                className="flex items-center gap-3 group"
+                            >
+                                <div className="h-12 w-12 relative overflow-hidden rounded-full border border-brand-gold/30 shadow-[0_0_30px_rgba(255,184,76,0.2)] group-hover:shadow-[0_0_40px_rgba(255,184,76,0.4)] transition-all duration-500">
                                     <Image
                                         src="/favicontobeusedandicon.png"
                                         alt="ALAMODE"
                                         fill
-                                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
                                 </div>
-                                <span className="text-2xl font-bold text-brand-gold tracking-tighter uppercase font-outfit">
+                                <span className="text-2xl font-bold text-brand-gold tracking-tighter uppercase font-outfit hidden sm:block">
                                     ALAMODE
                                 </span>
-                            </Link>
+                            </button>
                         </div>
 
                         {!isDashboard && (
