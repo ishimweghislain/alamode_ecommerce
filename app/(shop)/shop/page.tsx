@@ -32,6 +32,12 @@ export default async function ShopPage({
     const activeCategory = categorySlug ? categories.find(c => c.slug === categorySlug) : null;
     const activeVendor = vendorId ? vendors.find(v => v.id === vendorId) : null;
 
+    // Filter vendors by shop name when on the directory page
+    const shopQuery = !isShowingProducts ? query : undefined;
+    const filteredVendors = vendors.filter(v =>
+        !shopQuery || v.storeName.toLowerCase().includes(shopQuery.toLowerCase())
+    );
+
     const now = new Date();
     const products = await prisma.product.findMany({
         where: {
@@ -76,12 +82,12 @@ export default async function ShopPage({
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
                     <div>
                         <h1 className="text-4xl font-outfit font-bold text-white mb-2">
-                            {activeVendor ? activeVendor.storeName : "The Alamode Mall"}
+                            {activeVendor ? activeVendor.storeName : "Our Shops"}
                         </h1>
                         <p className="text-gray-400 max-w-xl text-sm">
                             {activeVendor
                                 ? activeVendor.description
-                                : "Explore our exclusive boutiques and curated collections from Rwanda's finest artisans."}
+                                : "Browse all our shops below. Click on any shop to see its products."}
                         </p>
                     </div>
                     {isShowingProducts && (
@@ -115,10 +121,31 @@ export default async function ShopPage({
 
             {!isShowingProducts ? (
                 /* Boutique Directory View */
-                <div className="space-y-16">
+                <div className="space-y-10">
+                    {/* Shop Search Bar */}
+                    <div className="relative max-w-md">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+                        <form action="/shop" method="GET">
+                            <input
+                                name="q"
+                                placeholder="Search for a shop by name..."
+                                defaultValue={query}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-brand-accent transition-all text-sm text-white placeholder:text-gray-600"
+                            />
+                        </form>
+                    </div>
+
+                    {filteredVendors.length === 0 && (
+                        <div className="py-20 text-center border border-dashed border-white/10 rounded-3xl">
+                            <Store className="h-10 w-10 text-gray-700 mx-auto mb-4" />
+                            <p className="text-white font-bold text-lg mb-2">No shops found</p>
+                            <p className="text-gray-500 text-sm">Try a different name or <a href="/shop" className="text-brand-accent hover:underline">view all shops</a>.</p>
+                        </div>
+                    )}
+
                     {/* Featured Stores Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {vendors.map((vendor) => (
+                        {filteredVendors.map((vendor) => (
                             <Link
                                 key={vendor.id}
                                 href={`/shop?vendorId=${vendor.id}`}
