@@ -62,6 +62,10 @@ const Navbar = () => {
                                     <HelpCircle className="h-4 w-4" />
                                     How It Works
                                 </Link>
+                                <Link href="/download" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
+                                    <Smartphone className="h-4 w-4" />
+                                    App
+                                </Link>
                             </div>
                         )}
 
