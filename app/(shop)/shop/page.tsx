@@ -66,7 +66,8 @@ export default async function ShopPage({
         }
     }) as any[];
 
-    const isShowingProducts = !!(query || categorySlug || subcategorySlug || vendorId);
+    // Only switch to product view when filtering by category, subcategory, or vendor — not when searching shop names
+    const isShowingProducts = !!(categorySlug || subcategorySlug || vendorId);
 
     const shopCategories = [
         { name: "All Items", slug: null, icon: LayoutGrid, color: "from-gray-900 to-gray-800" },
