@@ -8,6 +8,7 @@ import Link from "next/link";
 import ProductGallery from "@/components/ui/ProductGallery";
 import WishlistToggle from "@/components/ui/WishlistToggle";
 import ProductActions from "@/components/product/ProductActions";
+import TextReveal from "@/components/ui/TextReveal";
 
 export const dynamic = "force-dynamic";
 
@@ -92,9 +93,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                 <WishlistToggle productId={product.id} initialIsWishlisted={isWishlisted} />
                             )}
                         </div>
-                        <h1 className="text-4xl font-outfit font-bold text-white mb-4 leading-tight">
+                        <TextReveal className="text-4xl font-outfit font-bold text-white mb-4 leading-tight">
                             {product.name}
-                        </h1>
+                        </TextReveal>
                         <div className="flex items-center gap-4 mb-6">
                             <div className="flex items-center gap-1">
                                 {Array(5).fill(0).map((_, i) => (

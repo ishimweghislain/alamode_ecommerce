@@ -7,8 +7,8 @@ import MotionInView from "@/components/ui/MotionInView";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import ProductCarousel from "@/components/ui/ProductCarousel";
-import TextReveal from "@/components/ui/TextReveal";
+import ProductCarousel from "../components/ui/ProductCarousel";
+import TextReveal from "../components/ui/TextReveal";
 
 export const dynamic = "force-dynamic";
 
@@ -73,7 +73,9 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
           <MotionInView className="flex justify-between items-end">
             <div>
-              <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">Featured Collection</h2>
+              <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
+                Featured Collection
+              </TextReveal>
               <p className="text-gray-400">Exclusive items selected for their exceptional quality.</p>
             </div>
             <Link href="/products" className="text-brand-accent hover:text-brand-gold font-medium transition-colors">
@@ -112,7 +114,9 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
           <MotionInView className="flex justify-between items-end">
             <div>
-              <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">Trending Now</h2>
+              <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
+                Trending Now
+              </TextReveal>
               <p className="text-gray-400">What&apos;s currently captivating our elite community.</p>
             </div>
           </MotionInView>
