@@ -83,7 +83,7 @@ export default function SupportClient({ tickets }: SupportClientProps) {
                             </div>
                             <div className="p-3 bg-white/5 rounded-xl border border-white/5">
                                 <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Email Concierge</p>
-                                <a href="mailto:mugisha@programmage.com" className="text-sm text-white font-mono hover:text-brand-gold transition-colors">mugisha@programmage.com</a>
+                                <a href="mailto:mugisha@programage.com" className="text-sm text-white font-mono hover:text-brand-gold transition-colors">mugisha@programage.com</a>
                             </div>
                         </div>
                     </div>

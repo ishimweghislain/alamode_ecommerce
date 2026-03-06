@@ -127,28 +127,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Newsletter / CTA */}
-      <section className="bg-brand-dark/30 py-20 border-t border-white/10">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-outfit font-bold text-white mb-6">Stay Ahead of the Curve</h2>
-          <p className="text-gray-400 mb-10 text-lg">
-            Receive curated inspiration, exclusive previews, and the latest marketplace insights directly to your inbox.
-          </p>
-          <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="flex-1 bg-white/5 border border-white/10 rounded-luxury px-6 py-4 focus:outline-none focus:border-brand-accent transition-all"
-            />
-            <button className="btn-primary h-14 px-8">
-              Subscribe
-            </button>
-          </form>
-          <p className="mt-6 text-xs text-gray-500">
-            By subscribing, you agree to our Terms and Privacy Policy.
-          </p>
-        </div>
-      </section>
     </div>
   );
 }
