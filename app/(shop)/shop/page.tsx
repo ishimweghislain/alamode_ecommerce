@@ -32,11 +32,6 @@ export default async function ShopPage({
     const activeCategory = categorySlug ? categories.find(c => c.slug === categorySlug) : null;
     const activeVendor = vendorId ? vendors.find(v => v.id === vendorId) : null;
 
-    // Filter vendors by shop name when on the directory page
-    const shopQuery = !isShowingProducts ? query : undefined;
-    const filteredVendors = vendors.filter(v =>
-        !shopQuery || v.storeName.toLowerCase().includes(shopQuery.toLowerCase())
-    );
 
     const now = new Date();
     const products = await prisma.product.findMany({
@@ -68,6 +63,12 @@ export default async function ShopPage({
 
     // Only switch to product view when filtering by category, subcategory, or vendor — not when searching shop names
     const isShowingProducts = !!(categorySlug || subcategorySlug || vendorId);
+
+    // Filter vendors by shop name when on the directory page (query is used for shop name, not product search)
+    const shopQuery = !isShowingProducts ? query : undefined;
+    const filteredVendors = vendors.filter(v =>
+        !shopQuery || v.storeName.toLowerCase().includes(shopQuery.toLowerCase())
+    );
 
     const shopCategories = [
         { name: "All Items", slug: null, icon: LayoutGrid, color: "from-gray-900 to-gray-800" },
