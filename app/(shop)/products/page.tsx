@@ -83,10 +83,10 @@ export default async function AllProductsPage({
                                 <span className="h-1 w-8 bg-brand-gold rounded-full" />
                             </div>
                             <h1 className="text-4xl md:text-6xl font-outfit font-black text-white mb-4 tracking-tighter">
-                                Infinite <span className="text-brand-gold italic">Catalog.</span>
+                                All <span className="text-brand-gold italic">Products.</span>
                             </h1>
                             <p className="text-gray-400 max-w-xl text-lg leading-relaxed">
-                                Our entire marketplace at your fingertips. Discover every unique creation and luxury item across all our boutiques.
+                                See everything we have in one place. Find your favorite items from all our shops.
                             </p>
                         </div>
 
