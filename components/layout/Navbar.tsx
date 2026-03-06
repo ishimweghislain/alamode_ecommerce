@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBag, HelpCircle, Heart, Tag } from "lucide-react";
+import { ShoppingCart, User, Search, LogOut, ChevronDown, LayoutGrid, ShoppingBag, HelpCircle, Heart, Tag, Store } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -50,8 +50,12 @@ const Navbar = () => {
                                     <LayoutGrid className="h-4 w-4" />
                                     Categories
                                 </Link>
-                                <Link href="/shop" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
+                                <Link href="/products" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
                                     <ShoppingBag className="h-4 w-4" />
+                                    Products
+                                </Link>
+                                <Link href="/shop" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
+                                    <Store className="h-4 w-4" />
                                     Shop
                                 </Link>
                                 <Link href="/premium" className="flex items-center gap-2 hover:text-brand-gold transition-all hover:scale-105">
