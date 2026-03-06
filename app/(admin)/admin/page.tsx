@@ -1,3 +1,4 @@
+
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Users, Store, Package, CreditCard, TrendingUp, AlertTriangle, DollarSign, ShoppingBag, ArrowUpRight } from "lucide-react";
