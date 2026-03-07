@@ -104,14 +104,10 @@ export default function CartPage() {
                                 <span>Shipping</span>
                                 <span className="text-brand-accent">Free Premium</span>
                             </div>
-                            <div className="flex justify-between text-gray-400 text-sm">
-                                <span>Tax Estimate</span>
-                                <span>{formatPrice(total * 0.05)}</span>
-                            </div>
                             <div className="pt-4 border-t border-white/10 flex justify-between">
                                 <span className="text-white font-bold">Total</span>
                                 <span className="text-brand-gold font-bold text-2xl font-outfit">
-                                    {formatPrice(total * 1.05)}
+                                    {formatPrice(total)}
                                 </span>
                             </div>
                         </div>
