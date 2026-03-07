@@ -1,3 +1,5 @@
+"use client";
+
 import { useCart } from "@/components/CartProvider";
 import { formatPrice, cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
