@@ -96,6 +96,7 @@ model Vendor {
   products    Product[]
   withdrawals WithdrawalRequest[]
   promotions  Promotion[]
+  deliveryFees DeliveryFee[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

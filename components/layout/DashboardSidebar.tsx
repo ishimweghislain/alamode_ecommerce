@@ -102,6 +102,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "Categories", icon: ShoppingBag, href: "/admin/categories" },
         { label: "Orders", icon: ShoppingBag, href: "/admin/orders" },
         { label: "Withdrawals", icon: CreditCard, href: "/admin/withdrawals", count: counts.pendingWithdrawals },
+        { label: "Delivery Fees", icon: Truck, href: "/admin/delivery" },
         { label: "Users", icon: Users, href: "/admin/users", count: counts.newUsers },
         { label: "Support", icon: HelpCircle, href: "/admin/support", count: counts.openTickets },
         { label: "Analytics", icon: BarChart3, href: "/admin/analytics" },
