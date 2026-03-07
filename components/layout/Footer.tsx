@@ -18,7 +18,7 @@ const Footer = () => {
                             ALAMODE
                         </Link>
                         <p className="mt-4 text-gray-400 text-sm leading-relaxed">
-                            Rwanda's leading luxury mall. Find the best boutiques and collections at <span className="text-brand-gold italic">alamode.rw</span>.
+                            Rwanda's leading luxury mall. Find the best boutiques and collections at <span className="text-brand-gold italic font-bold">alamodesite</span> (<span className="text-brand-gold italic">alamode.rw</span>).
                         </p>
                     </div>
 

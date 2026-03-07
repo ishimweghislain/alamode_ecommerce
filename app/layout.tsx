@@ -8,15 +8,15 @@ const inter = { variable: "font-inter" };
 const outfit = { variable: "font-outfit" };
 
 export const metadata: Metadata = {
-  title: "ALAMODE | Rwanda's Luxury Marketplace & Boutique Mall",
-  description: "Shop the best from Rwanda's top boutiques. ALAMODE (alamode.rw) is your curated sanctuary for premium fashion, tech, and style. Buy better, sell well.",
-  keywords: ["Alamode", "alamode.rw", "Rwanda luxury shopping", "Boutique Rwanda", "Rwanda marketplace", "online shopping Rwanda"],
+  title: "ALAMODESITE | ALAMODE - Rwanda's Luxury Marketplace & Boutique Mall",
+  description: "Shop the best from Rwanda's top boutiques. ALAMODE (alamode.rw) is your curated sanctuary (alamodesite) for premium fashion, tech, and style. Buy better, sell well.",
+  keywords: ["alamodesite", "Alamode", "alamode.rw", "Rwanda luxury shopping", "Boutique Rwanda", "Rwanda marketplace", "online shopping Rwanda"],
   authors: [{ name: "ALAMODE" }],
   openGraph: {
-    title: "ALAMODE | Luxury Marketplace Rwanda",
-    description: "Shop premium collections from elite vendors in Rwanda. Reach at alamode.rw",
+    title: "ALAMODESITE | ALAMODE Luxury Marketplace Rwanda",
+    description: "Shop premium collections from elite vendors in Rwanda. Reach at alamode.rw - also known as alamodesite.",
     url: "https://alamode.rw",
-    siteName: "ALAMODE",
+    siteName: "ALAMODESITE",
     images: [
       {
         url: "/favicontobeusedandicon.png",
