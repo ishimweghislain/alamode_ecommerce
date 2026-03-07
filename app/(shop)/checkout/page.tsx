@@ -73,7 +73,7 @@ export default function CheckoutPage() {
         );
     }
 
-    const serviceFee = total * 0.05;
+    const serviceFee = (total + deliveryFee) * 0.07;
     const finalTotal = total + serviceFee + deliveryFee;
 
     const validatePhone = (phone: string) => {

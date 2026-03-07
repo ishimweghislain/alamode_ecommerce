@@ -101,9 +101,9 @@ export default async function AdminDashboard() {
     ];
 
     const revenueStats = [
-        { label: "Total System Revenue (5%)", value: formatPrice((totalRevenue._sum.totalAmount || 0) * 0.05), icon: DollarSign, color: "text-green-400", href: "/admin/analytics" },
-        { label: "Daily System Commission", value: formatPrice((dailySales._sum.totalAmount || 0) * 0.05), icon: TrendingUp, color: "text-brand-accent", href: "/admin/orders" },
-        { label: "Monthly System Commission", value: formatPrice((monthlySales._sum.totalAmount || 0) * 0.05), icon: ShoppingBag, color: "text-brand-gold", href: "/admin/analytics" },
+        { label: "Total System Revenue (7%)", value: formatPrice((totalRevenue._sum.totalAmount || 0) * 0.07), icon: DollarSign, color: "text-green-400", href: "/admin/analytics" },
+        { label: "Daily System Commission", value: formatPrice((dailySales._sum.totalAmount || 0) * 0.07), icon: TrendingUp, color: "text-brand-accent", href: "/admin/orders" },
+        { label: "Monthly System Commission", value: formatPrice((monthlySales._sum.totalAmount || 0) * 0.07), icon: ShoppingBag, color: "text-brand-gold", href: "/admin/analytics" },
     ];
 
     return (

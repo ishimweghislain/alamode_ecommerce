@@ -21,7 +21,7 @@ export async function POST(req: Request) {
         const vendorIds = Array.from(new Set(products.map(p => p.vendorId)));
 
         // Fetch delivery fees for these vendors in the selected district
-        const deliveryFees = await (prisma as any).deliveryFee.findMany({
+        const deliveryFees = await prisma.deliveryFee.findMany({
             where: {
                 district,
                 vendorId: { in: vendorIds }

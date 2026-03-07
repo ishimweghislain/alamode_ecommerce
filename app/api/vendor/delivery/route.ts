@@ -16,7 +16,7 @@ export async function GET() {
         return new NextResponse("Vendor not found", { status: 404 });
     }
 
-    const fees = await (prisma as any).deliveryFee.findMany({
+    const fees = await prisma.deliveryFee.findMany({
         where: { vendorId: vendor.id }
     });
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 
     const { district, fee } = await req.json();
 
-    const deliveryFee = await (prisma as any).deliveryFee.upsert({
+    const deliveryFee = await prisma.deliveryFee.upsert({
         where: {
             vendorId_district: {
                 vendorId: vendor.id,
