@@ -37,8 +37,10 @@ export default async function AdminOrderDetailsPage({ params }: AdminOrderPagePr
 
     if (!order) return notFound();
 
-    const commissionTotal = order.totalAmount * 0.07;
-    const vendorsTotal = order.totalAmount * 0.93;
+    const productSum = order.totalAmount - (order.deliveryFee || 0);
+    const commissionTotal = productSum * 0.07;
+    const vendorProductShare = productSum * 0.93;
+    const deliveryTotal = order.deliveryFee || 0;
 
     return (
         <div className="space-y-8">
@@ -132,12 +134,16 @@ export default async function AdminOrderDetailsPage({ params }: AdminOrderPagePr
 
                             <div className="p-4 rounded-2xl bg-white/[0.03] space-y-4 border border-white/5">
                                 <div className="flex justify-between items-center text-xs">
-                                    <span className="text-gray-500">System Revenue (7%)</span>
+                                    <span className="text-gray-500">System Revenue (7% of Item)</span>
                                     <span className="text-brand-accent font-black tracking-widest">+{formatPrice(commissionTotal)}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-xs">
-                                    <span className="text-gray-500">Vendor Disbursement (93%)</span>
-                                    <span className="text-brand-gold font-bold">-{formatPrice(vendorsTotal)}</span>
+                                    <span className="text-gray-500">Vendor Product Share (93%)</span>
+                                    <span className="text-brand-gold font-bold">-{formatPrice(vendorProductShare)}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-xs border-t border-white/5 pt-4">
+                                    <span className="text-gray-500">Delivery Fee (To Vendor)</span>
+                                    <span className="text-white font-bold">-{formatPrice(deliveryTotal)}</span>
                                 </div>
                             </div>
 

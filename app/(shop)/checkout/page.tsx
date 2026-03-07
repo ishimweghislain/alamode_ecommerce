@@ -73,8 +73,7 @@ export default function CheckoutPage() {
         );
     }
 
-    const serviceFee = (total + deliveryFee) * 0.07;
-    const finalTotal = total + serviceFee + deliveryFee;
+    const finalTotal = total + deliveryFee;
 
     const validatePhone = (phone: string) => {
         const rwandaPhoneRegex = /^(07[2389])\d{7}$/;
@@ -278,10 +277,6 @@ export default function CheckoutPage() {
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-500">Subtotal</span>
                                     <span className="text-gray-300">{formatPrice(total)}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500">Service Fee (7%)</span>
-                                    <span className="text-gray-300">{formatPrice(serviceFee)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-500">Shipping {formData.district ? `(${formData.district})` : ""}</span>

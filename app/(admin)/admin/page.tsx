@@ -35,23 +35,23 @@ export default async function AdminDashboard() {
             prisma.order.count().catch(() => 0),
             prisma.vendor.count({ where: { isApproved: false } }).catch(() => 0),
             prisma.order.aggregate({
-                _sum: { totalAmount: true },
+                _sum: { totalAmount: true, deliveryFee: true },
                 where: { status: { not: "CANCELLED" } }
-            }).catch(() => ({ _sum: { totalAmount: 0 } })),
+            }).catch(() => ({ _sum: { totalAmount: 0, deliveryFee: 0 } })),
             prisma.order.aggregate({
-                _sum: { totalAmount: true },
+                _sum: { totalAmount: true, deliveryFee: true },
                 where: {
                     createdAt: { gte: startOfDay },
                     status: { not: "CANCELLED" }
                 }
-            }).catch(() => ({ _sum: { totalAmount: 0 } })),
+            }).catch(() => ({ _sum: { totalAmount: 0, deliveryFee: 0 } })),
             prisma.order.aggregate({
-                _sum: { totalAmount: true },
+                _sum: { totalAmount: true, deliveryFee: true },
                 where: {
                     createdAt: { gte: startOfMonth },
                     status: { not: "CANCELLED" }
                 }
-            }).catch(() => ({ _sum: { totalAmount: 0 } })),
+            }).catch(() => ({ _sum: { totalAmount: 0, deliveryFee: 0 } })),
             prisma.order.findMany({
                 take: 5,
                 orderBy: { createdAt: 'desc' },
@@ -101,9 +101,9 @@ export default async function AdminDashboard() {
     ];
 
     const revenueStats = [
-        { label: "Total System Revenue (7%)", value: formatPrice((totalRevenue._sum.totalAmount || 0) * 0.07), icon: DollarSign, color: "text-green-400", href: "/admin/analytics" },
-        { label: "Daily System Commission", value: formatPrice((dailySales._sum.totalAmount || 0) * 0.07), icon: TrendingUp, color: "text-brand-accent", href: "/admin/orders" },
-        { label: "Monthly System Commission", value: formatPrice((monthlySales._sum.totalAmount || 0) * 0.07), icon: ShoppingBag, color: "text-brand-gold", href: "/admin/analytics" },
+        { label: "Total System Revenue (7%)", value: formatPrice(((totalRevenue._sum.totalAmount || 0) - (totalRevenue._sum.deliveryFee || 0)) * 0.07), icon: DollarSign, color: "text-green-400", href: "/admin/analytics" },
+        { label: "Daily System Commission", value: formatPrice(((dailySales._sum.totalAmount || 0) - (dailySales._sum.deliveryFee || 0)) * 0.07), icon: TrendingUp, color: "text-brand-accent", href: "/admin/orders" },
+        { label: "Monthly System Commission", value: formatPrice(((monthlySales._sum.totalAmount || 0) - (monthlySales._sum.deliveryFee || 0)) * 0.07), icon: ShoppingBag, color: "text-brand-gold", href: "/admin/analytics" },
     ];
 
     return (
