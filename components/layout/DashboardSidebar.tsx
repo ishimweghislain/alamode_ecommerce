@@ -16,7 +16,8 @@ import {
     ChevronRight,
     Store,
     Heart,
-    Tag
+    Tag,
+    Truck
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { clsx } from "clsx";
@@ -111,6 +112,7 @@ const Sidebar = ({ role }: SidebarProps) => {
         { label: "My Store", icon: Store, href: "/vendor/profile" },
         { label: "Products", icon: Package, href: "/vendor/products" },
         { label: "Promotions", icon: Tag, href: "/vendor/promotions" },
+        { label: "Delivery Fees", icon: Truck, href: "/vendor/delivery" },
         { label: "Orders", icon: ShoppingBag, href: "/vendor/orders", count: counts.newOrders },
         { label: "Withdrawals", icon: CreditCard, href: "/vendor/withdrawals" },
         { label: "Support", icon: HelpCircle, href: "/vendor/support", count: counts.openTickets },

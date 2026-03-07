@@ -169,10 +169,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                 <ShieldCheck className="h-5 w-5 text-brand-accent" />
                                 <span>2 Year Premium Warranty</span>
                             </div>
-                            <div className="flex items-center gap-3 text-gray-400 text-sm">
-                                <RotateCcw className="h-5 w-5 text-brand-accent" />
-                                <span>30-Day Luxury Return Policy</span>
-                            </div>
                         </div>
                     </div>
 
