@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
+import { notifyAdmins } from "@/lib/notifications";
 
 export async function POST(req: Request) {
     try {
@@ -62,6 +63,13 @@ export async function POST(req: Request) {
                 vendorId: vendor.id,
                 status: "PENDING"
             }
+        });
+
+        await notifyAdmins({
+            title: "New Withdrawal Request",
+            message: `${vendor.storeName} has requested a withdrawal of RWF ${parseFloat(amount).toLocaleString()}.`,
+            type: "INFO",
+            link: "/admin/withdrawals"
         });
 
         return NextResponse.json(withdrawal);

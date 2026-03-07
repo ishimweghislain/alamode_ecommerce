@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
+import { notifyAdmins, createNotification } from "@/lib/notifications";
 
 export async function POST(
     req: Request,
@@ -45,6 +46,29 @@ export async function POST(
                 isNewForUser: user.role === "ADMIN"
             }
         });
+
+        // Send notifications
+        if (user.role === "ADMIN") {
+            // Notify the ticket owner
+            const owner = await prisma.user.findUnique({ where: { id: ticket.userId } });
+            if (owner) {
+                await createNotification({
+                    userId: owner.id,
+                    title: "Support Ticket Response",
+                    message: `An admin has responded to your ticket: "${ticket.subject}"`,
+                    type: "SUCCESS",
+                    link: owner.role === "VENDOR" ? "/vendor/support" : "/profile/support"
+                });
+            }
+        } else {
+            // Notify admins
+            await notifyAdmins({
+                title: "New Message on Ticket",
+                message: `New response from ${user.name || user.email} on ticket "${ticket.subject}"`,
+                type: "INFO",
+                link: "/admin/support"
+            });
+        }
 
         return NextResponse.json(newMessage);
     } catch (error) {

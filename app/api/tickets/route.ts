@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
+import { notifyAdmins } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,13 @@ export async function POST(req: Request) {
                     }
                 }
             }
+        });
+
+        await notifyAdmins({
+            title: "New Support Ticket",
+            message: `New ticket from ${user.name || user.email} regarding "${subject}"`,
+            type: "INFO",
+            link: "/admin/support"
         });
 
         return NextResponse.json(ticket);

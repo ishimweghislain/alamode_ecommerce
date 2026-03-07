@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import { notifyAdmins } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -34,11 +35,18 @@ export async function POST(req: Request) {
 
         // If role is VENDOR, create a vendor profile as well
         if (role === "VENDOR") {
-            await prisma.vendor.create({
+            const vendor = await prisma.vendor.create({
                 data: {
                     storeName: `${name}'s Store`,
                     userId: user.id,
                 },
+            });
+
+            await notifyAdmins({
+                title: "New Boutique Application",
+                message: `Boutique "${vendor.storeName}" has registered for a vendor account and is awaiting approval.`,
+                type: "WARNING",
+                link: `/admin/vendors`
             });
         }
 

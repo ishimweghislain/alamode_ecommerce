@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { createNotification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,36 @@ export async function POST(req: Request) {
                     })),
                 },
             },
+            include: {
+                items: {
+                    include: {
+                        product: {
+                            include: {
+                                vendor: true
+                            }
+                        }
+                    }
+                }
+            }
         });
+
+        // Notify Vendors
+        const vendorsToNotify = new Set<string>();
+        order.items.forEach(item => {
+            if (item.product.vendor.userId) {
+                vendorsToNotify.add(item.product.vendor.userId);
+            }
+        });
+
+        for (const vendorUserId of vendorsToNotify) {
+            await createNotification({
+                userId: vendorUserId,
+                title: "New Order Confirmed",
+                message: `You have received a new order ${order.id.slice(-6).toUpperCase()} for RWF ${order.totalAmount.toLocaleString()}.`,
+                type: "SUCCESS",
+                link: "/vendor/orders"
+            });
+        }
 
         return NextResponse.json(order);
     } catch (error) {
