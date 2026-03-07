@@ -1,3 +1,5 @@
+"use client";
+
 import NotificationList from "@/components/ui/NotificationList";
 import { Bell, RefreshCw } from "lucide-react";
 import { useState } from "react";

@@ -1,3 +1,5 @@
+"use client";
+
 import NotificationList from "@/components/ui/NotificationList";
 import { Bell } from "lucide-react";
 
