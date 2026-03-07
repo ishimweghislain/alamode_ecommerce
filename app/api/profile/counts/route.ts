@@ -11,17 +11,24 @@ export async function GET() {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const [openTickets] = await Promise.all([
+        const [openTickets, unreadNotifications] = await Promise.all([
             prisma.ticket.count({
                 where: {
                     userId: user.id,
                     isNewForUser: true
                 }
+            }).catch(() => 0),
+            prisma.notification.count({
+                where: {
+                    userId: user.id,
+                    read: false
+                }
             }).catch(() => 0)
         ]);
 
         return NextResponse.json({
-            openTickets
+            openTickets,
+            unreadNotifications
         });
     } catch (error) {
         console.error("[PROFILE_COUNT_ERROR]", error);

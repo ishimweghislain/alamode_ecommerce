@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ui/ProductCard";
-import { Search, LayoutGrid, Zap, Sparkles } from "lucide-react";
+import { Search, LayoutGrid } from "lucide-react";
 import Link from "next/link";
 import { clsx } from "clsx";
+import { Suspense } from "react";
+import ProductSort from "@/components/product/ProductSort";
 
 export const dynamic = "force-dynamic";
 
@@ -69,7 +71,7 @@ export default async function AllProductsPage({
     }
 
     return (
-        <div className="min-h-screen bg-background-dark pt-12 pb-24">
+        <div className="min-h-screen bg-background-dark pt-6 pb-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Section */}
                 <div className="relative mb-16 p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-brand-accent/20 via-brand-dark to-brand-dark border border-white/10 overflow-hidden shadow-2xl">
@@ -121,28 +123,9 @@ export default async function AllProductsPage({
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3 bg-white/5 p-1 rounded-2xl border border-white/10 self-stretch sm:self-auto">
-                            <Link
-                                href={`/products?sort=latest${query ? `&q=${query}` : ''}`}
-                                className={clsx(
-                                    "flex-1 px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all fex items-center gap-2",
-                                    sortBy === 'latest' ? "bg-brand-accent text-white" : "text-gray-500 hover:text-white"
-                                )}
-                            >
-                                <Zap className="h-4 w-4" />
-                                Newest
-                            </Link>
-                            <Link
-                                href={`/products?sort=popular${query ? `&q=${query}` : ''}`}
-                                className={clsx(
-                                    "flex-1 px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2",
-                                    sortBy === 'popular' ? "bg-brand-gold text-background-dark" : "text-gray-500 hover:text-white"
-                                )}
-                            >
-                                <Sparkles className="h-4 w-4" />
-                                Popular
-                            </Link>
-                        </div>
+                        <Suspense fallback={<div className="h-12 w-64 bg-white/5 animate-pulse rounded-2xl" />}>
+                            <ProductSort />
+                        </Suspense>
                     </div>
 
                     {productsRaw.length > 0 ? (

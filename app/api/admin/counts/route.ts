@@ -31,13 +31,15 @@ export async function GET() {
             activePromotions,
             newUsers,
             openTickets,
-            pendingWithdrawals
+            pendingWithdrawals,
+            unreadNotifications
         ] = await Promise.all([
             safeCount('vendor', { where: { isNew: true } }),
             safeCount('promotion', { where: { isNew: true } }),
             safeCount('user', { where: { isNew: true } }),
             safeCount('ticket', { where: { isNewForAdmin: true } }),
-            safeCount('withdrawalRequest', { where: { isNew: true } })
+            safeCount('withdrawalRequest', { where: { isNew: true } }),
+            safeCount('notification', { where: { userId: user.id, read: false } })
         ]);
 
         return NextResponse.json({
@@ -45,7 +47,8 @@ export async function GET() {
             activePromotions,
             newUsers,
             openTickets,
-            pendingWithdrawals
+            pendingWithdrawals,
+            unreadNotifications
         });
     } catch (error) {
         console.error("[GLOBAL_COUNT_ERROR]", error);

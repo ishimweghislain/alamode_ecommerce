@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, Edit, Trash, Clock, Ruler, Store } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Heart, ShieldCheck, Truck, RotateCcw, Star, Edit, Trash, Clock, Ruler, Store, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
@@ -44,9 +44,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
             {/* Navigation Bar */}
-            <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-6">
                     <Link
                         href={isAdmin ? "/admin/products" : (product.vendor?.id ? `/shop?vendorId=${product.vendor.id}` : "/shop")}
@@ -85,10 +85,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {/* Product Info */}
                 <div className="flex flex-col">
                     <div className="mb-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="bg-brand-dark text-brand-accent text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
-                                {product.category.name}
-                            </span>
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <div className="flex items-center gap-3">
+                                <span className="bg-brand-dark text-brand-accent text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-brand-accent/5">
+                                    {product.category.name}
+                                </span>
+                                <span className="h-4 w-[1px] bg-white/10 hidden md:block"></span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Sold by</span>
+                                    <Link href={`/vendors#${product.vendor.id}`} className="text-xs text-white font-bold hover:text-brand-gold transition-colors underline underline-offset-4 decoration-brand-accent/30">
+                                        {product.vendor.storeName}
+                                    </Link>
+                                    <Link href={`/vendors#${product.vendor.id}`} className="text-[10px] text-brand-accent hover:text-white transition-colors flex items-center gap-1 ml-1">
+                                        View Store <ArrowRight className="h-2 w-2" />
+                                    </Link>
+                                </div>
+                            </div>
                             {!isAdmin && (
                                 <WishlistToggle productId={product.id} initialIsWishlisted={isWishlisted} />
                             )}
@@ -172,27 +184,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         </div>
                     </div>
 
-                    {/* Vendor Info */}
-                    <div className="card-luxury p-4 flex items-center gap-4">
-                        <div className="relative h-12 w-12 rounded-full overflow-hidden bg-brand-dark">
-                            {product.vendor.logo ? (
-                                <Image src={product.vendor.logo} alt={product.vendor.storeName} fill className="object-cover" />
-                            ) : (
-                                <div className="h-full w-full flex items-center justify-center text-brand-gold font-bold">
-                                    {product.vendor.storeName.charAt(0)}
-                                </div>
-                            )}
-                        </div>
-                        <div>
-                            <p className="text-xs text-brand-accent font-bold uppercase tracking-wider">Sold by</p>
-                            <Link href={`/vendors#${product.vendor.id}`} className="text-white font-bold hover:text-brand-gold transition-colors">
-                                {product.vendor.storeName}
-                            </Link>
-                        </div>
-                        <Link href={`/vendors#${product.vendor.id}`} className="ml-auto text-sm text-gray-400 hover:text-white transition-colors">
-                            View Store →
-                        </Link>
-                    </div>
                 </div>
             </div>
         </div>

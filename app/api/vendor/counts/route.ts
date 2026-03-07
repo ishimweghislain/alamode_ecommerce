@@ -19,7 +19,7 @@ export async function GET() {
             return new NextResponse("Vendor not found", { status: 404 });
         }
 
-        const [newOrders, openTickets] = await Promise.all([
+        const [newOrders, openTickets, unreadNotifications] = await Promise.all([
             (prisma.orderItem as any).count({
                 where: {
                     product: { vendorId: vendor.id },
@@ -37,12 +37,19 @@ export async function GET() {
             }).catch((err: any) => {
                 console.error("[VENDOR_COUNT_ERROR] ticket count failed:", err);
                 return 0;
-            })
+            }),
+            prisma.notification.count({
+                where: {
+                    userId: user.id,
+                    read: false
+                }
+            }).catch(() => 0)
         ]);
 
         return NextResponse.json({
             newOrders,
-            openTickets
+            openTickets,
+            unreadNotifications
         });
     } catch (error) {
         console.error("[VENDOR_COUNT_ERROR]", error);

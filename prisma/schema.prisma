@@ -56,6 +56,7 @@ model Notification {
   type      String   @default("INFO") // INFO, SUCCESS, WARNING, ERROR
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  link      String?  @default("/")
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }

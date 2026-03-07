@@ -17,7 +17,8 @@ import {
     Store,
     Heart,
     Tag,
-    Truck
+    Truck,
+    Bell
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { clsx } from "clsx";
@@ -96,6 +97,7 @@ const Sidebar = ({ role }: SidebarProps) => {
 
     const adminLinks = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
+        { label: "Notifications", icon: Bell, href: "/admin/notifications", count: counts.unreadNotifications },
         { label: "Vendors", icon: Store, href: "/admin/vendors", count: counts.pendingVendors },
         { label: "Products", icon: Package, href: "/admin/products" },
         { label: "Promotions", icon: Tag, href: "/admin/promotions", count: counts.activePromotions },
@@ -110,6 +112,7 @@ const Sidebar = ({ role }: SidebarProps) => {
 
     const vendorLinks = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/vendor" },
+        { label: "Notifications", icon: Bell, href: "/vendor/notifications", count: counts.unreadNotifications },
         { label: "My Store", icon: Store, href: "/vendor/profile" },
         { label: "Products", icon: Package, href: "/vendor/products" },
         { label: "Promotions", icon: Tag, href: "/vendor/promotions" },
@@ -122,6 +125,7 @@ const Sidebar = ({ role }: SidebarProps) => {
 
     const customerLinks = [
         { label: "My Profile", icon: Users, href: "/profile" },
+        { label: "Notifications", icon: Bell, href: "/profile/notifications", count: counts.unreadNotifications },
         { label: "My Orders", icon: ShoppingBag, href: "/profile/orders" },
         { label: "Wishlist", icon: Heart, href: "/profile/wishlist" },
         { label: "Payments", icon: CreditCard, href: "/profile/payments" },
