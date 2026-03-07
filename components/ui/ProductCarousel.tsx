@@ -39,14 +39,18 @@ const ProductCarousel = ({ products, reverse = false }: ProductCarouselProps) =>
         }
     }, [isPlaying, controls, totalWidth, reverse, validProducts.length]);
 
+    const xPos = useRef(0);
+
     const handleNext = () => {
         setIsPlaying(false);
-        controls.set({ x: (prev: any) => parseFloat(prev) - itemWidth });
+        xPos.current -= itemWidth;
+        controls.set({ x: xPos.current });
     };
 
     const handlePrev = () => {
         setIsPlaying(false);
-        controls.set({ x: (prev: any) => parseFloat(prev) + itemWidth });
+        xPos.current += itemWidth;
+        controls.set({ x: xPos.current });
     };
 
     return (

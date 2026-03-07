@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { items, shippingAddress, phone, paymentMethod, totalAmount } = body;
+        const { items, shippingAddress, district, phone, paymentMethod, totalAmount, deliveryFee } = body;
 
         if (!items || items.length === 0) {
             return new NextResponse("Invalid order items", { status: 400 });
@@ -26,9 +26,11 @@ export async function POST(req: Request) {
             data: {
                 userId: user.id,
                 shippingAddress,
+                district,
                 phone,
                 paymentMethod,
                 totalAmount,
+                deliveryFee: deliveryFee || 0,
                 status: "PAID", // Simulation: Auto-mark as PAID
                 items: {
                     create: items.map((item: any) => ({
