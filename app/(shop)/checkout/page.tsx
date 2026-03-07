@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { MapPin, Phone, CreditCard, Smartphone, CheckCircle2, ShieldCheck, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
+import { MapPin, Phone, CreditCard, Smartphone, CheckCircle2, ShieldCheck, ArrowLeft, Loader2, AlertCircle, Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
