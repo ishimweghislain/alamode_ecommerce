@@ -178,7 +178,9 @@ model Order {
   user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   status          OrderStatus @default(PENDING)
   totalAmount     Float
+  deliveryFee     Float       @default(0)
   shippingAddress String
+  district        String?
   phone           String
   paymentMethod   String?
   paymentId       String?
@@ -230,6 +232,18 @@ model Dispute {
   status    String   @default("OPEN")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model DeliveryFee {
+  id        String   @id @default(cuid())
+  vendorId  String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  district  String
+  fee       Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([vendorId, district])
 }
 
 model PromoCode {
