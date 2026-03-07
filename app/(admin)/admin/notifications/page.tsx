@@ -40,7 +40,7 @@ export default function AdminNotificationsPage() {
                     className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all disabled:opacity-50"
                 >
                     <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
-                    {isSyncing ? "Syncing..." : "Sync Legacy"}
+                    {isSyncing ? "Updating..." : "Update Notifications"}
                 </button>
             </div>
 
