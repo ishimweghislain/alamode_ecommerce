@@ -8,11 +8,16 @@ export async function GET() {
         return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const vendors = await prisma.vendor.findMany({
-        include: {
-            deliveryFees: true
-        }
-    });
+    try {
+        const vendors = await prisma.vendor.findMany({
+            include: {
+                deliveryFees: true
+            }
+        });
 
-    return NextResponse.json(vendors);
+        return NextResponse.json(vendors);
+    } catch (error) {
+        console.error("[ADMIN_DELIVERY_GET_ERROR]", error);
+        return new NextResponse("Internal Error", { status: 500 });
+    }
 }

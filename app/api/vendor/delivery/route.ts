@@ -16,11 +16,16 @@ export async function GET() {
         return new NextResponse("Vendor not found", { status: 404 });
     }
 
-    const fees = await prisma.deliveryFee.findMany({
-        where: { vendorId: vendor.id }
-    });
+    try {
+        const fees = await prisma.deliveryFee.findMany({
+            where: { vendorId: vendor.id }
+        });
 
-    return NextResponse.json(fees);
+        return NextResponse.json(fees);
+    } catch (error) {
+        console.error("[VENDOR_DELIVERY_GET_ERROR]", error);
+        return new NextResponse("Internal Error", { status: 500 });
+    }
 }
 
 export async function POST(req: Request) {
@@ -39,20 +44,25 @@ export async function POST(req: Request) {
 
     const { district, fee } = await req.json();
 
-    const deliveryFee = await prisma.deliveryFee.upsert({
-        where: {
-            vendorId_district: {
+    try {
+        const deliveryFee = await prisma.deliveryFee.upsert({
+            where: {
+                vendorId_district: {
+                    vendorId: vendor.id,
+                    district
+                }
+            },
+            update: { fee: parseFloat(fee) },
+            create: {
                 vendorId: vendor.id,
-                district
+                district,
+                fee: parseFloat(fee)
             }
-        },
-        update: { fee: parseFloat(fee) },
-        create: {
-            vendorId: vendor.id,
-            district,
-            fee: parseFloat(fee)
-        }
-    });
+        });
 
-    return NextResponse.json(deliveryFee);
+        return NextResponse.json(deliveryFee);
+    } catch (error) {
+        console.error("[VENDOR_DELIVERY_POST_ERROR]", error);
+        return new NextResponse("Internal Error", { status: 500 });
+    }
 }
