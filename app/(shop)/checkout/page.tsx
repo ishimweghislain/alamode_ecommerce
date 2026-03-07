@@ -280,7 +280,7 @@ export default function CheckoutPage() {
                                     <span className="text-gray-300">{formatPrice(total)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500">Admin Service Fee (5%)</span>
+                                    <span className="text-gray-500">Service Fee (5%)</span>
                                     <span className="text-gray-300">{formatPrice(serviceFee)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
