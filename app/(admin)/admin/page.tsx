@@ -83,95 +83,103 @@ async function MainStatsGrid() {
 }
 
 async function RevenueStats() {
-    const now = new Date();
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    try {
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const [total, daily, monthly] = await Promise.all([
-        prisma.order.aggregate({ _sum: { totalAmount: true, deliveryFee: true }, where: { status: { not: "CANCELLED" } } }),
-        prisma.order.aggregate({ _sum: { totalAmount: true, deliveryFee: true }, where: { createdAt: { gte: startOfDay }, status: { not: "CANCELLED" } } }),
-        prisma.order.aggregate({ _sum: { totalAmount: true, deliveryFee: true }, where: { createdAt: { gte: startOfMonth }, status: { not: "CANCELLED" } } })
-    ]);
+        const [total, daily, monthly] = await Promise.all([
+            prisma.order.aggregate({ _sum: { totalAmount: true, deliveryFee: true }, where: { status: { not: "CANCELLED" } } }).catch(() => ({ _sum: { totalAmount: 0, deliveryFee: 0 } })),
+            prisma.order.aggregate({ _sum: { totalAmount: true, deliveryFee: true }, where: { createdAt: { gte: startOfDay }, status: { not: "CANCELLED" } } }).catch(() => ({ _sum: { totalAmount: 0, deliveryFee: 0 } })),
+            prisma.order.aggregate({ _sum: { totalAmount: true, deliveryFee: true }, where: { createdAt: { gte: startOfMonth }, status: { not: "CANCELLED" } } }).catch(() => ({ _sum: { totalAmount: 0, deliveryFee: 0 } }))
+        ]);
 
-    const revStats = [
-        { label: "Total System Revenue (7%)", value: formatPrice(((total._sum.totalAmount || 0) - (total._sum.deliveryFee || 0)) * 0.07), icon: DollarSign, color: "text-green-400" },
-        { label: "Daily System Commission", value: formatPrice(((daily._sum.totalAmount || 0) - (daily._sum.deliveryFee || 0)) * 0.07), icon: TrendingUp, color: "text-brand-accent" },
-        { label: "Monthly System Commission", value: formatPrice(((monthly._sum.totalAmount || 0) - (monthly._sum.deliveryFee || 0)) * 0.07), icon: ShoppingBag, color: "text-brand-gold" },
-    ];
+        const revStats = [
+            { label: "Total System Revenue (7%)", value: formatPrice(((total._sum?.totalAmount || 0) - (total._sum?.deliveryFee || 0)) * 0.07), icon: DollarSign, color: "text-green-400" },
+            { label: "Daily System Commission", value: formatPrice(((daily._sum?.totalAmount || 0) - (daily._sum?.deliveryFee || 0)) * 0.07), icon: TrendingUp, color: "text-brand-accent" },
+            { label: "Monthly System Commission", value: formatPrice(((monthly._sum?.totalAmount || 0) - (monthly._sum?.deliveryFee || 0)) * 0.07), icon: ShoppingBag, color: "text-brand-gold" },
+        ];
 
-    return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {revStats.map((stat) => (
-                <div key={stat.label} className="card-luxury p-6 flex flex-col gap-4 border-l-4 border-l-brand-accent group">
-                    <div className={`p-3 rounded-xl bg-white/5 w-fit ${stat.color}`}><stat.icon className="h-5 w-5" /></div>
-                    <div>
-                        <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{stat.label}</p>
-                        <h3 className="text-2xl font-bold text-white mt-1">{stat.value}</h3>
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {revStats.map((stat) => (
+                    <div key={stat.label} className="card-luxury p-6 flex flex-col gap-4 border-l-4 border-l-brand-accent group">
+                        <div className={`p-3 rounded-xl bg-white/5 w-fit ${stat.color}`}><stat.icon className="h-5 w-5" /></div>
+                        <div>
+                            <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{stat.label}</p>
+                            <h3 className="text-2xl font-bold text-white mt-1">{stat.value}</h3>
+                        </div>
                     </div>
-                </div>
-            ))}
-        </div>
-    );
+                ))}
+            </div>
+        );
+    } catch (error) {
+        return <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-3xl text-red-500 text-sm">Revenue analytics temporarily unavailable.</div>;
+    }
 }
 
 async function RecentActivity() {
-    const [recentOrders, topProducts] = await Promise.all([
-        prisma.order.findMany({
-            take: 5,
-            orderBy: { createdAt: 'desc' },
-            include: { user: { select: { name: true, email: true } } }
-        }),
-        prisma.product.findMany({
-            take: 5,
-            orderBy: { orderItems: { _count: 'desc' } },
-            select: { name: true, price: true, _count: { select: { orderItems: true } } }
-        })
-    ]);
+    try {
+        const [recentOrders, topProducts] = await Promise.all([
+            prisma.order.findMany({
+                take: 5,
+                orderBy: { createdAt: 'desc' },
+                include: { user: { select: { name: true, email: true } } }
+            }).catch(() => []),
+            prisma.product.findMany({
+                take: 5,
+                orderBy: { orderItems: { _count: 'desc' } },
+                select: { name: true, price: true, _count: { select: { orderItems: true } } }
+            }).catch(() => [])
+        ]);
 
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="card-luxury p-6">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-bold text-white text-lg">Recent Transactions</h3>
-                    <Link href="/admin/orders" className="text-xs text-brand-accent font-bold hover:underline">VIEW ALL</Link>
+        return (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="card-luxury p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="font-bold text-white text-lg">Recent Transactions</h3>
+                        <Link href="/admin/orders" className="text-xs text-brand-accent font-bold hover:underline">VIEW ALL</Link>
+                    </div>
+                    <div className="space-y-4">
+                        {recentOrders.map((order: any) => (
+                            <div key={order.id} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+                                <div>
+                                    <p className="text-sm font-bold text-white">{order.user?.name || order.user?.email || 'Anonymous'}</p>
+                                    <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm font-bold text-brand-gold">{formatPrice(order.totalAmount)}</p>
+                                    <p className={`text-[10px] font-bold uppercase ${order.status === 'PAID' ? 'text-green-400' : 'text-brand-accent'}`}>{order.status}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <div className="space-y-4">
-                    {recentOrders.map((order: any) => (
-                        <div key={order.id} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
-                            <div>
-                                <p className="text-sm font-bold text-white">{order.user?.name || order.user?.email || 'Anonymous'}</p>
-                                <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+                <div className="card-luxury p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="font-bold text-white text-lg">Top Performing Products</h3>
+                        <Link href="/admin/products" className="text-xs text-brand-accent font-bold hover:underline">VIEW CATALOG</Link>
+                    </div>
+                    <div className="space-y-4">
+                        {topProducts.map((product: any) => (
+                            <div key={product.name} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-lg bg-brand-accent/20 flex items-center justify-center font-bold text-brand-accent text-xs">P</div>
+                                    <p className="text-sm font-medium text-white truncate max-w-[150px]">{product.name}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm font-bold text-white">{product._count?.orderItems || 0} Sales</p>
+                                    <p className="text-xs text-gray-500">{formatPrice(product.price)} avg</p>
+                                </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-sm font-bold text-brand-gold">{formatPrice(order.totalAmount)}</p>
-                                <p className={`text-[10px] font-bold uppercase ${order.status === 'PAID' ? 'text-green-400' : 'text-brand-accent'}`}>{order.status}</p>
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
-            <div className="card-luxury p-6">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-bold text-white text-lg">Top Performing Products</h3>
-                    <Link href="/admin/products" className="text-xs text-brand-accent font-bold hover:underline">VIEW CATALOG</Link>
-                </div>
-                <div className="space-y-4">
-                    {topProducts.map((product: any) => (
-                        <div key={product.name} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
-                            <div className="flex items-center gap-3">
-                                <div className="h-8 w-8 rounded-lg bg-brand-accent/20 flex items-center justify-center font-bold text-brand-accent text-xs">P</div>
-                                <p className="text-sm font-medium text-white truncate max-w-[150px]">{product.name}</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-sm font-bold text-white">{product._count.orderItems} Sales</p>
-                                <p className="text-xs text-gray-500">{formatPrice(product.price)} avg</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
+        );
+    } catch (error) {
+        return <div className="p-6 bg-white/5 rounded-3xl text-gray-500 text-sm">Activity feed temporarily unavailable.</div>;
+    }
 }
 
 // --- Dashboard Shell ---
