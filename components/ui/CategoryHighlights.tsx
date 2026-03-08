@@ -1,16 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { prisma } from "@/lib/prisma";
 
-const CategoryHighlights = async () => {
-    const categories = await prisma.category.findMany({
-        take: 4,
-        include: {
-            _count: {
-                select: { products: true }
-            }
-        }
-    });
+interface CategoryHighlightsProps {
+    categories: any[];
+}
+
+const CategoryHighlights = ({ categories }: CategoryHighlightsProps) => {
 
     return (
         <section className="py-20 bg-background-dark">

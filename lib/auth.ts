@@ -52,24 +52,27 @@ export const authOptions: NextAuthOptions = {
         maxAge: 30 * 24 * 60 * 60, // 30 days
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
+                token.address = (user as any).address;
+                token.phoneNumber = (user as any).phoneNumber;
             }
 
-            // Refresh address/phone/active state from DB on every token refresh
-            const dbUser = await prisma.user.findUnique({
-                where: { id: token.id as string },
-                select: { address: true, phoneNumber: true, isActive: true }
-            });
+            // Only refresh from DB if explicitly requested or on login
+            // This prevents a DB hit on every single session access
+            if (trigger === "update" && session) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: token.id as string },
+                    select: { address: true, phoneNumber: true, isActive: true }
+                });
 
-            if (!dbUser || !dbUser.isActive) {
-                return null as any; // Force sign out if deleted or deactivated
+                if (dbUser) {
+                    token.address = dbUser.address || undefined;
+                    token.phoneNumber = dbUser.phoneNumber || undefined;
+                }
             }
-
-            token.address = dbUser.address || undefined;
-            token.phoneNumber = dbUser.phoneNumber || undefined;
 
             return token;
         },

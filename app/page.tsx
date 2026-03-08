@@ -1,5 +1,4 @@
 import Hero from "@/components/ui/Hero";
-import ProductCard from "@/components/ui/ProductCard";
 import CategoryHighlights from "@/components/ui/CategoryHighlights";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,19 +8,21 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ProductCarousel from "../components/ui/ProductCarousel";
 import TextReveal from "../components/ui/TextReveal";
+import { Suspense } from "react";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // Cache for 1 hour
 
-export default async function Home() {
-  const user = await getCurrentUser();
+// Skeleton Component for Loading state
+const HomeSkeleton = () => (
+  <div className="space-y-20 animate-pulse px-4 sm:px-6 lg:px-8 py-20">
+    <div className="h-10 w-64 bg-white/5 rounded-full mb-8" />
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {[1, 2, 3, 4].map(i => <div key={i} className="h-80 bg-white/5 rounded-3xl" />)}
+    </div>
+  </div>
+);
 
-  if (user) {
-    if (user.role === "ADMIN") redirect("/admin");
-    if (user.role === "VENDOR") redirect("/vendor");
-    if (user.role === "CUSTOMER") redirect("/profile");
-  }
-
-  const now = new Date();
+async function FeaturedProductsSection({ now }: { now: Date }) {
   const featuredProductsRaw = await (prisma.product as any).findMany({
     where: { isFeatured: true },
     include: {
@@ -35,6 +36,34 @@ export default async function Home() {
     orderBy: { updatedAt: 'desc' }
   });
 
+  const products = (featuredProductsRaw as any[]).map(p => ({
+    ...p,
+    category: p.category?.name || "Category",
+    salePrice: p.promotions?.[0]?.salePrice,
+    discountPct: p.promotions?.[0]?.discountPct
+  }));
+
+  return (
+    <section id="featured-products" className="py-20 scroll-mt-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <MotionInView className="flex justify-between items-end">
+          <div>
+            <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
+              Featured Collection
+            </TextReveal>
+            <p className="text-gray-400">Exclusive items selected for their exceptional quality.</p>
+          </div>
+          <Link href="/products" className="text-brand-accent hover:text-brand-gold font-medium transition-colors">
+            Explore All →
+          </Link>
+        </MotionInView>
+      </div>
+      <ProductCarousel products={products} />
+    </section>
+  );
+}
+
+async function TrendingProductsSection({ now }: { now: Date }) {
   const trendingProductsRaw = await (prisma.product as any).findMany({
     where: { isTrending: true },
     include: {
@@ -48,14 +77,7 @@ export default async function Home() {
     orderBy: { updatedAt: 'desc' }
   });
 
-  const featuredProducts = (featuredProductsRaw as any[]).map(p => ({
-    ...p,
-    category: p.category?.name || "Category",
-    salePrice: p.promotions?.[0]?.salePrice,
-    discountPct: p.promotions?.[0]?.discountPct
-  }));
-
-  const trendingProducts = (trendingProductsRaw as any[]).map(p => ({
+  const products = (trendingProductsRaw as any[]).map(p => ({
     ...p,
     category: p.category?.name || "Category",
     salePrice: p.promotions?.[0]?.salePrice,
@@ -63,31 +85,59 @@ export default async function Home() {
   }));
 
   return (
+    <section id="trending-products" className="py-20 mb-20 scroll-mt-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <MotionInView className="flex justify-between items-end">
+          <div>
+            <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
+              Trending Now
+            </TextReveal>
+            <p className="text-gray-400">What&apos;s currently captivating our elite community.</p>
+          </div>
+        </MotionInView>
+      </div>
+      <ProductCarousel products={products} reverse />
+    </section>
+  );
+}
+
+async function CategoriesSection() {
+  const categories = await prisma.category.findMany({
+    take: 4,
+    include: {
+      _count: {
+        select: { products: true }
+      }
+    }
+  });
+
+  return <CategoryHighlights categories={categories} />;
+}
+
+export default async function Home() {
+  const now = new Date();
+
+  return (
     <div className="flex flex-col">
+      {/* Handlers redirects in a non-blocking way */}
+      <Suspense fallback={null}>
+        <UserRedirect />
+      </Suspense>
+
       <Hero />
 
-      <CategoryHighlights />
+      {/* We wrap individual heavy sections in Suspense */}
+      {/* This allows Hero to be visible immediately while data loads in background */}
 
-      {/* Featured Products */}
-      <section id="featured-products" className="py-20 scroll-mt-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-          <MotionInView className="flex justify-between items-end">
-            <div>
-              <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
-                Featured Collection
-              </TextReveal>
-              <p className="text-gray-400">Exclusive items selected for their exceptional quality.</p>
-            </div>
-            <Link href="/products" className="text-brand-accent hover:text-brand-gold font-medium transition-colors">
-              Explore All →
-            </Link>
-          </MotionInView>
-        </div>
+      <Suspense fallback={<HomeSkeleton />}>
+        <CategoriesSection />
+      </Suspense>
 
-        <ProductCarousel products={featuredProducts} />
-      </section>
+      <Suspense fallback={<div className="h-[400px] flex items-center justify-center opacity-10 font-black text-4xl">LOADING COLLECTIONS...</div>}>
+        <FeaturedProductsSection now={now} />
+      </Suspense>
 
-      {/* Banner / Promotion */}
+      {/* Static Banner */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <MotionInView direction="none" className="max-w-7xl mx-auto rounded-luxury overflow-hidden relative h-[400px] flex items-center shadow-2xl">
           <Image
@@ -95,6 +145,7 @@ export default async function Home() {
             alt="Promotion"
             fill
             className="object-cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-brand-dark/60 backdrop-blur-[2px]" />
           <div className="relative z-10 p-8 md:p-16 max-w-xl">
@@ -109,21 +160,20 @@ export default async function Home() {
         </MotionInView>
       </section>
 
-      {/* Trending Products */}
-      <section id="trending-products" className="py-20 mb-20 scroll-mt-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-          <MotionInView className="flex justify-between items-end">
-            <div>
-              <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
-                Trending Now
-              </TextReveal>
-              <p className="text-gray-400">What&apos;s currently captivating our elite community.</p>
-            </div>
-          </MotionInView>
-        </div>
-
-        <ProductCarousel products={trendingProducts} reverse />
-      </section>
+      <Suspense fallback={<div className="h-[400px] flex items-center justify-center opacity-10 font-black text-4xl uppercase">Trending Incoming...</div>}>
+        <TrendingProductsSection now={now} />
+      </Suspense>
     </div>
   );
+}
+
+// Separate component for user redirection logic to avoid blocking the main shell
+async function UserRedirect() {
+  const user = await getCurrentUser();
+  if (user) {
+    if (user.role === "ADMIN") redirect("/admin");
+    if (user.role === "VENDOR") redirect("/vendor");
+    if (user.role === "CUSTOMER") redirect("/profile");
+  }
+  return null;
 }
