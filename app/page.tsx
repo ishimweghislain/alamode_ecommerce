@@ -187,11 +187,17 @@ export default async function Home() {
 
 // Separate component for user redirection logic to avoid blocking the main shell
 async function UserRedirect() {
-  const user = await getCurrentUser();
-  if (user) {
-    if (user.role === "ADMIN") redirect("/admin");
-    if (user.role === "VENDOR") redirect("/vendor");
-    if (user.role === "CUSTOMER") redirect("/profile");
+  try {
+    const user = await getCurrentUser();
+    if (user) {
+      if (user.role === "ADMIN") redirect("/admin");
+      if (user.role === "VENDOR") redirect("/vendor");
+      if (user.role === "CUSTOMER") redirect("/profile");
+    }
+  } catch (error: any) {
+    if (error?.digest?.startsWith('NEXT_REDIRECT')) throw error;
+    // Fail silently to allow homepage to render for non-logged-in view
+    console.error("Redirect check failed", error);
   }
   return null;
 }
