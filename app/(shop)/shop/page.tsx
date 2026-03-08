@@ -9,6 +9,23 @@ export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 18;
 
+const BoutiqueLoading = () => (
+    <div className="fixed inset-0 z-[40] bg-background-dark flex flex-col items-center justify-center">
+        {/* Top Progress Bar */}
+        <div className="fixed top-0 left-0 right-0 z-[60]">
+            <div className="h-1 bg-brand-accent w-full animate-progress-loading shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+        </div>
+
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+            <Loader2 className="h-12 w-12 text-brand-accent animate-spin" />
+            <div className="flex flex-col items-center">
+                <span className="text-white font-outfit font-black tracking-[0.3em] uppercase text-xs">Entering Boutique Mall</span>
+                <span className="text-gray-500 text-[10px] uppercase tracking-[0.5em] mt-2 italic">Curating Exclusive Selections</span>
+            </div>
+        </div>
+    </div>
+);
+
 // --- Sub-components for Streaming ---
 
 async function BoutiqueDirectory({ query }: { query?: string }) {
