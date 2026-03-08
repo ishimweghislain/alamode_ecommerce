@@ -23,95 +23,113 @@ const HomeSkeleton = () => (
 );
 
 async function FeaturedProductsSection({ now }: { now: Date }) {
-  const featuredProductsRaw = await (prisma.product as any).findMany({
-    where: { isFeatured: true },
-    include: {
-      category: true,
-      promotions: {
-        where: { isActive: true, expiresAt: { gt: now } },
-        take: 1
-      }
-    },
-    take: 20,
-    orderBy: { updatedAt: 'desc' }
-  });
+  try {
+    const featuredProductsRaw = await (prisma.product as any).findMany({
+      where: { isFeatured: true },
+      include: {
+        category: true,
+        promotions: {
+          where: { isActive: true, expiresAt: { gt: now } },
+          take: 1
+        }
+      },
+      take: 20,
+      orderBy: { updatedAt: 'desc' }
+    }).catch(() => []);
 
-  const products = (featuredProductsRaw as any[]).map(p => ({
-    ...p,
-    category: p.category?.name || "Category",
-    salePrice: p.promotions?.[0]?.salePrice,
-    discountPct: p.promotions?.[0]?.discountPct
-  }));
+    const products = (featuredProductsRaw as any[]).map(p => ({
+      ...p,
+      category: p.category?.name || "Category",
+      salePrice: p.promotions?.[0]?.salePrice,
+      discountPct: p.promotions?.[0]?.discountPct
+    }));
 
-  return (
-    <section id="featured-products" className="py-20 scroll-mt-20 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <MotionInView className="flex justify-between items-end">
-          <div>
-            <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
-              Featured Collection
-            </TextReveal>
-            <p className="text-gray-400">Exclusive items selected for their exceptional quality.</p>
-          </div>
-          <Link href="/products" className="text-brand-accent hover:text-brand-gold font-medium transition-colors">
-            Explore All →
-          </Link>
-        </MotionInView>
-      </div>
-      <ProductCarousel products={products} />
-    </section>
-  );
+    if (products.length === 0) return null;
+
+    return (
+      <section id="featured-products" className="py-20 scroll-mt-20 overflow-hidden text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <MotionInView className="flex justify-between items-end">
+            <div className="text-left">
+              <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
+                Featured Collection
+              </TextReveal>
+              <p className="text-gray-400">Exclusive items selected for their exceptional quality.</p>
+            </div>
+            <Link href="/products" className="text-brand-accent hover:text-brand-gold font-medium transition-colors">
+              Explore All →
+            </Link>
+          </MotionInView>
+        </div>
+        <ProductCarousel products={products} />
+      </section>
+    );
+  } catch (error) {
+    return null;
+  }
 }
 
 async function TrendingProductsSection({ now }: { now: Date }) {
-  const trendingProductsRaw = await (prisma.product as any).findMany({
-    where: { isTrending: true },
-    include: {
-      category: true,
-      promotions: {
-        where: { isActive: true, expiresAt: { gt: now } },
-        take: 1
-      }
-    },
-    take: 20,
-    orderBy: { updatedAt: 'desc' }
-  });
+  try {
+    const trendingProductsRaw = await (prisma.product as any).findMany({
+      where: { isTrending: true },
+      include: {
+        category: true,
+        promotions: {
+          where: { isActive: true, expiresAt: { gt: now } },
+          take: 1
+        }
+      },
+      take: 20,
+      orderBy: { updatedAt: 'desc' }
+    }).catch(() => []);
 
-  const products = (trendingProductsRaw as any[]).map(p => ({
-    ...p,
-    category: p.category?.name || "Category",
-    salePrice: p.promotions?.[0]?.salePrice,
-    discountPct: p.promotions?.[0]?.discountPct
-  }));
+    const products = (trendingProductsRaw as any[]).map(p => ({
+      ...p,
+      category: p.category?.name || "Category",
+      salePrice: p.promotions?.[0]?.salePrice,
+      discountPct: p.promotions?.[0]?.discountPct
+    }));
 
-  return (
-    <section id="trending-products" className="py-20 mb-20 scroll-mt-20 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <MotionInView className="flex justify-between items-end">
-          <div>
-            <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
-              Trending Now
-            </TextReveal>
-            <p className="text-gray-400">What&apos;s currently captivating our elite community.</p>
-          </div>
-        </MotionInView>
-      </div>
-      <ProductCarousel products={products} reverse />
-    </section>
-  );
+    if (products.length === 0) return null;
+
+    return (
+      <section id="trending-products" className="py-20 mb-20 scroll-mt-20 overflow-hidden text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <MotionInView className="flex justify-between items-end">
+            <div className="text-left">
+              <TextReveal className="text-3xl md:text-4xl font-outfit font-bold text-white mb-2 uppercase tracking-tighter">
+                Trending Now
+              </TextReveal>
+              <p className="text-gray-400">What&apos;s currently captivating our elite community.</p>
+            </div>
+          </MotionInView>
+        </div>
+        <ProductCarousel products={products} reverse />
+      </section>
+    );
+  } catch (error) {
+    return null;
+  }
 }
 
 async function CategoriesSection() {
-  const categories = await prisma.category.findMany({
-    take: 4,
-    include: {
-      _count: {
-        select: { products: true }
+  try {
+    const categories = await prisma.category.findMany({
+      take: 4,
+      include: {
+        _count: {
+          select: { products: true }
+        }
       }
-    }
-  });
+    }).catch(() => []);
 
-  return <CategoryHighlights categories={categories} />;
+    if (categories.length === 0) return null;
+
+    return <CategoryHighlights categories={categories} />;
+  } catch (error) {
+    return null;
+  }
 }
 
 export default async function Home() {
