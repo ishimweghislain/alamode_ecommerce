@@ -1,5 +1,5 @@
 import NotificationList from "@/components/ui/NotificationList";
-import AdminNotificationsSync from "@/components/admin/AdminNotificationsSync";
+import AdminNotificationsSync from "../../../../components/admin/AdminNotificationsSync";
 import { Bell } from "lucide-react";
 
 export const dynamic = "force-dynamic";
