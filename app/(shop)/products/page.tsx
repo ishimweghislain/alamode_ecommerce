@@ -1,25 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ui/ProductCard";
-import { Search, LayoutGrid } from "lucide-react";
+import { Search, LayoutGrid, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { clsx } from "clsx";
 import { Suspense } from "react";
 import ProductSort from "@/components/product/ProductSort";
 
 export const dynamic = "force-dynamic";
 
-export default async function AllProductsPage({
-    searchParams
-}: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}) {
-    const params = await searchParams;
-    const query = typeof params.q === 'string' ? params.q : undefined;
-    const sortBy = typeof params.sort === 'string' ? params.sort : 'latest';
+// --- Sub-components for Streaming ---
 
+async function ProductGrid({ query, sortBy }: { query?: string, sortBy: string }) {
     const now = new Date();
-
-    // Base query for products
     const whereClause: any = {
         ...(query ? {
             OR: [
@@ -32,28 +23,20 @@ export default async function AllProductsPage({
     let productsRaw: any[];
 
     if (sortBy === 'popular') {
-        // Most bought
         productsRaw = await (prisma.product as any).findMany({
             where: whereClause,
             include: {
                 category: true,
                 vendor: true,
-                _count: {
-                    select: { orderItems: true }
-                },
+                _count: { select: { orderItems: true } },
                 promotions: {
                     where: { isActive: true, expiresAt: { gt: now } },
                     take: 1,
                 },
             },
-            orderBy: {
-                orderItems: {
-                    _count: 'desc'
-                }
-            }
+            orderBy: { orderItems: { _count: 'desc' } }
         });
     } else {
-        // Latest added
         productsRaw = await (prisma.product as any).findMany({
             where: whereClause,
             include: {
@@ -64,16 +47,94 @@ export default async function AllProductsPage({
                     take: 1,
                 },
             },
-            orderBy: {
-                createdAt: 'desc'
-            }
+            orderBy: { createdAt: 'desc' }
         });
     }
+
+    if (productsRaw.length === 0) {
+        return (
+            <div className="py-40 text-center rounded-[3rem] border border-dashed border-white/10 bg-white/[0.02]">
+                <div className="p-10 inline-block rounded-full bg-white/5 mb-10">
+                    <Search className="h-16 w-16 text-gray-700" />
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-4">A Silent Search</h3>
+                <p className="text-gray-500 max-w-sm mx-auto text-lg leading-relaxed">
+                    No items matched your criteria. Try adjusting your search or explore our boutiques.
+                </p>
+                <Link href="/products" className="mt-12 inline-flex items-center gap-3 px-8 py-4 bg-brand-accent text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:scale-105 transition-all">
+                    View Everything
+                </Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col gap-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-white/5 pb-10">
+                <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-brand-accent/10 border border-brand-accent/20">
+                        <LayoutGrid className="h-5 w-5 text-brand-accent" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Marketplace Inventory</p>
+                        <h2 className="text-xl font-bold text-white">{productsRaw.length} Results</h2>
+                    </div>
+                </div>
+                <ProductSort />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {productsRaw.map((product: any) => {
+                    const promo = product.promotions?.[0];
+                    return (
+                        <ProductCard
+                            key={product.id}
+                            id={product.id}
+                            name={product.name}
+                            price={product.price}
+                            images={product.images}
+                            category={product.category.name}
+                            salePrice={promo ? promo.salePrice : undefined}
+                            discountPct={promo ? promo.discountPct : undefined}
+                            sizes={product.sizes || []}
+                            sizeType={product.sizeType || undefined}
+                        />
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+const ProductLoading = () => (
+    <div className="space-y-12 py-20">
+        <div className="flex items-center justify-center gap-4 text-brand-accent animate-pulse">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="font-outfit font-black uppercase tracking-[0.3em]">Curating Masterpieces...</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 opacity-20">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                <div key={i} className="h-96 bg-white/5 rounded-3xl animate-pulse" />
+            ))}
+        </div>
+    </div>
+);
+
+// --- Main Page Shell ---
+
+export default async function AllProductsPage({
+    searchParams
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+    const params = await searchParams;
+    const query = typeof params.q === 'string' ? params.q : undefined;
+    const sortBy = typeof params.sort === 'string' ? params.sort : 'latest';
 
     return (
         <div className="min-h-screen bg-background-dark pt-2 pb-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header Section */}
+                {/* Header Section - Loads Instantly */}
                 <div className="relative mb-4 p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-brand-accent/20 via-brand-dark to-brand-dark border border-white/10 overflow-hidden shadow-2xl">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                     <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -110,59 +171,10 @@ export default async function AllProductsPage({
                     </div>
                 </div>
 
-                {/* Filters & Grid */}
-                <div className="flex flex-col gap-10">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-white/5 pb-10">
-                        <div className="flex items-center gap-4">
-                            <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-brand-accent/10 border border-brand-accent/20">
-                                <LayoutGrid className="h-5 w-5 text-brand-accent" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Marketplace Inventory</p>
-                                <h2 className="text-xl font-bold text-white">{productsRaw.length} Results</h2>
-                            </div>
-                        </div>
-
-                        <Suspense fallback={<div className="h-12 w-64 bg-white/5 animate-pulse rounded-2xl" />}>
-                            <ProductSort />
-                        </Suspense>
-                    </div>
-
-                    {productsRaw.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                            {productsRaw.map((product: any) => {
-                                const promo = product.promotions?.[0];
-                                return (
-                                    <ProductCard
-                                        key={product.id}
-                                        id={product.id}
-                                        name={product.name}
-                                        price={product.price}
-                                        images={product.images}
-                                        category={product.category.name}
-                                        salePrice={promo ? promo.salePrice : undefined}
-                                        discountPct={promo ? promo.discountPct : undefined}
-                                        sizes={product.sizes || []}
-                                        sizeType={product.sizeType || undefined}
-                                    />
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <div className="py-40 text-center rounded-[3rem] border border-dashed border-white/10 bg-white/[0.02]">
-                            <div className="p-10 inline-block rounded-full bg-white/5 mb-10">
-                                <Search className="h-16 w-16 text-gray-700" />
-                            </div>
-                            <h3 className="text-3xl font-bold text-white mb-4">A Silent Search</h3>
-                            <p className="text-gray-500 max-w-sm mx-auto text-lg leading-relaxed">
-                                No items matched your criteria. Try adjusting your search or explore our boutiques.
-                            </p>
-                            <Link href="/products" className="mt-12 inline-flex items-center gap-3 px-8 py-4 bg-brand-accent text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:scale-105 transition-all">
-                                View Everything
-                            </Link>
-                        </div>
-                    )}
-                </div>
+                {/* Grid Section - Streams In */}
+                <Suspense key={`${query}-${sortBy}`} fallback={<ProductLoading />}>
+                    <ProductGrid query={query} sortBy={sortBy} />
+                </Suspense>
             </div>
         </div>
     );
