@@ -7,6 +7,8 @@ const Footer = () => {
     const pathname = usePathname();
     const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/vendor") || pathname.startsWith("/profile") || pathname === "/support";
 
+    if (isDashboard) return null;
+
     return (
         <footer className="bg-background-dark border-t border-white/10 pt-6 pb-24 md:pb-12 mt-4">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
