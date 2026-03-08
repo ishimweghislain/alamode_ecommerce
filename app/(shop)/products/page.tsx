@@ -1,16 +1,28 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ui/ProductCard";
-import { Search, LayoutGrid, Loader2 } from "lucide-react";
+import { Search, LayoutGrid, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import ProductSort from "@/components/product/ProductSort";
 
 export const dynamic = "force-dynamic";
 
-// --- Sub-components for Streaming ---
+const PAGE_SIZE = 24;
 
-async function ProductGrid({ query, sortBy }: { query?: string, sortBy: string }) {
+// --- Sub-components for Streaming & Pagination ---
+
+async function ProductGrid({
+    query,
+    sortBy,
+    page
+}: {
+    query?: string,
+    sortBy: string,
+    page: number
+}) {
     const now = new Date();
+    const skip = (page - 1) * PAGE_SIZE;
+
     const whereClause: any = {
         ...(query ? {
             OR: [
@@ -20,10 +32,9 @@ async function ProductGrid({ query, sortBy }: { query?: string, sortBy: string }
         } : {})
     };
 
-    let productsRaw: any[];
-
-    if (sortBy === 'popular') {
-        productsRaw = await (prisma.product as any).findMany({
+    // Parallelize count and data fetch for speed
+    const [productsRaw, totalCount] = await Promise.all([
+        (prisma.product as any).findMany({
             where: whereClause,
             include: {
                 category: true,
@@ -34,22 +45,14 @@ async function ProductGrid({ query, sortBy }: { query?: string, sortBy: string }
                     take: 1,
                 },
             },
-            orderBy: { orderItems: { _count: 'desc' } }
-        });
-    } else {
-        productsRaw = await (prisma.product as any).findMany({
-            where: whereClause,
-            include: {
-                category: true,
-                vendor: true,
-                promotions: {
-                    where: { isActive: true, expiresAt: { gt: now } },
-                    take: 1,
-                },
-            },
-            orderBy: { createdAt: 'desc' }
-        });
-    }
+            take: PAGE_SIZE,
+            skip: skip,
+            orderBy: sortBy === 'popular'
+                ? { orderItems: { _count: 'desc' } }
+                : { createdAt: 'desc' }
+        }),
+        prisma.product.count({ where: whereClause })
+    ]).catch(() => [[], 0]);
 
     if (productsRaw.length === 0) {
         return (
@@ -68,6 +71,8 @@ async function ProductGrid({ query, sortBy }: { query?: string, sortBy: string }
         );
     }
 
+    const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
     return (
         <div className="flex flex-col gap-10">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-white/5 pb-10">
@@ -77,7 +82,7 @@ async function ProductGrid({ query, sortBy }: { query?: string, sortBy: string }
                     </div>
                     <div>
                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">Marketplace Inventory</p>
-                        <h2 className="text-xl font-bold text-white">{productsRaw.length} Results</h2>
+                        <h2 className="text-xl font-bold text-white">{totalCount} Results (Page {page})</h2>
                     </div>
                 </div>
                 <ProductSort />
@@ -102,8 +107,63 @@ async function ProductGrid({ query, sortBy }: { query?: string, sortBy: string }
                     );
                 })}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-4 mt-12 mb-20">
+                    <Link
+                        href={`/products?page=${Math.max(1, page - 1)}${query ? `&q=${query}` : ''}${sortBy !== 'latest' ? `&sort=${sortBy}` : ''}`}
+                        className={clsx(
+                            "p-4 rounded-2xl border flex items-center gap-2 transition-all",
+                            page <= 1 ? "opacity-30 pointer-events-none border-white/5" : "border-white/10 hover:border-brand-accent hover:text-brand-accent bg-white/5"
+                        )}
+                    >
+                        <ChevronLeft className="h-5 w-5" /> Previous
+                    </Link>
+
+                    <div className="flex items-center gap-2">
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            let pageNum = page;
+                            if (page <= 3) pageNum = i + 1;
+                            else if (page >= totalPages - 2) pageNum = totalPages - 4 + i;
+                            else pageNum = page - 2 + i;
+
+                            if (pageNum < 1 || pageNum > totalPages) return null;
+
+                            return (
+                                <Link
+                                    key={pageNum}
+                                    href={`/products?page=${pageNum}${query ? `&q=${query}` : ''}${sortBy !== 'latest' ? `&sort=${sortBy}` : ''}`}
+                                    className={clsx(
+                                        "h-12 w-12 flex items-center justify-center rounded-xl font-bold transition-all border",
+                                        page === pageNum
+                                            ? "bg-brand-accent border-brand-accent text-white"
+                                            : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
+                                    )}
+                                >
+                                    {pageNum}
+                                </Link>
+                            );
+                        })}
+                    </div>
+
+                    <Link
+                        href={`/products?page=${Math.min(totalPages, page + 1)}${query ? `&q=${query}` : ''}${sortBy !== 'latest' ? `&sort=${sortBy}` : ''}`}
+                        className={clsx(
+                            "p-4 rounded-2xl border flex items-center gap-2 transition-all",
+                            page >= totalPages ? "opacity-30 pointer-events-none border-white/5" : "border-white/10 hover:border-brand-accent hover:text-brand-accent bg-white/5"
+                        )}
+                    >
+                        Next <ChevronRight className="h-5 w-5" />
+                    </Link>
+                </div>
+            )}
         </div>
     );
+}
+
+function clsx(...classes: any[]) {
+    return classes.filter(Boolean).join(' ');
 }
 
 const ProductLoading = () => (
@@ -114,7 +174,7 @@ const ProductLoading = () => (
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 opacity-20">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                <div key={i} className="h-96 bg-white/5 rounded-3xl animate-pulse" />
+                <div key={i} className="h-96 bg-white/5 rounded-3xl" />
             ))}
         </div>
     </div>
@@ -130,6 +190,7 @@ export default async function AllProductsPage({
     const params = await searchParams;
     const query = typeof params.q === 'string' ? params.q : undefined;
     const sortBy = typeof params.sort === 'string' ? params.sort : 'latest';
+    const pageNum = typeof params.page === 'string' ? parseInt(params.page) : 1;
 
     return (
         <div className="min-h-screen bg-background-dark pt-2 pb-16">
@@ -172,8 +233,8 @@ export default async function AllProductsPage({
                 </div>
 
                 {/* Grid Section - Streams In */}
-                <Suspense key={`${query}-${sortBy}`} fallback={<ProductLoading />}>
-                    <ProductGrid query={query} sortBy={sortBy} />
+                <Suspense key={`${query}-${sortBy}-${pageNum}`} fallback={<ProductLoading />}>
+                    <ProductGrid query={query} sortBy={sortBy} page={pageNum} />
                 </Suspense>
             </div>
         </div>

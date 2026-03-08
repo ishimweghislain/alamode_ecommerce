@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ui/ProductCard";
-import { Search, Shirt, Smartphone, Home, LayoutGrid, Store, ArrowRight, Star, SlidersHorizontal, Loader2 } from "lucide-react";
+import { Search, Shirt, Smartphone, Home, LayoutGrid, Store, ArrowRight, Star, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { clsx } from "clsx";
 import Image from "next/image";
 import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
+
+const PAGE_SIZE = 18;
 
 // --- Sub-components for Streaming ---
 
@@ -82,31 +83,40 @@ async function BoutiqueDirectory({ query }: { query?: string }) {
     );
 }
 
-async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId }: any) {
+async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId, page }: any) {
     const now = new Date();
-    const products = await prisma.product.findMany({
-        where: {
-            AND: [
-                query ? {
-                    OR: [
-                        { name: { contains: query, mode: 'insensitive' } },
-                        { description: { contains: query, mode: 'insensitive' } }
-                    ]
-                } : {},
-                categorySlug ? { category: { slug: categorySlug } } : {},
-                subcategorySlug ? { subcategory: { slug: subcategorySlug } } : {},
-                vendorId ? { vendorId } : {}
-            ]
-        },
-        include: {
-            category: true,
-            promotions: {
-                where: { isActive: true, expiresAt: { gt: now } },
-                take: 1,
+    const skip = (page - 1) * PAGE_SIZE;
+
+    const whereClause: any = {
+        AND: [
+            query ? {
+                OR: [
+                    { name: { contains: query, mode: 'insensitive' } },
+                    { description: { contains: query, mode: 'insensitive' } }
+                ]
+            } : {},
+            categorySlug ? { category: { slug: categorySlug } } : {},
+            subcategorySlug ? { subcategory: { slug: subcategorySlug } } : {},
+            vendorId ? { vendorId } : {}
+        ]
+    };
+
+    const [products, totalCount] = await Promise.all([
+        prisma.product.findMany({
+            where: whereClause,
+            include: {
+                category: true,
+                promotions: {
+                    where: { isActive: true, expiresAt: { gt: now } },
+                    take: 1,
+                },
             },
-        },
-        orderBy: { createdAt: 'desc' }
-    });
+            take: PAGE_SIZE,
+            skip: skip,
+            orderBy: { createdAt: 'desc' }
+        }),
+        prisma.product.count({ where: whereClause })
+    ]).catch(() => [[], 0]);
 
     if (products.length === 0) {
         return (
@@ -123,25 +133,54 @@ async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId
         );
     }
 
+    const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-            {products.map((product: any) => {
-                const promo = product.promotions?.[0];
-                return (
-                    <ProductCard
-                        key={product.id}
-                        id={product.id}
-                        name={product.name}
-                        price={product.price}
-                        image={product.images[0]}
-                        category={product.category.name}
-                        salePrice={promo ? promo.salePrice : undefined}
-                        discountPct={promo ? promo.discountPct : undefined}
-                        sizes={(product as any).sizes || []}
-                        sizeType={(product as any).sizeType || undefined}
-                    />
-                );
-            })}
+        <div className="flex flex-col gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                {products.map((product: any) => {
+                    const promo = product.promotions?.[0];
+                    return (
+                        <ProductCard
+                            key={product.id}
+                            id={product.id}
+                            name={product.name}
+                            price={product.price}
+                            image={product.images[0]}
+                            category={product.category.name}
+                            salePrice={promo ? promo.salePrice : undefined}
+                            discountPct={promo ? promo.discountPct : undefined}
+                            sizes={(product as any).sizes || []}
+                            sizeType={(product as any).sizeType || undefined}
+                        />
+                    );
+                })}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between gap-4 mt-8 border-t border-white/5 pt-8">
+                    <Link
+                        href={`/shop?page=${Math.max(1, page - 1)}${vendorId ? `&vendorId=${vendorId}` : ''}${categorySlug ? `&category=${categorySlug}` : ''}${subcategorySlug ? `&subcategory=${subcategorySlug}` : ''}${query ? `&q=${query}` : ''}`}
+                        className={clsx(
+                            "flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-all",
+                            page <= 1 ? "opacity-20 pointer-events-none" : "text-gray-400 hover:text-brand-accent"
+                        )}
+                    >
+                        <ChevronLeft className="h-4 w-4" /> Previous
+                    </Link>
+                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Page {page} of {totalPages}</span>
+                    <Link
+                        href={`/shop?page=${Math.min(totalPages, page + 1)}${vendorId ? `&vendorId=${vendorId}` : ''}${categorySlug ? `&category=${categorySlug}` : ''}${subcategorySlug ? `&subcategory=${subcategorySlug}` : ''}${query ? `&q=${query}` : ''}`}
+                        className={clsx(
+                            "flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-all",
+                            page >= totalPages ? "opacity-20 pointer-events-none" : "text-gray-400 hover:text-brand-accent"
+                        )}
+                    >
+                        Next <ChevronRight className="h-4 w-4" />
+                    </Link>
+                </div>
+            )}
         </div>
     );
 }
@@ -192,6 +231,10 @@ async function ShopSidebarContent({ categorySlug, subcategorySlug, vendorId }: a
     );
 }
 
+function clsx(...classes: any[]) {
+    return classes.filter(Boolean).join(' ');
+}
+
 // --- Main Page Shell ---
 
 export default async function ShopPage({
@@ -204,6 +247,7 @@ export default async function ShopPage({
     const categorySlug = typeof params.category === 'string' ? params.category : undefined;
     const subcategorySlug = typeof params.subcategory === 'string' ? params.subcategory : undefined;
     const vendorId = typeof params.vendorId === 'string' ? params.vendorId : undefined;
+    const pageNum = typeof params.page === 'string' ? parseInt(params.page) : 1;
 
     const isShowingProducts = !!(categorySlug || subcategorySlug || vendorId);
 
@@ -293,8 +337,8 @@ export default async function ShopPage({
                                 <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest"><SlidersHorizontal className="h-3 w-3" /> Sort: Luxury</div>
                             </div>
 
-                            <Suspense key={`${categorySlug}-${subcategorySlug}-${vendorId}-${query}`} fallback={<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 opacity-20 animate-pulse">{[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-80 bg-white/5 rounded-3xl" />)}</div>}>
-                                <BoutiqueProducts query={query} categorySlug={categorySlug} subcategorySlug={subcategorySlug} vendorId={vendorId} />
+                            <Suspense key={`${categorySlug}-${subcategorySlug}-${vendorId}-${query}-${pageNum}`} fallback={<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 opacity-20 animate-pulse">{[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-80 bg-white/5 rounded-3xl" />)}</div>}>
+                                <BoutiqueProducts query={query} categorySlug={categorySlug} subcategorySlug={subcategorySlug} vendorId={vendorId} page={pageNum} />
                             </Suspense>
                         </div>
                     </div>
