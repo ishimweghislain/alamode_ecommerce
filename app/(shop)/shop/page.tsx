@@ -337,7 +337,7 @@ export default async function ShopPage({
                                 <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest"><SlidersHorizontal className="h-3 w-3" /> Sort: Luxury</div>
                             </div>
 
-                            <Suspense key={`${categorySlug}-${subcategorySlug}-${vendorId}-${query}-${pageNum}`} fallback={<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 opacity-20 animate-pulse">{[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-80 bg-white/5 rounded-3xl" />)}</div>}>
+                            <Suspense key={`${categorySlug}-${subcategorySlug}-${vendorId}-${query}-${pageNum}`} fallback={<BoutiqueLoading />}>
                                 <BoutiqueProducts query={query} categorySlug={categorySlug} subcategorySlug={subcategorySlug} vendorId={vendorId} page={pageNum} />
                             </Suspense>
                         </div>

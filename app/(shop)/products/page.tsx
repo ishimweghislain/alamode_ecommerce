@@ -167,15 +167,18 @@ function clsx(...classes: any[]) {
 }
 
 const ProductLoading = () => (
-    <div className="space-y-12 py-20">
-        <div className="flex items-center justify-center gap-4 text-brand-accent animate-pulse">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <span className="font-outfit font-black uppercase tracking-[0.3em]">Curating Masterpieces...</span>
+    <div className="fixed inset-0 z-[40] bg-background-dark flex flex-col items-center justify-center">
+        {/* Top Progress Bar */}
+        <div className="fixed top-0 left-0 right-0 z-[60]">
+            <div className="h-1 bg-brand-accent w-full animate-progress-loading shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 opacity-20">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                <div key={i} className="h-96 bg-white/5 rounded-3xl" />
-            ))}
+
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+            <Loader2 className="h-12 w-12 text-brand-accent animate-spin" />
+            <div className="flex flex-col items-center">
+                <span className="text-white font-outfit font-black tracking-[0.3em] uppercase text-xs">Synchronizing Inventory</span>
+                <span className="text-gray-500 text-[10px] uppercase tracking-[0.5em] mt-2 italic">Alamode Premium Experience</span>
+            </div>
         </div>
     </div>
 );
