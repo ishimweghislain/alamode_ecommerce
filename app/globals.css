@@ -48,3 +48,10 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-brand-emerald;
 }
+
+@layer utilities {
+  .loading-progress {
+    @apply fixed top-0 left-0 right-0 h-[3px] bg-brand-accent z-[9999] shadow-[0_0_10px_rgba(16,185,129,0.5)];
+    animation: progress-loading 2s ease-in-out infinite;
+  }
+}

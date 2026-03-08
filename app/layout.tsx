@@ -38,6 +38,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
+import ProgressBar from "@/components/layout/ProgressBar";
 
 export default function RootLayout({
   children,
@@ -50,6 +51,7 @@ export default function RootLayout({
         className={`${inter.variable} ${outfit.variable} antialiased bg-background-dark text-white min-h-screen flex flex-col`}
       >
         <AuthProvider>
+          <ProgressBar />
           <ToastProvider />
           <CartProvider>
             <Navbar />
