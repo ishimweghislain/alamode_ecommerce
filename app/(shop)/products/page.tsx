@@ -71,10 +71,10 @@ export default async function AllProductsPage({
     }
 
     return (
-        <div className="min-h-screen bg-background-dark pt-6 pb-24">
+        <div className="min-h-screen bg-background-dark pt-2 pb-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Section */}
-                <div className="relative mb-16 p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-brand-accent/20 via-brand-dark to-brand-dark border border-white/10 overflow-hidden shadow-2xl">
+                <div className="relative mb-4 p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-brand-accent/20 via-brand-dark to-brand-dark border border-white/10 overflow-hidden shadow-2xl">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                     <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
                         <div>

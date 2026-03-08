@@ -47,6 +47,8 @@ model User {
   tickets       Ticket[]
   notifications Notification[]
   wishlist      Product[] @relation("UserWishlist")
+
+  @@index([createdAt])
 }
 
 model Notification {
@@ -153,6 +155,12 @@ model Product {
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([isFeatured])
+  @@index([isTrending])
+  @@index([categoryId])
+  @@index([vendorId])
 }
 
 model Promotion {

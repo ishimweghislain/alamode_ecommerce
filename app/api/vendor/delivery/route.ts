@@ -44,19 +44,21 @@ export async function POST(req: Request) {
 
     const { district, fee } = await req.json();
 
+    const parsedFee = isNaN(parseFloat(fee)) ? 0 : parseFloat(fee);
+
     try {
-        const deliveryFee = await prisma.deliveryFee.upsert({
+        const deliveryFee = await (prisma.deliveryFee as any).upsert({
             where: {
                 vendorId_district: {
                     vendorId: vendor.id,
                     district
                 }
             },
-            update: { fee: parseFloat(fee) },
+            update: { fee: parsedFee },
             create: {
                 vendorId: vendor.id,
                 district,
-                fee: parseFloat(fee)
+                fee: parsedFee
             }
         });
 

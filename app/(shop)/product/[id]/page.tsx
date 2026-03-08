@@ -44,10 +44,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8">
             {/* Navigation Bar */}
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-6">
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
                     <Link
                         href={isAdmin ? "/admin/products" : (product.vendor?.id ? `/shop?vendorId=${product.vendor.id}` : "/shop")}
                         className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
@@ -84,19 +84,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
                 {/* Product Info */}
                 <div className="flex flex-col">
-                    <div className="mb-6">
+                    <div className="mb-4">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                            <div className="flex items-center gap-3">
-                                <span className="bg-brand-dark text-brand-accent text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-brand-accent/5">
+                            <div className="flex items-center flex-wrap gap-x-3 gap-y-2">
+                                <span className="bg-brand-dark text-brand-accent text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-brand-accent/5 shrink-0">
                                     {product.category.name}
                                 </span>
-                                <span className="h-4 w-[1px] bg-white/10 hidden md:block"></span>
                                 <div className="flex items-center gap-2">
                                     <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Sold by</span>
-                                    <Link href={`/vendors#${product.vendor.id}`} className="text-xs text-white font-bold hover:text-brand-gold transition-colors underline underline-offset-4 decoration-brand-accent/30">
+                                    <Link href={`/vendors#${product.vendor.id}`} className="text-xs text-brand-gold font-bold hover:text-white transition-colors">
                                         {product.vendor.storeName}
                                     </Link>
-                                    <Link href={`/vendors#${product.vendor.id}`} className="text-[10px] text-brand-accent hover:text-white transition-colors flex items-center gap-1 ml-1">
+                                    <Link href={`/vendors#${product.vendor.id}`} className="text-[10px] text-brand-accent hover:text-white transition-colors flex items-center gap-1 ml-1 shrink-0">
                                         View Store <ArrowRight className="h-2 w-2" />
                                     </Link>
                                 </div>
@@ -105,7 +104,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                 <WishlistToggle productId={product.id} initialIsWishlisted={isWishlisted} />
                             )}
                         </div>
-                        <TextReveal className="text-4xl font-outfit font-bold text-white mb-4 leading-tight">
+                        <TextReveal className="text-4xl font-outfit font-bold text-white mb-2 leading-tight">
                             {product.name}
                         </TextReveal>
                         <div className="flex items-center gap-4 mb-6">

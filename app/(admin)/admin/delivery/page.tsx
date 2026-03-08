@@ -5,6 +5,7 @@ import { Truck, Search, AlertTriangle, CheckCircle, Info, Ghost } from "lucide-r
 import axios from "axios";
 import { formatPrice } from "@/lib/utils";
 import { RWANDA_DISTRICTS } from "@/lib/constants";
+import { toast } from "react-hot-toast";
 
 export default function AdminDeliveryPage() {
     const [vendors, setVendors] = useState<any[]>([]);
@@ -16,8 +17,9 @@ export default function AdminDeliveryPage() {
             try {
                 const { data } = await axios.get("/api/admin/delivery");
                 setVendors(data);
-            } catch (error) {
-                console.error("Failed to fetch vendor delivery fees");
+            } catch (error: any) {
+                console.error("Failed to fetch vendor delivery fees", error);
+                toast.error("Network communication failure. Vendors could not be loaded.");
             } finally {
                 setLoading(false);
             }
@@ -103,8 +105,8 @@ export default function AdminDeliveryPage() {
                                                     <div
                                                         key={district}
                                                         className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${hasFee
-                                                                ? 'bg-brand-accent/10 border-brand-accent/30 text-white'
-                                                                : 'bg-red-500/5 border-red-500/20 text-red-500/50 grayscale'
+                                                            ? 'bg-brand-accent/10 border-brand-accent/30 text-white'
+                                                            : 'bg-red-500/5 border-red-500/20 text-red-500/50 grayscale'
                                                             }`}
                                                     >
                                                         {district}: {hasFee ? formatPrice(feeObj.fee) : "0"}
