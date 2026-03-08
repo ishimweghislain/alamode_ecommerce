@@ -16,14 +16,12 @@ export default function Loading() {
                         <span className="text-brand-accent font-outfit font-black text-xl italic">A</span>
                     </div>
                 </div>
-                <div className="flex flex-col items-center">
-                    <h2 className="text-white font-outfit font-bold tracking-[0.2em] uppercase text-sm">
-                        Alamode<span className="text-brand-accent">.</span>
-                    </h2>
-                    <p className="text-gray-500 text-[10px] uppercase tracking-[0.4em] mt-2 font-medium">
-                        Authenticity in Motion
-                    </p>
-                </div>
+                <h2 className="text-white font-outfit font-bold tracking-[0.2em] uppercase text-sm">
+                    Alamode<span className="text-brand-accent">.</span>
+                </h2>
+                <p className="text-gray-500 text-[10px] uppercase tracking-[0.4em] mt-2 font-medium">
+                    Opening soon...
+                </p>
             </div>
         </div>
     );
