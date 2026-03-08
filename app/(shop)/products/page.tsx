@@ -33,26 +33,8 @@ async function ProductGrid({
     };
 
     // Parallelize count and data fetch for speed
-    const [productsRaw, totalCount] = await Promise.all([
-        (prisma.product as any).findMany({
-            where: whereClause,
-            include: {
-                category: true,
-                vendor: true,
-                _count: { select: { orderItems: true } },
-                promotions: {
-                    where: { isActive: true, expiresAt: { gt: now } },
-                    take: 1,
-                },
-            },
-            take: PAGE_SIZE,
-            skip: skip,
-            orderBy: sortBy === 'popular'
-                ? { orderItems: { _count: 'desc' } }
-                : { createdAt: 'desc' }
-        }),
-        prisma.product.count({ where: whereClause })
-    ]).catch(() => [[], 0]) as Promise<[any[], number]>;
+    ])
+        .catch (() => [[], 0]) as any;
 
     if (productsRaw.length === 0) {
         return (
