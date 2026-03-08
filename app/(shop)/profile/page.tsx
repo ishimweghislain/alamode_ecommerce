@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { User, Mail, Shield, ShoppingBag, Heart, Settings, Loader2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { Suspense } from "react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
