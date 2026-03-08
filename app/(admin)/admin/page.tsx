@@ -6,80 +6,88 @@ import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
-// --- Sub-components for Streaming ---
+// --- Sub-components with Robust Error Handling ---
 
 async function AlertsSection() {
-    const [pendingVendors, pendingWithdrawals] = await Promise.all([
-        prisma.vendor.count({ where: { isApproved: false } }).catch(() => 0),
-        prisma.withdrawalRequest.count({ where: { status: 'PENDING' } }).catch(() => 0)
-    ]);
+    try {
+        const [pendingVendors, pendingWithdrawals] = await Promise.all([
+            prisma.vendor.count({ where: { isApproved: false } }).catch(() => 0),
+            prisma.withdrawalRequest.count({ where: { status: 'PENDING' } }).catch(() => 0)
+        ]);
 
-    return (
-        <div className="space-y-4">
-            {pendingVendors > 0 && (
-                <Link href="/admin/vendors?status=pending" className="block transform hover:scale-[1.01] transition-all">
-                    <div className="bg-brand-gold/10 border border-brand-gold/20 p-5 rounded-3xl flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="h-10 w-10 bg-brand-gold/20 rounded-full flex items-center justify-center">
-                                <AlertTriangle className="text-brand-gold h-5 w-5" />
+        if (pendingVendors === 0 && pendingWithdrawals === 0) return null;
+
+        return (
+            <div className="space-y-4 mb-8">
+                {pendingVendors > 0 && (
+                    <Link href="/admin/vendors?status=pending" className="block transform hover:scale-[1.01] transition-all">
+                        <div className="bg-brand-gold/10 border border-brand-gold/20 p-5 rounded-3xl flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="h-10 w-10 bg-brand-gold/20 rounded-full flex items-center justify-center">
+                                    <AlertTriangle className="text-brand-gold h-5 w-5" />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-brand-gold font-bold">Pending Approvals</p>
+                                    <p className="text-sm text-brand-gold/70">You have {pendingVendors} vendor waiting for verification.</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-brand-gold font-bold">Pending Approvals</p>
-                                <p className="text-sm text-brand-gold/70">You have {pendingVendors} vendor waiting for verification.</p>
-                            </div>
+                            <div className="flex items-center gap-2 text-brand-gold font-bold text-sm">REVIEW NOW <ArrowUpRight className="h-4 w-4" /></div>
                         </div>
-                        <div className="flex items-center gap-2 text-brand-gold font-bold text-sm">REVIEW NOW <ArrowUpRight className="h-4 w-4" /></div>
-                    </div>
-                </Link>
-            )}
-            {pendingWithdrawals > 0 && (
-                <Link href="/admin/withdrawals" className="block transform hover:scale-[1.01] transition-all">
-                    <div className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-3xl flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="h-10 w-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                                <DollarSign className="text-blue-400 h-5 w-5" />
+                    </Link>
+                )}
+                {pendingWithdrawals > 0 && (
+                    <Link href="/admin/withdrawals" className="block transform hover:scale-[1.01] transition-all">
+                        <div className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-3xl flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="h-10 w-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                                    <DollarSign className="text-blue-400 h-5 w-5" />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-blue-400 font-bold">Pending Withdrawals</p>
+                                    <p className="text-sm text-blue-400/70">You have {pendingWithdrawals} payout request waiting for approval.</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-blue-400 font-bold">Pending Withdrawals</p>
-                                <p className="text-sm text-blue-400/70">You have {pendingWithdrawals} payout request waiting for approval.</p>
-                            </div>
+                            <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">PROCESS NOW <ArrowUpRight className="h-4 w-4" /></div>
                         </div>
-                        <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">PROCESS NOW <ArrowUpRight className="h-4 w-4" /></div>
-                    </div>
-                </Link>
-            )}
-        </div>
-    );
+                    </Link>
+                )}
+            </div>
+        );
+    } catch (e) { return null; }
 }
 
 async function MainStatsGrid() {
-    const [users, vendors, products, orders] = await Promise.all([
-        prisma.user.count().catch(() => 0),
-        prisma.vendor.count().catch(() => 0),
-        prisma.product.count().catch(() => 0),
-        prisma.order.count().catch(() => 0)
-    ]);
+    try {
+        const [users, vendors, products, orders] = await Promise.all([
+            prisma.user.count().catch(() => 0),
+            prisma.vendor.count().catch(() => 0),
+            prisma.product.count().catch(() => 0),
+            prisma.order.count().catch(() => 0)
+        ]);
 
-    const stats = [
-        { label: "Total Users", value: users, icon: Users, color: "text-blue-400", href: "/admin/users" },
-        { label: "Total Vendors", value: vendors, icon: Store, color: "text-brand-accent", href: "/admin/vendors" },
-        { label: "Total Products", value: products, icon: Package, color: "text-brand-gold", href: "/admin/products" },
-        { label: "Total Orders", value: orders, icon: CreditCard, color: "text-purple-400", href: "/admin/orders" },
-    ];
+        const stats = [
+            { label: "Total Users", value: users, icon: Users, color: "text-blue-400", href: "/admin/users" },
+            { label: "Total Vendors", value: vendors, icon: Store, color: "text-brand-accent", href: "/admin/vendors" },
+            { label: "Total Products", value: products, icon: Package, color: "text-brand-gold", href: "/admin/products" },
+            { label: "Total Orders", value: orders, icon: CreditCard, color: "text-purple-400", href: "/admin/orders" },
+        ];
 
-    return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat) => (
-                <Link key={stat.label} href={stat.href} className="card-luxury p-6 flex items-center gap-6 hover:border-brand-accent/50 transition-all group">
-                    <div className={`p-4 rounded-2xl bg-white/5 ${stat.color} group-hover:scale-110 transition-transform`}><stat.icon className="h-6 w-6" /></div>
-                    <div>
-                        <p className="text-gray-400 text-sm font-medium">{stat.label}</p>
-                        <h3 className="text-2xl font-bold text-white uppercase">{stat.value}</h3>
-                    </div>
-                </Link>
-            ))}
-        </div>
-    );
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {stats.map((stat) => (
+                    <Link key={stat.label} href={stat.href} className="card-luxury p-6 flex items-center gap-6 hover:border-brand-accent/50 transition-all group">
+                        <div className={`p-4 rounded-2xl bg-white/5 ${stat.color} group-hover:scale-110 transition-transform`}><stat.icon className="h-6 w-6" /></div>
+                        <div className="text-left">
+                            <p className="text-gray-400 text-sm font-medium">{stat.label}</p>
+                            <h3 className="text-2xl font-bold text-white uppercase">{stat.value}</h3>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        );
+    } catch (e) {
+        return <div className="p-12 text-center text-gray-500 bg-white/5 rounded-3xl">Stats offline.</div>;
+    }
 }
 
 async function RevenueStats() {
@@ -105,7 +113,7 @@ async function RevenueStats() {
                 {revStats.map((stat) => (
                     <div key={stat.label} className="card-luxury p-6 flex flex-col gap-4 border-l-4 border-l-brand-accent group">
                         <div className={`p-3 rounded-xl bg-white/5 w-fit ${stat.color}`}><stat.icon className="h-5 w-5" /></div>
-                        <div>
+                        <div className="text-left">
                             <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{stat.label}</p>
                             <h3 className="text-2xl font-bold text-white mt-1">{stat.value}</h3>
                         </div>
@@ -113,8 +121,8 @@ async function RevenueStats() {
                 ))}
             </div>
         );
-    } catch (error) {
-        return <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-3xl text-red-500 text-sm">Revenue analytics temporarily unavailable.</div>;
+    } catch (e) {
+        return <div className="p-8 text-center bg-white/5 rounded-3xl text-gray-500 italic">Revenue engine synchronizing...</div>;
     }
 }
 
@@ -143,7 +151,7 @@ async function RecentActivity() {
                     <div className="space-y-4">
                         {recentOrders.map((order: any) => (
                             <div key={order.id} className="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
-                                <div>
+                                <div className="text-left">
                                     <p className="text-sm font-bold text-white">{order.user?.name || order.user?.email || 'Anonymous'}</p>
                                     <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
                                 </div>
@@ -153,6 +161,7 @@ async function RecentActivity() {
                                 </div>
                             </div>
                         ))}
+                        {recentOrders.length === 0 && <p className="text-center text-gray-500 py-10 italic">No orders recorded yet.</p>}
                     </div>
                 </div>
                 <div className="card-luxury p-6">
@@ -177,8 +186,8 @@ async function RecentActivity() {
                 </div>
             </div>
         );
-    } catch (error) {
-        return <div className="p-6 bg-white/5 rounded-3xl text-gray-500 text-sm">Activity feed temporarily unavailable.</div>;
+    } catch (e) {
+        return <div className="p-20 text-center bg-white/5 rounded-3xl text-gray-500">Activity monitor offline.</div>;
     }
 }
 
@@ -186,9 +195,9 @@ async function RecentActivity() {
 
 export default async function AdminDashboard() {
     return (
-        <div className="space-y-8 pb-10">
-            <div>
-                <h1 className="text-3xl font-outfit font-bold text-white mb-2">Admin Portal Center</h1>
+        <div className="space-y-8 pb-20">
+            <div className="text-left">
+                <h1 className="text-3xl font-outfit font-bold text-white mb-2">Admin Intelligence Center</h1>
                 <p className="text-gray-400">Manage and monitor the ALAMODE ecosystem with real-time analytics.</p>
             </div>
 
@@ -200,7 +209,7 @@ export default async function AdminDashboard() {
                 <MainStatsGrid />
             </Suspense>
 
-            <Suspense fallback={<div className="flex items-center gap-3 text-brand-accent/50 py-10 font-black uppercase tracking-widest"><Loader2 className="animate-spin h-5 w-5" /> Syncing Revenue Data...</div>}>
+            <Suspense fallback={<div className="flex items-center gap-3 text-brand-accent/50 py-10 font-bold uppercase tracking-widest text-xs animate-pulse"><Loader2 className="animate-spin h-5 w-5" /> Syncing Revenue Data...</div>}>
                 <RevenueStats />
             </Suspense>
 
