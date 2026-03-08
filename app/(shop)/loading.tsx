@@ -1,28 +1,11 @@
 export default function Loading() {
     return (
-        <div className="fixed inset-0 z-[40] bg-background-dark flex flex-col items-center justify-center">
-            {/* Top Progress Bar */}
-            <div className="fixed top-0 left-0 right-0 z-[60]">
-                <div className="h-1 bg-brand-accent w-full animate-progress-loading shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
-            </div>
+        <div className="fixed top-0 left-0 right-0 z-[9999]">
+            {/* Simple Top Progress Bar (YouTube/GitHub Style) */}
+            <div className="h-[3px] bg-brand-accent w-full animate-progress-loading shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
 
-            {/* Minimalist Center Brand Loader */}
-            <div className="flex flex-col items-center gap-6 animate-pulse">
-                <div className="relative">
-                    <div className="h-20 w-20 rounded-full border-2 border-white/5 flex items-center justify-center">
-                        <div className="h-20 w-20 rounded-full border-t-2 border-brand-accent animate-spin absolute" />
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-brand-accent font-outfit font-black text-xl italic">A</span>
-                    </div>
-                </div>
-                <h2 className="text-white font-outfit font-bold tracking-[0.2em] uppercase text-sm">
-                    Alamode<span className="text-brand-accent">.</span>
-                </h2>
-                <p className="text-gray-500 text-[10px] uppercase tracking-[0.4em] mt-2 font-medium">
-                    Opening soon...
-                </p>
-            </div>
+            {/* Subtle Overlay to hide the content/footer while switching */}
+            <div className="fixed inset-0 bg-background-dark/20 backdrop-blur-[2px] -z-10 pointer-events-none" />
         </div>
     );
 }
