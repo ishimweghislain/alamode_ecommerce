@@ -25,6 +25,16 @@ module.exports = {
       },
       borderRadius: {
         'luxury': '0.75rem',
+      },
+      keyframes: {
+        'progress-loading': {
+          '0%': { width: '0%', left: '0%' },
+          '50%': { width: '70%', left: '0%' },
+          '100%': { width: '100%', left: '0%' }
+        }
+      },
+      animation: {
+        'progress-loading': 'progress-loading 1.2s ease-in-out infinite'
       }
     },
   },
