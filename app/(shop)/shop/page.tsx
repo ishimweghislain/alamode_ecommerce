@@ -101,7 +101,7 @@ async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId
         ]
     };
 
-    const [products, totalCount] = await Promise.all([
+    const [products, totalCount] = (await Promise.all([
         prisma.product.findMany({
             where: whereClause,
             include: {
@@ -116,7 +116,7 @@ async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId
             orderBy: { createdAt: 'desc' }
         }),
         prisma.product.count({ where: whereClause })
-    ]).catch(() => [[], 0]) as Promise<[any[], number]>;
+    ]).catch(() => [[], 0])) as [any[], number];
 
     if (products.length === 0) {
         return (
