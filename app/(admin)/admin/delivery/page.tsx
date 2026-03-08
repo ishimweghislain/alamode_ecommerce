@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import DeliveryClient from "@/components/admin/DeliveryClient";
+import DeliveryClient from "../../../../components/admin/DeliveryClient";
 
 export const dynamic = "force-dynamic";
 
