@@ -116,7 +116,7 @@ async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId
             orderBy: { createdAt: 'desc' }
         }),
         prisma.product.count({ where: whereClause })
-    ]).catch(() => [[], 0]);
+    ]).catch(() => [[], 0]) as Promise<[any[], number]>;
 
     if (products.length === 0) {
         return (

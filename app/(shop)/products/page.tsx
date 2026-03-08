@@ -52,7 +52,7 @@ async function ProductGrid({
                 : { createdAt: 'desc' }
         }),
         prisma.product.count({ where: whereClause })
-    ]).catch(() => [[], 0]);
+    ]).catch(() => [[], 0]) as Promise<[any[], number]>;
 
     if (productsRaw.length === 0) {
         return (
