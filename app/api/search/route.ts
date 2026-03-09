@@ -7,19 +7,37 @@ export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const query = searchParams.get("q");
+        const categorySlug = searchParams.get("category");
+        const subcategorySlug = searchParams.get("subcategory");
 
         if (!query || query.length < 2) {
-            return NextResponse.json({ products: [], vendors: [] });
+            return NextResponse.json({ products: [], vendors: [], categories: [] });
+        }
+
+        // Build product WHERE clause with optional category/subcategory filter
+        const productWhere: any = {
+            OR: [
+                { name: { contains: query, mode: "insensitive" } },
+                { description: { contains: query, mode: "insensitive" } },
+            ],
+        };
+
+        if (categorySlug) {
+            productWhere.category = { slug: categorySlug };
+        }
+
+        // Subcategory filter via a relation if available (graceful fallback)
+        if (subcategorySlug) {
+            try {
+                productWhere.subcategory = { slug: subcategorySlug };
+            } catch {
+                // subcategory relation may not exist on product — ignore
+            }
         }
 
         const [products, vendors, categories] = await Promise.all([
             (prisma.product as any).findMany({
-                where: {
-                    OR: [
-                        { name: { contains: query, mode: "insensitive" } },
-                        { description: { contains: query, mode: "insensitive" } },
-                    ],
-                },
+                where: productWhere,
                 take: 5,
                 select: {
                     id: true,
