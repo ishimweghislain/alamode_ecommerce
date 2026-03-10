@@ -38,8 +38,8 @@ export async function PATCH(
                 return new NextResponse("Forbidden", { status: 403 });
             }
 
-            const { name, description, price, stock, categoryId, subcategoryId, images, sizes, sizeType } = body;
-            const product = await prisma.product.update({
+            const { name, description, price, stock, categoryId, subcategoryId, subsubcategoryId, images, sizes, sizeType } = body;
+            const product = await (prisma.product as any).update({
                 where: { id: productId },
                 data: {
                     ...(name && { name }),
@@ -48,6 +48,7 @@ export async function PATCH(
                     ...(stock !== undefined && { stock: parseInt(stock) }),
                     ...(categoryId && { categoryId }),
                     subcategoryId: subcategoryId || null,
+                    subsubcategoryId: subsubcategoryId || null,
                     ...(images && { images }),
                     ...(sizes !== undefined && { sizes }),
                     sizeType: sizeType || null,

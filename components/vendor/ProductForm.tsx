@@ -27,12 +27,14 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
         stock: initialData?.stock || "",
         categoryId: initialData?.categoryId || "",
         subcategoryId: initialData?.subcategoryId || "",
+        subsubcategoryId: initialData?.subsubcategoryId || "",
         sizeType: initialData?.sizeType || "",
     });
 
     const [sizes, setSizes] = useState<string[]>(initialData?.sizes || []);
     const [customSizeInput, setCustomSizeInput] = useState("");
     const [subcategories, setSubcategories] = useState<any[]>([]);
+    const [subsubcategories, setSubsubcategories] = useState<any[]>([]);
 
     useEffect(() => {
         if (formData.categoryId) {
@@ -40,8 +42,18 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
             setSubcategories(selectedCat?.subcategories || []);
         } else {
             setSubcategories([]);
+            setSubsubcategories([]);
         }
     }, [formData.categoryId, categories]);
+
+    useEffect(() => {
+        if (formData.subcategoryId) {
+            const selectedSub = subcategories.find(s => s.id === formData.subcategoryId);
+            setSubsubcategories(selectedSub?.subsubcategories || []);
+        } else {
+            setSubsubcategories([]);
+        }
+    }, [formData.subcategoryId, subcategories]);
 
     const togglePresetSize = (size: string) => {
         setSizes(prev =>
@@ -180,16 +192,15 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
                         </div>
                     </div>
 
-                    {/* Categories */}
                     <div className="card-luxury p-6 space-y-4">
                         <h2 className="text-xl font-bold text-white">Categories</h2>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm text-gray-400">Category</label>
                                 <select
                                     required
                                     value={formData.categoryId}
-                                    onChange={(e) => setFormData({ ...formData, categoryId: e.target.value, subcategoryId: "" })}
+                                    onChange={(e) => setFormData({ ...formData, categoryId: e.target.value, subcategoryId: "", subsubcategoryId: "" })}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-brand-accent transition-colors outline-none"
                                 >
                                     <option value="" className="bg-background-dark">Select Category</option>
@@ -198,19 +209,35 @@ export default function ProductForm({ initialData, categories }: ProductFormProp
                                     ))}
                                 </select>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm text-gray-400">Subcategory</label>
-                                <select
-                                    value={formData.subcategoryId}
-                                    onChange={(e) => setFormData({ ...formData, subcategoryId: e.target.value })}
-                                    disabled={!formData.categoryId}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-brand-accent transition-colors outline-none disabled:opacity-50"
-                                >
-                                    <option value="" className="bg-background-dark">Select Subcategory</option>
-                                    {subcategories.map((sub) => (
-                                        <option key={sub.id} value={sub.id} className="bg-background-dark">{sub.name}</option>
-                                    ))}
-                                </select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm text-gray-400">Subcategory</label>
+                                    <select
+                                        value={formData.subcategoryId}
+                                        onChange={(e) => setFormData({ ...formData, subcategoryId: e.target.value, subsubcategoryId: "" })}
+                                        disabled={!formData.categoryId || subcategories.length === 0}
+                                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-brand-accent transition-colors outline-none disabled:opacity-50"
+                                    >
+                                        <option value="" className="bg-background-dark">Select Subcategory</option>
+                                        {subcategories.map((sub) => (
+                                            <option key={sub.id} value={sub.id} className="bg-background-dark">{sub.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm text-gray-400">Micro Category</label>
+                                    <select
+                                        value={formData.subsubcategoryId}
+                                        onChange={(e) => setFormData({ ...formData, subsubcategoryId: e.target.value })}
+                                        disabled={!formData.subcategoryId || subsubcategories.length === 0}
+                                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-brand-accent transition-colors outline-none disabled:opacity-50"
+                                    >
+                                        <option value="" className="bg-background-dark">Optional Sub-subcategory</option>
+                                        {subsubcategories.map((ss) => (
+                                            <option key={ss.id} value={ss.id} className="bg-background-dark">{ss.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>

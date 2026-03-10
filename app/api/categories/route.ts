@@ -8,7 +8,11 @@ export async function GET() {
     try {
         const categories = await (prisma as any).category.findMany({
             include: {
-                subcategories: true,
+                subcategories: {
+                    include: {
+                        subsubcategories: true
+                    }
+                },
                 _count: {
                     select: { products: true }
                 }

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { name, description, price, stock, categoryId, subcategoryId, images, sizes, sizeType, vendorId: bodyVendorId } = body;
+        const { name, description, price, stock, categoryId, subcategoryId, subsubcategoryId, images, sizes, sizeType, vendorId: bodyVendorId } = body;
 
         if (!name || !description || !price || !categoryId || !images || images.length === 0) {
             return new NextResponse("Missing required fields", { status: 400 });
@@ -36,6 +36,7 @@ export async function POST(req: Request) {
                 stock: parseInt(stock) || 0,
                 categoryId,
                 subcategoryId: subcategoryId || null,
+                subsubcategoryId: subsubcategoryId || null,
                 vendorId: user.role === "ADMIN" ? bodyVendorId : vendorId,
                 images,
                 sizes: sizes || [],

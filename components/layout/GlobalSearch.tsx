@@ -11,10 +11,17 @@ import { formatPrice } from "@/lib/utils";
 import axios from "axios";
 import { clsx } from "clsx";
 
+interface Subsubcategory {
+    id: string;
+    name: string;
+    slug: string;
+}
+
 interface Subcategory {
     id: string;
     name: string;
     slug: string;
+    subsubcategories?: Subsubcategory[];
 }
 
 interface Category {
@@ -40,6 +47,7 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory | null>(null);
+    const [selectedSubsubcategory, setSelectedSubsubcategory] = useState<Subsubcategory | null>(null);
     const [isCatOpen, setIsCatOpen] = useState(false);
     const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
     const [catsLoaded, setCatsLoaded] = useState(false);
@@ -79,7 +87,8 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
                 try {
                     const catParam = selectedCategory ? `&category=${selectedCategory.slug}` : "";
                     const subParam = selectedSubcategory ? `&subcategory=${selectedSubcategory.slug}` : "";
-                    const response = await axios.get(`/api/search?q=${query}${catParam}${subParam}`);
+                    const subsubParam = selectedSubsubcategory ? `&subsubcategory=${selectedSubsubcategory.slug}` : "";
+                    const response = await axios.get(`/api/search?q=${query}${catParam}${subParam}${subsubParam}`);
                     setResults(response.data);
                     setIsOpen(true);
                 } catch (error) {
@@ -102,16 +111,18 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
         if (query.trim()) params.set("q", query.trim());
         if (selectedCategory) params.set("category", selectedCategory.slug);
         if (selectedSubcategory) params.set("subcategory", selectedSubcategory.slug);
+        if (selectedSubsubcategory) params.set("subsubcategory", selectedSubsubcategory.slug);
 
         const queryString = params.toString();
         router.push(queryString ? `/shop?${queryString}` : "/shop");
         setIsOpen(false);
         setIsCatOpen(false);
-    }, [query, selectedCategory, selectedSubcategory, router]);
+    }, [query, selectedCategory, selectedSubcategory, selectedSubsubcategory, router]);
 
-    const handleCategorySelect = useCallback((cat: Category | null, sub?: Subcategory) => {
+    const handleCategorySelect = useCallback((cat: Category | null, sub?: Subcategory, subsub?: Subsubcategory) => {
         setSelectedCategory(cat);
         setSelectedSubcategory(sub || null);
+        setSelectedSubsubcategory(subsub || null);
         setIsCatOpen(false);
         setHoveredCategory(null);
         // Focus input after selection
@@ -121,13 +132,16 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
     const clearFilters = useCallback(() => {
         setSelectedCategory(null);
         setSelectedSubcategory(null);
+        setSelectedSubsubcategory(null);
     }, []);
 
-    const categoryLabel = selectedSubcategory
-        ? selectedSubcategory.name
-        : selectedCategory
-            ? selectedCategory.name
-            : "All Categories";
+    const categoryLabel = selectedSubsubcategory
+        ? selectedSubsubcategory.name
+        : selectedSubcategory
+            ? selectedSubcategory.name
+            : selectedCategory
+                ? selectedCategory.name
+                : "All Categories";
 
     return (
         <div ref={searchRef} className={clsx(
@@ -283,42 +297,49 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
 
                         {/* Right: Subcategories Panel */}
                         {hoveredCategory && hoveredCategory.subcategories && hoveredCategory.subcategories.length > 0 && (
-                            <div className="w-48 py-2 animate-in fade-in slide-in-from-left-2 duration-150">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 px-4 py-1.5">
-                                    {hoveredCategory.name}
-                                </p>
-                                <div className="h-px bg-white/5 mx-3 mb-1" />
-
-                                {/* Browse all in this category */}
-                                <button
-                                    type="button"
-                                    onClick={() => handleCategorySelect(hoveredCategory)}
-                                    className={clsx(
-                                        "w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors text-left",
-                                        selectedCategory?.id === hoveredCategory.id && !selectedSubcategory
-                                            ? "text-brand-accent"
-                                            : "text-gray-500 hover:text-white hover:bg-white/5"
-                                    )}
-                                >
-                                    <Tag className="h-3 w-3 shrink-0" />
-                                    <span className="text-xs font-semibold italic">All in {hoveredCategory.name}</span>
-                                </button>
-
-                                {hoveredCategory.subcategories.map((sub) => (
+                            <div className="w-[600px] py-4 px-2 animate-in fade-in slide-in-from-left-2 duration-150">
+                                <div className="flex items-center justify-between px-3 mb-4">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                                        {hoveredCategory.name} Collections
+                                    </p>
                                     <button
-                                        key={sub.id}
                                         type="button"
-                                        onClick={() => handleCategorySelect(hoveredCategory, sub)}
-                                        className={clsx(
-                                            "w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors text-left",
-                                            selectedSubcategory?.id === sub.id
-                                                ? "text-brand-accent bg-brand-accent/10"
-                                                : "text-gray-400 hover:text-white hover:bg-white/5"
-                                        )}
+                                        onClick={() => handleCategorySelect(hoveredCategory)}
+                                        className="text-xs font-bold text-brand-accent hover:text-white transition-colors flex items-center gap-1 bg-brand-accent/10 px-3 py-1.5 rounded-full"
                                     >
-                                        <span className="font-medium">{sub.name}</span>
+                                        <Tag className="h-3 w-3" />
+                                        View All
                                     </button>
-                                ))}
+                                </div>
+                                <div className="h-px bg-white/5 mx-3 mb-4" />
+
+                                <div className="px-3 grid grid-cols-3 gap-6">
+                                    {hoveredCategory.subcategories.map((sub) => (
+                                        <div key={sub.id} className="flex flex-col">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleCategorySelect(hoveredCategory, sub)}
+                                                className="font-bold text-white text-sm mb-2 hover:text-brand-accent transition-colors text-left"
+                                            >
+                                                {sub.name}
+                                            </button>
+                                            {sub.subsubcategories && sub.subsubcategories.length > 0 && (
+                                                <div className="flex flex-col gap-1.5 pl-1 border-l border-white/5">
+                                                    {sub.subsubcategories.map((ss) => (
+                                                        <button
+                                                            key={ss.id}
+                                                            type="button"
+                                                            onClick={() => handleCategorySelect(hoveredCategory, sub, ss)}
+                                                            className="text-xs text-gray-400 hover:text-white transition-colors text-left pl-2"
+                                                        >
+                                                            {ss.name}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         )}
 
@@ -370,7 +391,11 @@ export default function GlobalSearch({ variant = "navbar" }: GlobalSearchProps) 
                             <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Filtering by:</span>
                             <span className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-accent/10 border border-brand-accent/20 rounded-full text-[10px] font-black text-brand-accent uppercase tracking-wider">
                                 <Tag className="h-2.5 w-2.5" />
-                                {selectedSubcategory ? `${selectedCategory.name} › ${selectedSubcategory.name}` : selectedCategory.name}
+                                {selectedSubsubcategory
+                                    ? `${selectedCategory.name} › ${selectedSubcategory?.name} › ${selectedSubsubcategory.name}`
+                                    : selectedSubcategory
+                                        ? `${selectedCategory.name} › ${selectedSubcategory.name}`
+                                        : selectedCategory.name}
                                 <button
                                     type="button"
                                     onClick={clearFilters}

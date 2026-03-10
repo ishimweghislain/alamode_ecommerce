@@ -89,7 +89,7 @@ async function BoutiqueDirectory({ query }: { query?: string }) {
     );
 }
 
-async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId, page }: any) {
+async function BoutiqueProducts({ query, categorySlug, subcategorySlug, subsubcategorySlug, vendorId, page }: any) {
     const now = new Date();
     const skip = (page - 1) * PAGE_SIZE;
 
@@ -103,6 +103,7 @@ async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId
             } : {},
             categorySlug ? { category: { slug: categorySlug } } : {},
             subcategorySlug ? { subcategory: { slug: subcategorySlug } } : {},
+            subsubcategorySlug ? { subsubcategory: { slug: subsubcategorySlug } } : {},
             vendorId ? { vendorId } : {}
         ]
     };
@@ -167,7 +168,7 @@ async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId
             {totalPages > 1 && (
                 <div className="flex items-center justify-between gap-4 mt-8 border-t border-white/5 pt-8">
                     <Link
-                        href={`/shop?page=${Math.max(1, page - 1)}${vendorId ? `&vendorId=${vendorId}` : ''}${categorySlug ? `&category=${categorySlug}` : ''}${subcategorySlug ? `&subcategory=${subcategorySlug}` : ''}${query ? `&q=${query}` : ''}`}
+                        href={`/shop?page=${Math.max(1, page - 1)}${vendorId ? `&vendorId=${vendorId}` : ''}${categorySlug ? `&category=${categorySlug}` : ''}${subcategorySlug ? `&subcategory=${subcategorySlug}` : ''}${subsubcategorySlug ? `&subsubcategory=${subsubcategorySlug}` : ''}${query ? `&q=${query}` : ''}`}
                         className={clsx(
                             "flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-all",
                             page <= 1 ? "opacity-20 pointer-events-none" : "text-gray-400 hover:text-brand-accent"
@@ -177,7 +178,7 @@ async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId
                     </Link>
                     <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Page {page} of {totalPages}</span>
                     <Link
-                        href={`/shop?page=${Math.min(totalPages, page + 1)}${vendorId ? `&vendorId=${vendorId}` : ''}${categorySlug ? `&category=${categorySlug}` : ''}${subcategorySlug ? `&subcategory=${subcategorySlug}` : ''}${query ? `&q=${query}` : ''}`}
+                        href={`/shop?page=${Math.min(totalPages, page + 1)}${vendorId ? `&vendorId=${vendorId}` : ''}${categorySlug ? `&category=${categorySlug}` : ''}${subcategorySlug ? `&subcategory=${subcategorySlug}` : ''}${subsubcategorySlug ? `&subsubcategory=${subsubcategorySlug}` : ''}${query ? `&q=${query}` : ''}`}
                         className={clsx(
                             "flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-all",
                             page >= totalPages ? "opacity-20 pointer-events-none" : "text-gray-400 hover:text-brand-accent"
@@ -193,8 +194,8 @@ async function BoutiqueProducts({ query, categorySlug, subcategorySlug, vendorId
 
 // Sidebars & UI Helpers
 
-async function ShopSidebarContent({ categorySlug, subcategorySlug, vendorId }: any) {
-    const categories = await prisma.category.findMany({ include: { subcategories: true } });
+async function ShopSidebarContent({ categorySlug, subcategorySlug, subsubcategorySlug, vendorId }: any) {
+    const categories = await prisma.category.findMany({ include: { subcategories: { include: { subsubcategories: true } } } });
     const vendors = await prisma.vendor.findMany({ where: { isApproved: true } });
     const activeCategory = categorySlug ? categories.find(c => c.slug === categorySlug) : null;
 
@@ -207,13 +208,24 @@ async function ShopSidebarContent({ categorySlug, subcategorySlug, vendorId }: a
                         {activeCategory.name} Styles
                     </h3>
                     <div className="space-y-1">
-                        <Link href={`/shop?category=${categorySlug}${vendorId ? `&vendorId=${vendorId}` : ''}`} className={clsx("block w-full text-left px-4 py-3 rounded-xl text-xs transition-all", !subcategorySlug ? "bg-white/10 text-white font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white")}>
+                        <Link href={`/shop?category=${categorySlug}${vendorId ? `&vendorId=${vendorId}` : ''}`} className={clsx("block w-full text-left px-4 py-3 rounded-xl text-xs transition-all", !subcategorySlug && !subsubcategorySlug ? "bg-white/10 text-white font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white")}>
                             All {activeCategory.name}
                         </Link>
                         {activeCategory.subcategories.map((sub: any) => (
-                            <Link key={sub.id} href={`/shop?category=${categorySlug}&subcategory=${sub.slug}${vendorId ? `&vendorId=${vendorId}` : ''}`} className={clsx("block w-full text-left px-4 py-3 rounded-xl text-xs transition-all", subcategorySlug === sub.slug ? "bg-brand-accent/20 text-brand-accent font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white")}>
-                                {sub.name}
-                            </Link>
+                            <div key={sub.id} className="space-y-1">
+                                <Link href={`/shop?category=${categorySlug}&subcategory=${sub.slug}${vendorId ? `&vendorId=${vendorId}` : ''}`} className={clsx("block w-full text-left px-4 py-3 rounded-xl text-xs transition-all", subcategorySlug === sub.slug && !subsubcategorySlug ? "bg-brand-accent/20 text-brand-accent font-bold" : "text-gray-500 hover:bg-white/5 hover:text-white")}>
+                                    {sub.name}
+                                </Link>
+                                {sub.slug === subcategorySlug && sub.subsubcategories && sub.subsubcategories.length > 0 && (
+                                    <div className="pl-4 space-y-1 pt-1 pb-2 border-l-2 border-brand-accent/20 ml-4">
+                                        {sub.subsubcategories.map((ss: any) => (
+                                            <Link key={ss.id} href={`/shop?category=${categorySlug}&subcategory=${sub.slug}&subsubcategory=${ss.slug}${vendorId ? `&vendorId=${vendorId}` : ''}`} className={clsx("block w-full text-left px-3 py-2 rounded-lg text-[11px] transition-all", subsubcategorySlug === ss.slug ? "text-white font-bold bg-white/5" : "text-gray-500 hover:text-white hover:bg-white/5")}>
+                                                {ss.name}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -252,10 +264,11 @@ export default async function ShopPage({
     const query = typeof params.q === 'string' ? params.q : undefined;
     const categorySlug = typeof params.category === 'string' ? params.category : undefined;
     const subcategorySlug = typeof params.subcategory === 'string' ? params.subcategory : undefined;
+    const subsubcategorySlug = typeof params.subsubcategory === 'string' ? params.subsubcategory : undefined;
     const vendorId = typeof params.vendorId === 'string' ? params.vendorId : undefined;
     const pageNum = typeof params.page === 'string' ? parseInt(params.page) : 1;
 
-    const isShowingProducts = !!(categorySlug || subcategorySlug || vendorId);
+    const isShowingProducts = !!(categorySlug || subcategorySlug || subsubcategorySlug || vendorId);
 
     const shopCategories = [
         { name: "All Items", slug: null, icon: LayoutGrid },
@@ -334,7 +347,7 @@ export default async function ShopPage({
 
                     <div className="flex flex-col lg:flex-row gap-12">
                         <Suspense fallback={<div className="w-64 space-y-8 animate-pulse">{[1, 2].map(i => <div key={i} className="h-40 bg-white/5 rounded-3xl" />)}</div>}>
-                            <ShopSidebarContent categorySlug={categorySlug} subcategorySlug={subcategorySlug} vendorId={vendorId} />
+                            <ShopSidebarContent categorySlug={categorySlug} subcategorySlug={subcategorySlug} subsubcategorySlug={subsubcategorySlug} vendorId={vendorId} />
                         </Suspense>
 
                         <div className="flex-1">
@@ -343,8 +356,8 @@ export default async function ShopPage({
                                 <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest"><SlidersHorizontal className="h-3 w-3" /> Sort: Luxury</div>
                             </div>
 
-                            <Suspense key={`${categorySlug}-${subcategorySlug}-${vendorId}-${query}-${pageNum}`} fallback={<BoutiqueLoading />}>
-                                <BoutiqueProducts query={query} categorySlug={categorySlug} subcategorySlug={subcategorySlug} vendorId={vendorId} page={pageNum} />
+                            <Suspense key={`${categorySlug}-${subcategorySlug}-${subsubcategorySlug}-${vendorId}-${query}-${pageNum}`} fallback={<BoutiqueLoading />}>
+                                <BoutiqueProducts query={query} categorySlug={categorySlug} subcategorySlug={subcategorySlug} subsubcategorySlug={subsubcategorySlug} vendorId={vendorId} page={pageNum} />
                             </Suspense>
                         </div>
                     </div>

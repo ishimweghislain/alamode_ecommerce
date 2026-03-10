@@ -121,9 +121,21 @@ model Subcategory {
   slug        String    @unique
   categoryId  String
   category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subsubcategories Subsubcategory[]
   products    Product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Subsubcategory {
+  id            String    @id @default(cuid())
+  name          String
+  slug          String    @unique
+  subcategoryId String
+  subcategory   Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  products      Product[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Product {
@@ -146,6 +158,9 @@ model Product {
   
   subcategoryId String?
   subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  
+  subsubcategoryId String?
+  subsubcategory   Subsubcategory? @relation(fields: [subsubcategoryId], references: [id], onDelete: Cascade)
   
   orderItems  OrderItem[]
   reviews     Review[]

@@ -9,6 +9,7 @@ export async function GET(req: Request) {
         const query = searchParams.get("q");
         const categorySlug = searchParams.get("category");
         const subcategorySlug = searchParams.get("subcategory");
+        const subsubcategorySlug = searchParams.get("subsubcategory");
 
         if (!query || query.length < 2) {
             return NextResponse.json({ products: [], vendors: [], categories: [] });
@@ -26,13 +27,12 @@ export async function GET(req: Request) {
             productWhere.category = { slug: categorySlug };
         }
 
-        // Subcategory filter via a relation if available (graceful fallback)
         if (subcategorySlug) {
-            try {
-                productWhere.subcategory = { slug: subcategorySlug };
-            } catch {
-                // subcategory relation may not exist on product — ignore
-            }
+            productWhere.subcategory = { slug: subcategorySlug };
+        }
+
+        if (subsubcategorySlug) {
+            productWhere.subsubcategory = { slug: subsubcategorySlug };
         }
 
         const [products, vendors, categories] = await Promise.all([
